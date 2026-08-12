@@ -1,0 +1,97 @@
+name: Terraform
+
+# Plan-only on PRs — apply is manual/environment-gated, per ARCHITECTURE.md
+# §18 ("terraform plan on PR, terraform apply on merge, environment-gated")
+# and the local-first / on-demand-cloud philosophy in ARCHITECTURE.md §1.
+# This workflow deliberately never runs `terraform apply`: it validates
+# formatting and configuration, and produces a plan as a PR artifact for
+# human review. Applying to staging/prod is a separate, manually-triggered
+# workflow (not included here) gated by GitHub Environments' required
+# reviewers — see terraform/README.md.
+
+on:
+  pull_request:
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform.yml"
+
+concurrency:
+  group: terraform-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fmt-validate-plan:
+    name: fmt check, validate, plan (dev only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: terraform/environments/dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - name: terraform fmt -check (whole terraform/ tree)
+        working-directory: terraform
+        run: terraform fmt -check -recursive
+
+      - name: terraform init (no backend write, read-only)
+        run: terraform init -backend=false
+
+      - name: terraform validate
+        run: terraform validate
+
+      # terraform plan requires cloud credentials (azurerm, databricks,
+      # snowflake providers). Skips gracefully on forked-repo PRs that
+      # cannot access repo secrets, matching the pattern used in dbt.yml.
+      - name: Check cloud credentials are configured
+        id: creds-check
+        run: |
+          if [ -z "${{ secrets.ARM_CLIENT_ID }}" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: terraform plan (dev environment only — informational, PR artifact)
+        if: steps.creds-check.outputs.configured == 'true'
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: |
+          terraform init
+          terraform plan -no-color -out=tfplan.binary | tee plan.txt
+
+      - name: Upload plan as PR artifact
+        if: steps.creds-check.outputs.configured == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-dev
+          path: terraform/environments/dev/plan.txt
+          retention-days: 14
+
+      - name: Skipped — no cloud credentials configured
+        if: steps.creds-check.outputs.configured == 'false'
+        run: echo "ARM_CLIENT_ID secret not set (expected on forked-repo PRs) — terraform plan skipped, fmt/validate still ran and gate the PR."
+
+  # NOTE (manual-approval-gated, not implemented in this workflow):
+  # `terraform apply` for `staging` and `prod` runs from a SEPARATE workflow
+  # triggered on merge to main, targeting a GitHub Environment
+  # (`staging` / `prod`) that has required reviewers configured in repo
+  # Settings > Environments. GitHub blocks that job until an authorized
+  # human approves the run — this is what ARCHITECTURE.md §18 means by
+  # "environment-gated" apply. `dev` may auto-apply on merge since it is
+  # provisioned/destroyed on demand for portfolio demos (ARCHITECTURE.md
+  # §21) and carries no customer-facing risk.

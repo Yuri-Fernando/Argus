@@ -1,0 +1,85 @@
+# Golden question set for the Recommendation Agent.
+#
+# Built in ROADMAP.md Sprint 14. Mirrors the rascunho.md original design sketch's example
+# (customer with high churn + high CLV -> HIGH priority retention campaign recommendation,
+# human approval REQUIRED) now implemented in
+# agents/recommendation/recommendation_agent.py + approval_queue.py.
+#
+# Schema per case:
+#   id                        — short stable identifier
+#   question                  — natural-language input (or a direct customer_id trigger)
+#   customer_context          — synthetic CustomerContext fixture inputs for this case
+#   expected_action            — one of recommendation_agent.CANDIDATE_ACTIONS
+#   expected_priority           — "low" | "medium" | "high"
+#   expected_requires_approval  — must always be true (ADR-006) — included explicitly so a
+#                                  regression that ever sets this false is caught immediately
+#   expected_answer_contains     — keywords a correct answer should include
+
+cases:
+  - id: high-churn-high-clv-retention-offer
+    question: "What should we do about customer MC-012345?"
+    customer_context:
+      churn_probability: 0.89
+      clv: 5200.00
+      support_ticket_count_90d: 4
+      support_sentiment_avg: -0.3
+      segment: "VIP"
+    expected_action: offer_retention_discount
+    expected_priority: high
+    expected_requires_approval: true
+    expected_answer_contains: ["retention", "human approval", "REQUIRED"]
+    notes: "The canonical rascunho.md example: high churn risk + high CLV -> HIGH priority, approval required."
+
+  - id: low-churn-no-action
+    question: "Does customer MC-098765 need any intervention?"
+    customer_context:
+      churn_probability: 0.05
+      clv: 800.00
+      support_ticket_count_90d: 0
+      support_sentiment_avg: 0.6
+      segment: "Loyal"
+    expected_action: no_action_recommended
+    expected_priority: low
+    expected_requires_approval: true
+    expected_answer_contains: ["no action"]
+
+  - id: negative-sentiment-support-escalation
+    question: "This customer has filed 6 tickets this month with angry tone — what's next?"
+    customer_context:
+      churn_probability: 0.4
+      clv: 1200.00
+      support_ticket_count_90d: 6
+      support_sentiment_avg: -0.7
+      segment: "Potential"
+    expected_action: escalate_to_support_supervisor
+    expected_priority: medium
+    expected_requires_approval: true
+    expected_answer_contains: ["escalate", "supervisor"]
+
+  - id: missing-churn-score-graceful-degradation
+    question: "Give me a recommendation for MC-000001."
+    customer_context:
+      churn_probability: null
+      clv: null
+      support_ticket_count_90d: null
+      support_sentiment_avg: null
+      segment: null
+    expected_action: no_action_recommended
+    expected_priority: low
+    expected_requires_approval: true
+    expected_answer_contains: ["unavailable"]
+    notes: "Missing signals must degrade to a safe, low-confidence default, never a guessed action."
+
+  - id: at-risk-low-clv-declines-priority
+    question: "Should we retain customer MC-055555 with an offer?"
+    customer_context:
+      churn_probability: 0.75
+      clv: 90.00
+      support_ticket_count_90d: 1
+      support_sentiment_avg: 0.1
+      segment: "At Risk"
+    expected_action: no_action_recommended
+    expected_priority: low
+    expected_requires_approval: true
+    expected_answer_contains: ["low"]
+    notes: "High churn but very low CLV should not automatically justify a costly retention offer."

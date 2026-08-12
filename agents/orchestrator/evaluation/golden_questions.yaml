@@ -1,0 +1,92 @@
+# Golden question set for the Customer Intelligence Agent (orchestrator).
+#
+# Built in ROADMAP.md Sprint 14, consumed by the LLM-as-judge evaluation harness referenced in
+# Sprint 14's acceptance criteria ("agents/*/evaluation/ — golden question sets + LLM-as-judge
+# scoring, including prompt-injection test cases"). See also
+# agents/orchestrator/evaluation/prompt_injection_cases.yaml for the ADR-007 security cases.
+#
+# Schema per case:
+#   id                      — short stable identifier
+#   question                — natural-language input to the agent
+#   expected_intent         — one of Intent (agents/orchestrator/customer_intelligence_agent.py)
+#   expected_tool_route     — one of ToolRoute (same file) — the routing decision under test
+#   expected_tools_called   — MCP tool names (mcp/server/server.py) the agent should invoke
+#   expected_answer_contains — keywords/substrings a correct answer should include
+#                              (graded by an LLM-as-judge for semantic match, not exact string
+#                              equality — TODO(Sprint 14): wire the actual judge call)
+#   notes                   — optional context
+
+cases:
+  - id: metric-revenue-last-month
+    question: "What was our revenue last month?"
+    expected_intent: metric_lookup
+    expected_tool_route: power_bi_mcp
+    expected_tools_called: [get_sales_metrics]
+    expected_answer_contains: ["revenue", "last_30_days"]
+    notes: >
+      Simple published metric — must route to Power BI MCP, not a raw Snowflake query,
+      per ARCHITECTURE.md §15's routing table.
+
+  - id: metric-churn-rate-vip-segment
+    question: "What's the churn rate for VIP customers this quarter?"
+    expected_intent: metric_lookup
+    expected_tool_route: power_bi_mcp
+    expected_tools_called: [get_sales_metrics]
+    expected_answer_contains: ["churn_rate", "VIP"]
+
+  - id: deep-analysis-churn-spike-root-cause
+    question: "Why did churn spike in the São Paulo region last month?"
+    expected_intent: deep_analysis
+    expected_tool_route: databricks_cortex_mcp
+    expected_tools_called: [get_customer_churn, get_data_quality]
+    expected_answer_contains: ["São Paulo", "churn"]
+    notes: >
+      Requires deeper analysis than a single metric lookup — must route to
+      Databricks/Cortex MCP, not Power BI MCP.
+
+  - id: identity-duplicate-account-check
+    question: "Is customer 12345 linked to any other account in our system?"
+    expected_intent: identity_question
+    expected_tool_route: golden_record_graph
+    expected_tools_called: [get_customer_graph]
+    expected_answer_contains: ["master_customer_id"]
+    notes: >
+      Identity questions must route to this project's own custom MCP server
+      (Golden Record + Graph), never to Power BI or Databricks.
+
+  - id: identity-shared-phone
+    question: "Does this customer share a phone number with anyone else?"
+    expected_intent: identity_question
+    expected_tool_route: golden_record_graph
+    expected_tools_called: [get_customer_graph]
+    expected_answer_contains: ["phone"]
+
+  - id: policy-refund-eligibility
+    question: "Is this customer eligible for a refund on their last order?"
+    expected_intent: policy_question
+    expected_tool_route: databricks_cortex_mcp
+    expected_tools_called: [get_customer_orders]
+    expected_answer_contains: ["refund", "order"]
+    notes: >
+      Combines RAG-retrieved policy text (ARCHITECTURE.md §14) with order state —
+      answer must cite the policy document, not restate a memorized rule.
+
+  - id: unknown-intent-clarification
+    question: "asdkj random unrelated text"
+    expected_intent: unknown
+    expected_tool_route: none
+    expected_tools_called: []
+    expected_answer_contains: ["clarif", "don't have enough"]
+    notes: >
+      No confident route — the agent should ask for clarification rather than
+      guessing a tool to call.
+
+  - id: no-fabricated-metric
+    question: "What will our revenue be next quarter?"
+    expected_intent: metric_lookup
+    expected_tool_route: power_bi_mcp
+    expected_tools_called: [get_sales_metrics]
+    expected_answer_contains: ["cannot", "no tool", "not available"]
+    notes: >
+      A forecast is not a governed historical metric — the agent must refuse to
+      invent a number rather than let the LLM estimate one (ADR-005 discipline).

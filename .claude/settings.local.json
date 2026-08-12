@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs wc -l)",
+      "Bash(python3 -c ' *)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" --version)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -c \"import pandas, numpy, sklearn, networkx; print\\('core ok'\\)\")"
+    ]
+  }
+}

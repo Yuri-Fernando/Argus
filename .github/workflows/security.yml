@@ -1,0 +1,90 @@
+name: Security
+
+# Runs on every PR — three independent gates:
+#   1. Dependency vulnerability scan (pip-audit against the resolved
+#      dependency set in pyproject.toml).
+#   2. Secret-scanning note — this repo relies on GitHub's native
+#      "secret scanning" + "push protection" (Settings > Code security),
+#      which run server-side on every push and are NOT re-implemented as a
+#      workflow step here (a workflow step would only scan the checked-out
+#      ref, not full history, and would duplicate a check GitHub already
+#      does for free on public repos). This job's sole secret-related
+#      responsibility is asserting that no synthetic data or fixture file
+#      added by a PR looks like a real credential pattern (see the PII gate
+#      below, and governance/security.md for the full threat model).
+#   3. `tests/data/test_no_real_pii.py` run as an explicit, named gate —
+#      not folded into `make test` output — so a PII leak shows up as its
+#      own red check, not buried in a general test summary.
+
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly scheduled scan catches newly-disclosed CVEs in dependencies
+    # that were already merged and didn't change this week.
+    - cron: "0 6 * * 1"
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-scan:
+    name: Dependency vulnerability scan (pip-audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: pyproject.toml
+
+      - name: Install project + pip-audit
+        run: |
+          pip install -e ".[dev,pyspark,docs-pdf]"
+          pip install pip-audit
+
+      - name: pip-audit
+        run: pip-audit --strict --desc
+
+  secret-scanning-note:
+    name: Secret scanning (GitHub-native, informational)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: No-op — documents the actual scanning mechanism
+        run: |
+          echo "Secret scanning + push protection run natively via GitHub"
+          echo "(Settings > Code security and analysis), not as a workflow"
+          echo "step. This job exists so the security gate list in"
+          echo "ARCHITECTURE.md / this workflow's name stays discoverable"
+          echo "from the Actions tab. See governance/security.md."
+
+  pii-gate:
+    name: No real PII gate (tests/data/test_no_real_pii.py)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: pyproject.toml
+
+      - name: make install
+        run: make install
+
+      - name: Generate synthetic data (so the PII gate has real content to scan)
+        run: make seed
+
+      - name: Run PII gate (explicit, named check — not folded into `make test`)
+        run: pytest -v tests/data/test_no_real_pii.py

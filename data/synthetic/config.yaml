@@ -1,0 +1,48 @@
+# Configuration for synthetic data generation.
+# See DATA_MODEL.md §5 for the rationale behind every knob here.
+
+seed: 42
+locale: pt_BR
+output_dir: data/synthetic
+
+# Volume profiles — pick with `--profile`. `local` is sized to run the full
+# pipeline (ingestion -> DQ -> MDM -> ML) on a laptop in a couple of minutes.
+# `cloud` matches the volumes described in ARCHITECTURE.md, meant for a real
+# Databricks cluster.
+profiles:
+  local:
+    customers: 10000
+    marketing_interactions: 20000
+    support_tickets: 2000
+    web_events: 50000
+  cloud:
+    customers: 100000
+    marketing_interactions: 200000
+    support_tickets: 50000
+    web_events: 1000000
+
+# Deliberately injected data problems, so the Data Quality and MDM /
+# Entity Resolution pipelines have something real to detect and fix.
+# Values are fractions of the total customer count.
+dirty_rates:
+  duplicate_customers: 0.05   # near-duplicate CRM rows of an existing customer
+  missing_email: 0.02
+  invalid_phone: 0.01
+  inconsistent_address: 0.01  # city/state pair that doesn't match
+
+# Marketing campaign definitions used to generate campaigns.csv
+campaigns:
+  count: 12
+  channels: [email, sms, push, social, search]
+
+# Support ticket taxonomy
+support:
+  categories: [delivery, payment, product_defect, refund_request, account, other]
+  priorities: [low, medium, high, urgent]
+  sentiments: [positive, neutral, negative]
+
+# Web analytics taxonomy
+web:
+  event_types: [page_view, product_view, add_to_cart, checkout_start, purchase, search]
+  devices: [desktop, mobile, tablet]
+  sources: [organic, paid_search, social, email, direct, referral]

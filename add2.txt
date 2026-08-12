@@ -1,0 +1,15 @@
+Crawl4AI
+Estruturar e otimizar bancos vetoriais (ChromaDB, FAISS) e implementar técnicas avançadas de RAG, conectando agentes aos dados corporativos no Snowflake ou em sistemas internos.
+Cultura de Engenharia: Montar pipelines de experimentação, versionamento e publicação (MLOps) sempre com foco em escalabilidade e código limpo.
+Experimentar e integrar diferentes LLMs (OpenAI, Gemini, DeepSeek, etc.), avaliando tecnicamente os cenários de uso e trade-offs de performance/custo.
+Criar agentes conversacionais com memória de curto e longo prazo, garantindo rastreabilidade e personalização para o cliente.
+Desenvolver agentes autônomos inteligentes utilizando frameworks modernos como LangChain e Agno, criando fluxos que combinem múltiplas ferramentas.
+Mecanismos de extração inteligente: Usar web scraping (Crawl4AI) e parsing de documentos complexos (Docling) para alimentar pipelines de conhecimento.
+
+
+    Experiência em Machine Learning (aprendizado supervisionado, não supervisionado e por reforço)
+
+    Experiência em MLOps para automação do ciclo de vida de modelos.
+
+    Conhecimento sobre otimização de LLMs (quantização, fine-tuning, etc.).
+

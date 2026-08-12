@@ -1,0 +1,28 @@
+# Copy to terraform.tfvars and fill in real values. Never commit
+# terraform.tfvars — see .gitignore. No real secrets below.
+
+# ---- Tagging ----
+project     = "eci"
+environment = "dev"
+cost_center = "portfolio-eci"
+
+# ---- Azure ----
+azure_subscription_id   = "00000000-0000-0000-0000-000000000000"
+azure_tenant_id          = "00000000-0000-0000-0000-000000000000"
+azure_region             = "brazilsouth"
+azure_openai_region      = "eastus2"
+azure_openai_deployment  = "gpt-4o"
+
+# ---- Databricks ----
+databricks_host  = "https://adb-0000000000000000.0.azuredatabricks.net"
+databricks_token = "" # prefer `az login` + Entra ID auth over a PAT; leave empty if unused
+databricks_catalog = "customer_intelligence"
+
+# ---- Snowflake ----
+snowflake_account        = "ab12345.sa-east-1"
+snowflake_user            = "TF_SERVICE_USER"
+snowflake_password        = "" # do not commit; inject via TF_VAR_snowflake_password in CI
+snowflake_role             = "SYSADMIN"
+snowflake_warehouse        = "CUSTOMER_INTELLIGENCE_WH"
+snowflake_warehouse_size   = "XSMALL"
+snowflake_database         = "CUSTOMER_INTELLIGENCE"

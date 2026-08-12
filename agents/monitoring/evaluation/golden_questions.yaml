@@ -1,0 +1,57 @@
+# Golden question set for the Monitoring Agent.
+#
+# Built in ROADMAP.md Sprint 14, wired to real Prometheus signals in Sprint 16. Each case
+# exercises agents/monitoring/monitoring_agent.py's evaluate_signals() against a synthetic
+# HealthSignal fixture, independent of whether Prometheus is actually running.
+#
+# Schema per case:
+#   id                     — short stable identifier
+#   question               — natural-language input to the agent
+#   signal_fixture          — synthetic HealthSignal input {name, value, unit, threshold}
+#   expected_alert_raised    — bool
+#   expected_severity         — one of AlertSeverity, or null if no alert expected
+#   expected_answer_contains  — keywords a correct answer should include
+
+cases:
+  - id: dq-score-below-threshold
+    question: "Is the platform's data quality score healthy right now?"
+    signal_fixture: {name: dq_score, value: 0.82, unit: score, threshold: 0.90}
+    expected_alert_raised: true
+    expected_severity: CRITICAL
+    expected_answer_contains: ["dq_score", "breached"]
+
+  - id: pipeline-duration-within-bounds
+    question: "Did the nightly Bronze-to-Silver job run on time?"
+    signal_fixture: {name: pipeline_duration_seconds, value: 1800.0, unit: seconds, threshold: 3600.0}
+    expected_alert_raised: false
+    expected_severity: null
+    expected_answer_contains: ["healthy", "no alert"]
+
+  - id: ml-latency-spike
+    question: "Is the churn model serving latency normal?"
+    signal_fixture: {name: ml_latency_ms, value: 5400.0, unit: ms, threshold: 2000.0}
+    expected_alert_raised: true
+    expected_severity: WARNING
+    expected_answer_contains: ["ml_latency", "breached"]
+
+  - id: agent-latency-spike
+    question: "Is the orchestrator agent responding within its SLA?"
+    signal_fixture: {name: agent_latency_ms, value: 12000.0, unit: ms, threshold: 8000.0}
+    expected_alert_raised: true
+    expected_severity: WARNING
+    expected_answer_contains: ["agent_latency"]
+
+  - id: unknown-value-no-false-positive
+    question: "What's the current MCP call error rate?"
+    signal_fixture: {name: mcp_call_error_rate, value: null, unit: unknown, threshold: 0.05}
+    expected_alert_raised: false
+    expected_severity: null
+    expected_answer_contains: ["unknown", "not yet available"]
+    notes: "A None value must never be treated as a threshold breach — see evaluate_signals() docstring."
+
+  - id: mcp-error-rate-breach
+    question: "Are MCP tool calls failing more than usual?"
+    signal_fixture: {name: mcp_call_error_rate, value: 0.12, unit: rate, threshold: 0.05}
+    expected_alert_raised: true
+    expected_severity: WARNING
+    expected_answer_contains: ["mcp_call_error_rate", "breached"]
