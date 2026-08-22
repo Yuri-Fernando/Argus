@@ -73,11 +73,21 @@ def _infer_main_cause(dataset: str, dimension_scores: dict[str, float | None]) -
 def _recommend_action_for_cause(main_cause: str) -> str:
     """Map a diagnosed cause to a short, human-actionable recommendation.
 
-    TODO(Sprint 14): replace this keyword-matching placeholder with either a small rules table
-    keyed by (source, dimension) or an LLM call constrained to a fixed action vocabulary (mirror
-    the CANDIDATE_ACTIONS pattern in agents/recommendation/recommendation_agent.py) so
-    recommendations stay auditable rather than free-form LLM prose.
+    Backed by `agents/quality/root_cause_classifier.py` — a local, CPU-only, no-LLM-round-trip
+    classifier trained on the platform's real DQ rule catalog (see that module's docstring for
+    the honest scope note on how this relates to the add2.txt "LLM optimization/quantization"
+    backlog item it implements). Falls back to the original keyword-matching heuristic if the
+    classifier is unavailable for any reason (e.g. scikit-learn not installed in a minimal
+    deployment) — this function must never raise just because the optimization layer is missing.
     """
+    try:
+        from agents.quality.root_cause_classifier import classify_root_cause
+
+        result = classify_root_cause(main_cause)
+        return f"[{result.human_label}, confidence {result.confidence:.0%}] {result.recommended_action}"
+    except Exception:
+        pass
+
     if "completeness" in main_cause:
         return "Review the upstream extraction job for missing-field regressions."
     if "freshness" in main_cause:

@@ -466,6 +466,63 @@ implemented")`) desde a especificação original — mas o que eles pediam já e
 Qualquer outra coisa que eu não conseguir resolver sozinho, registro aqui em uma nova entrada
 "⚠️ PRECISA DE VOCÊ" antes de seguir em frente, para você ver quando acordar.
 
+## 2026-08-21 (continuação) — rede voltou, fechando pendências
+
+Rede voltou (confirmado: `curl google.com` → 200). Usuário pediu pra reconferir add2.txt/
+tributario.txt e ver o que mais dava pra inserir. Aproveitando a rede de volta:
+
+- **Terraform**: os 4 módulos Snowflake que precisaram de revisão manual (schemas, grants, stages,
+  semantic) foram revalidados de verdade agora — **20/20 módulos confirmados via `terraform
+  validate` real**, zero precisando mais do fallback manual.
+- **Olist**: tentativa de download automático falhou de novo (timeout esperando login interativo do
+  Kaggle) — confirma que isso continua exigindo ação manual do usuário, não é algo que eu resolvo sozinho headless.
+- **Classificador SLM local** (`agents/llm_gateway/README.md` §"LLM optimization" — backlog do
+  add2.txt "otimização de LLMs/quantização"): próximo item sendo implementado agora — ver seção
+  abaixo assim que terminar.
+
+### Classificador SLM local de causa-raiz de DQ (eu, direto) — ✅ CONCLUÍDO
+
+`agents/quality/root_cause_classifier.py` — implementação real e honestamente escopada do item de
+backlog "otimização de LLM (quantização/fine-tuning)" do `add2.txt`, documentado em
+`agents/llm_gateway/README.md`. Não é o distilbert fine-tuned+quantizado que o texto original do
+backlog sugeria (desproporcional pro escopo) — é um classificador TF-IDF + Logistic Regression
+genuinamente local, CPU-only, sem round-trip de rede, treinado nas 47 descrições **reais** do
+catálogo de regras de `data_quality/expectations/` (10 classes, uma por tipo de regra) + poucas
+paráfrases por classe pra dar sinal de treino suficiente. Resultado real (held-out): **75% de
+acurácia, F1 macro 0,739** (baseline aleatório seria ~10%). Conectado em
+`agents/quality/data_quality_agent.py::_recommend_action_for_cause()`, substituindo o
+keyword-matching antigo, com fallback pro comportamento antigo se o classificador falhar.
+
+### WP10 — Conectar `mcp/tools/*.py` (5 arquivos) aos dados reais — ✅ CONCLUÍDO
+
+Todas as 5 ferramentas MCP religadas e testadas com dados reais, reaproveitando `api/services/` e
+`snowflake/local_runner.py` (sem duplicar lógica):
+
+- **`quality.py`**: `get_data_quality('crm_customer')` → score real 0,9967, dimensões reais
+  (completeness 0,9925, validity 0,9972...). `get_customer_quality` liga golden_record↔quarentena
+  (achado honesto: nenhum golden record tem hit de quarentena neste build, porque uma linha
+  quarentenada nunca sobrevive até ser fundida — lógica correta, resultado esperado).
+- **`customer.py`**: `get_customer`/`search_customers` reaproveitam `api/services/` direto (zero
+  duplicação). `get_customer_graph`: o grafo persistido (`data/graph/customer_graph.gpickle`) não
+  abre nesse ambiente (incompatibilidade de versão do networkx) — reconstruído em memória ao vivo
+  como fallback, funcionando (4 nós, 3 arestas pra `MC00000000`).
+- **`analytics.py`**: `get_sales_metrics('revenue')` → R$ 15.515.805,42 direto do `local_runner.py`.
+  Métricas sem Olist (`order_count`/`nps`/`delivery_sla`) retornam `None` com motivo real, nunca inventado.
+- **`ml.py`**: `get_customer_churn('MC00003652')` → carrega o modelo campeão REGISTRADO no MLflow
+  (sem retreinar), SHAP ao vivo — bate exatamente com os números já registrados no BUILD_LOG pra
+  esse cliente. `recommend_action` monta uma recomendação real (churn+CLV+segmento+suporte) —
+  achado: `agents/recommendation/recommendation_agent.py::score_recommendation` continua sendo
+  TODO stub, então a lógica composta vive direto em `ml.py` por enquanto (reaproveitando só o
+  conjunto fechado `CANDIDATE_ACTIONS`).
+- **`snowflake.py`**: `query_snowflake` executa SELECT validado contra o mesmo DuckDB local.
+
+**Bug real achado e corrigido durante a integração**: `analytics.py` e `snowflake.py` cada um
+chamava `build_warehouse(rebuild=True)` independentemente — DuckDB trava o arquivo pra conexão, e
+o segundo rebuild quebrava no `unlink()`. Corrigido compartilhando uma única conexão cacheada.
+
+**Pendência real que ficou registrada, não meu escopo de agora**: `recommendation_agent.py`'s
+`score_recommendation` ainda é TODO stub — é o próximo item natural se quiser continuar fechando gaps.
+
 ## ✅ SESSÃO CONCLUÍDA — 2026-08-21
 
 Commit final: `c0db5ec` (`git log --oneline -3` a partir do baseline `aca0f8d`). Versão: `2.2.0`
