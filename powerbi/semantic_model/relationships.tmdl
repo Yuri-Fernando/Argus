@@ -1,0 +1,70 @@
+// powerbi/semantic_model/relationships.tmdl
+// Star-schema relationships — mirror the FK comments in snowflake/ddl/*.sql.
+// All dimension->fact relationships are one-to-many, single-direction filter
+// (fact filtered by dimension), matching the read-mostly BI query pattern.
+
+relationship dim_customer_to_fact_payments
+	fromColumn: fact_payments.master_customer_id
+	toColumn: dim_customer.master_customer_id
+	crossFilteringBehavior: singleDirection
+
+relationship dim_customer_to_fact_support_interactions
+	fromColumn: fact_support_interactions.master_customer_id
+	toColumn: dim_customer.master_customer_id
+	crossFilteringBehavior: singleDirection
+
+relationship dim_customer_to_fact_campaign_interactions
+	fromColumn: fact_campaign_interactions.master_customer_id
+	toColumn: dim_customer.master_customer_id
+	crossFilteringBehavior: singleDirection
+
+relationship dim_customer_to_fact_web_events
+	fromColumn: fact_web_events.master_customer_id
+	toColumn: dim_customer.master_customer_id
+	crossFilteringBehavior: singleDirection
+
+relationship dim_date_to_fact_payments
+	fromColumn: fact_payments.date_key
+	toColumn: dim_date.date_key
+	crossFilteringBehavior: singleDirection
+	isActive: true
+
+relationship dim_date_to_fact_support_interactions_created
+	fromColumn: fact_support_interactions.date_key_created
+	toColumn: dim_date.date_key
+	crossFilteringBehavior: singleDirection
+	isActive: true
+
+relationship dim_date_to_fact_support_interactions_resolved
+	fromColumn: fact_support_interactions.date_key_resolved
+	toColumn: dim_date.date_key
+	crossFilteringBehavior: singleDirection
+	isActive: false
+	/// Inactive by default (one active relationship per fact<->dim_date pair max) —
+	/// activated per-visual via USERELATIONSHIP() in resolution-time-window DAX,
+	/// e.g. average resolution SLA measured against resolved_at.
+
+relationship dim_date_to_fact_campaign_interactions
+	fromColumn: fact_campaign_interactions.date_key
+	toColumn: dim_date.date_key
+	crossFilteringBehavior: singleDirection
+	isActive: true
+
+relationship dim_date_to_fact_web_events
+	fromColumn: fact_web_events.date_key
+	toColumn: dim_date.date_key
+	crossFilteringBehavior: singleDirection
+	isActive: true
+
+relationship dim_campaign_to_fact_campaign_interactions
+	fromColumn: fact_campaign_interactions.campaign_id
+	toColumn: dim_campaign.campaign_id
+	crossFilteringBehavior: singleDirection
+
+relationship dim_geography_to_dim_customer
+	fromColumn: dim_customer.city
+	toColumn: dim_geography.city
+	crossFilteringBehavior: singleDirection
+	/// Snowflake-loose: joined on (city, state) conceptually — Power BI relationships
+	/// are single-column, so city is used as the primary join key here; state is
+	/// carried on both tables for direct filtering without traversing the relationship.

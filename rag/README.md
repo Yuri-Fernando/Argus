@@ -42,6 +42,30 @@ Results get recorded in [`../benchmarks/cortex.md`](../benchmarks/cortex.md) as 
 rows alongside Cortex Analyst SQL/answer accuracy, since both are evaluated against golden
 question sets with the same "measured, not assumed" discipline as `snowflake/evaluations/`.
 
+## Status: implemented (local-dev path)
+
+`rag/parsing/`, `rag/embeddings/`, and `rag/evaluation/` are implemented and runnable end-to-end
+against the local stack (`rag/local_stack/`'s Docling + ChromaDB, real libraries wired in — not
+stubs). Measured result: **precision@3 = 1.0 (15/15)** on the 15-question golden set in
+`rag/evaluation/golden_questions.py`, well above the 0.8 target — see
+`rag/evaluation/precision_at_k_results.json` for the full per-question detail.
+
+How to run:
+
+```bash
+# Ingest data/documents/*.md into ChromaDB (data/rag/chroma/)
+python -m rag.embeddings.ingest
+
+# Re-ingest into a scratch store and score precision@k against the golden set
+python -m rag.evaluation.precision_at_k
+```
+
+`rag/README.md`'s Snowflake-native `parsing/`/`embeddings/`/`retrieval/` packages described above
+remain the production path; the local-dev `rag/parsing/` and `rag/embeddings/` packages are thin
+orchestration around `rag/local_stack/document_parser.py` (Docling) and
+`rag/local_stack/vector_store.py` (ChromaDB) — no parsing/embedding logic was reimplemented, per
+ADR-011.
+
 ## Local-dev alternative
 
 No Snowflake account? See [`local_stack/`](local_stack/) — a local-first equivalent of this same pipeline (Crawl4AI + Docling + ChromaDB/FAISS instead of `AI_PARSE_DOCUMENT`/`AI_EMBED`/Cortex Search), per [ADR-011](../docs/decisions/ADR-011-local-rag-stack.md).

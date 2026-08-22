@@ -1,0 +1,25 @@
+// powerbi/semantic_model/model.tmdl
+// Power BI semantic model definition, TMDL-style (Tabular Model Definition
+// Language — the text format Power BI Desktop/Fabric saves .pbip projects in).
+// Connects to Snowflake Semantic Views (ADR-005) via DirectQuery/Import against
+// the same dimensional model dbt/models/marts/ mirrors from snowflake/ddl/*.sql —
+// never directly against raw Gold tables (powerbi/README.md "Hard rule").
+//
+// This file plus dimensions.tmdl / facts.tmdl / relationships.tmdl describe the
+// same 8-table star schema as dbt/models/marts/schema.yml and snowflake/ddl/.
+// Measures (DAX) are defined separately in powerbi/dax/measures.md and imported
+// as calculated measures on top of these tables.
+
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+
+	annotation PBI_QueryOrder = ["dim_customer", "dim_date", "dim_geography", "dim_campaign", "fact_payments", "fact_support_interactions", "fact_campaign_interactions", "fact_web_events"]
+
+	// Data source: Snowflake Semantic Views (production) — see snowflake/README.md.
+	// Local development connects instead to data/warehouse/local.duckdb via the
+	// DuckDB ODBC driver, exposing the same 8 tables built by snowflake/local_runner.py.
+	dataSource SnowflakeSemanticViews
+		connectionString: "Driver=SnowflakeDSIIDriver;Server=<account>.snowflakecomputing.com;Warehouse=CUSTOMER_INTEL_WH;Database=CUSTOMER_INTEL;Schema=SEMANTIC_VIEWS"
+		impersonationMode: impersonateAuthenticatedUser

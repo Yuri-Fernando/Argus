@@ -4,7 +4,19 @@
       "Bash(xargs wc -l)",
       "Bash(python3 -c ' *)",
       "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" --version)",
-      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -c \"import pandas, numpy, sklearn, networkx; print\\('core ok'\\)\")"
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -c \"import pandas, numpy, sklearn, networkx; print\\('core ok'\\)\")",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m pip install --quiet kagglehub great-expectations jellyfish opentelemetry-api opentelemetry-sdk prometheus-client uvicorn python-multipart)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" data/synthetic/generate_all.py --profile local)",
+      "Bash(terraform version *)",
+      "Bash(timeout 20 \"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" ingestion/olist/download.py)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c 'import chromadb; print\\('\\\\''chromadb'\\\\'', chromadb.__version__\\)')",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c 'import docling; print\\('\\\\''docling ok'\\\\''\\)')",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c 'import fastapi, uvicorn; print\\('\\\\''fastapi'\\\\'', fastapi.__version__\\)')",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c 'import httpx; print\\('\\\\''httpx ok'\\\\''\\)')",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c 'import sklearn; print\\('\\\\''sklearn ok'\\\\''\\)')",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -c \"import pandas, pyarrow, jellyfish; print\\('pandas', pandas.__version__\\); print\\('pyarrow', pyarrow.__version__\\); print\\('jellyfish', jellyfish.__version__\\)\")",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c ' *)",
+      "Bash(cd \"/g/Outros computadores/Meu computador/Controle Base/Projetos, Robos e Automação/Projetos Git/Projetos Extras \\(Portfolio\\)/Enterprise Customer Intelligence Data Platform \\(Terminar\\)\" && mkdir -p lakehouse/bronze lakehouse/silver data_quality/expectations data_quality/validators data_quality/reports data/lakehouse/bronze data/lakehouse/silver data/lakehouse/quarantine && echo done)"
     ]
   }
 }

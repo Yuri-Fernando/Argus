@@ -1,0 +1,17 @@
+# Service for eci-api — ClusterIP by default; front with an Ingress/LoadBalancer per environment,
+# not decided here (out of Sprint 17 scope — no ingress controller assumed to exist).
+apiVersion: v1
+kind: Service
+metadata:
+  name: eci-api
+  labels:
+    app: eci-api
+    component: api
+spec:
+  type: ClusterIP
+  selector:
+    app: eci-api
+  ports:
+    - name: http
+      port: 8010
+      targetPort: 8010

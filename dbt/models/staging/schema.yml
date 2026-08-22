@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: stg_crm_customer
+    description: "1:1 pass-through over Silver crm_customer, renamed for downstream clarity."
+    columns:
+      - name: crm_customer_id
+        description: "Source-system (CRM) customer id — unresolved, pre-MDM."
+        tests: [not_null, unique]
+      - name: customer_name
+        description: "Normalized customer name (lakehouse/silver normalize_name)."
+      - name: customer_email
+        description: "Normalized customer email (lakehouse/silver normalize_email)."
+      - name: city
+        description: "Normalized city (lakehouse/silver normalize_city)."
+      - name: state
+        description: "Normalized 2-letter state code (lakehouse/silver normalize_state)."
+
+  - name: stg_payment_finance
+    description: "1:1 pass-through over Silver payment_finance."
+    columns:
+      - name: payment_id
+        description: "Unique payment identifier."
+        tests: [not_null, unique]
+      - name: crm_customer_id
+        description: "FK to stg_crm_customer.crm_customer_id (unresolved, pre-MDM)."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_crm_customer')
+              field: crm_customer_id
+      - name: net_amount
+        description: >
+          Amount actually recognized after fees. Revenue metric (docs/semantic-dictionary.md)
+          is SUM(net_amount) WHERE payment_status = 'settled' — the local stand-in for
+          SUM(order_value), matching snowflake/local_runner.py run_metric('revenue').
+      - name: gross_amount
+        description: >
+          Pre-fee amount. AOV metric numerator is SUM(gross_amount) WHERE payment_status =
+          'settled', matching snowflake/local_runner.py run_metric('aov').
+      - name: payment_status
+        description: "settled | pending | chargeback. Revenue/AOV filter to 'settled' only."
+        tests:
+          - accepted_values:
+              values: ['settled', 'pending', 'chargeback']
+
+  - name: stg_support_ticket
+    description: "1:1 pass-through over Silver support_ticket, with resolution_days derived."
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+      - name: crm_customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_crm_customer')
+              field: crm_customer_id
+      - name: sentiment
+        description: "Free-text ticket sentiment label, lower-cased in Silver."
+
+  - name: stg_campaign_interaction
+    description: "1:1 pass-through over Silver campaign_interaction."
+    columns:
+      - name: interaction_id
+        tests: [not_null, unique]
+      - name: crm_customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_crm_customer')
+              field: crm_customer_id
+      - name: campaign_id
+        description: "FK to dim_campaign.campaign_id (aggregated in marts/dim_campaign.sql)."
+        tests: [not_null]
+      - name: conversion
+        description: "0/1 flag — whether this touch resulted in a conversion."
+
+  - name: stg_web_event
+    description: "1:1 pass-through over Silver web_event, with a generated surrogate event_id."
+    columns:
+      - name: event_id
+        description: "Surrogate key (dbt_utils.generate_surrogate_key), no natural key in source."
+        tests: [not_null, unique]
+      - name: crm_customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_crm_customer')
+              field: crm_customer_id
+      - name: event_type
+        description: "e.g. page_view, add_to_cart, purchase_click — lower-cased in Silver."

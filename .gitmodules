@@ -1,0 +1,3 @@
+[submodule "jhones-trader"]
+	path = jhones-trader
+	url = https://github.com/Yuri-Fernando/jhones-trader

@@ -10,7 +10,7 @@ resource "azurerm_cognitive_account" "openai" {
   location            = var.location
   resource_group_name = var.resource_group_name
   kind                = "OpenAI"
-  sku_name             = "S0"
+  sku_name            = "S0"
 
   custom_subdomain_name         = "${var.project}-${var.environment}-oai-${var.location_short}"
   public_network_access_enabled = true # portfolio: no private endpoint; document as a prod gap

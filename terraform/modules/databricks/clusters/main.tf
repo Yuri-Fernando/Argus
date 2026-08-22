@@ -31,10 +31,10 @@ resource "databricks_cluster_policy" "job_policy" {
 
 resource "databricks_cluster" "shared_interactive" {
   cluster_name            = "${var.environment}-shared-interactive"
-  spark_version            = var.spark_version
-  node_type_id              = var.allowed_node_types[0]
-  autotermination_minutes  = 30
-  num_workers               = var.min_workers
+  spark_version           = var.spark_version
+  node_type_id            = var.allowed_node_types[0]
+  autotermination_minutes = 30
+  num_workers             = var.min_workers
 
   autoscale {
     min_workers = var.min_workers

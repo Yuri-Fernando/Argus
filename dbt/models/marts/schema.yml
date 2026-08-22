@@ -1,0 +1,105 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: >
+      One row per resolved master customer (post-MDM golden record). Mirrors
+      snowflake/ddl/01_dim_customer.sql column-for-column.
+    columns:
+      - name: master_customer_id
+        description: "Primary key. Resolved by mdm/entity_resolution + mdm/golden_record."
+        tests: [not_null, unique]
+      - name: churn_score
+        description: "Proxy churn score in [0,1] — see int_customer_golden_record.sql."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+      - name: lifetime_value
+        description: "Proxy CLV — see int_customer_golden_record.sql and docs/semantic-dictionary.md CLV."
+      - name: segment
+        description: "Segmentation label from ml/segmentation/ (data/ml/segmentation/customer_segments.parquet)."
+
+  - name: dim_date
+    description: "Standard calendar date dimension. Mirrors snowflake/ddl/02_dim_date.sql."
+    columns:
+      - name: date_key
+        description: "YYYYMMDD integer surrogate key."
+        tests: [not_null, unique]
+      - name: full_date
+        tests: [not_null]
+
+  - name: dim_geography
+    description: "Distinct city/state combinations from the Golden Record. Mirrors snowflake/ddl/03_dim_geography.sql."
+    columns:
+      - name: geography_id
+        tests: [not_null, unique]
+
+  - name: dim_campaign
+    description: "One row per campaign_id, aggregated from campaign interactions. Mirrors snowflake/ddl/04_dim_campaign.sql."
+    columns:
+      - name: campaign_id
+        tests: [not_null, unique]
+
+  - name: fact_payments
+    description: >
+      One row per payment, resolved to master_customer_id. Local stand-in for
+      order-level Revenue/AOV facts. Mirrors snowflake/ddl/05_fact_payments.sql.
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+      - name: master_customer_id
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: master_customer_id
+      - name: date_key
+        tests:
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['settled', 'pending', 'chargeback']
+      - name: net_amount
+        description: "Revenue metric numerator (WHERE status = 'settled'). See marts/_metrics.yml."
+
+  - name: fact_support_interactions
+    description: "One row per support ticket. Mirrors snowflake/ddl/06_fact_support_interactions.sql."
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+      - name: master_customer_id
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: master_customer_id
+
+  - name: fact_campaign_interactions
+    description: "One row per campaign touch. Mirrors snowflake/ddl/07_fact_campaign_interactions.sql."
+    columns:
+      - name: interaction_id
+        tests: [not_null, unique]
+      - name: master_customer_id
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: master_customer_id
+      - name: campaign_id
+        tests:
+          - relationships:
+              to: ref('dim_campaign')
+              field: campaign_id
+
+  - name: fact_web_events
+    description: "One row per web/clickstream event. Mirrors snowflake/ddl/08_fact_web_events.sql."
+    columns:
+      - name: event_id
+        tests: [not_null, unique]
+      - name: master_customer_id
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: master_customer_id

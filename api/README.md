@@ -12,19 +12,43 @@ api/
 └── middleware/         # auth, request logging, rate limiting
 ```
 
+## Status: implemented
+
+The route table below is what's actually implemented and running, not a plan. Data comes straight
+from the parquet outputs other workstreams already produced (`data/mdm/`, `data/ml/`) — no mock
+data, no invented fields.
+
 ## Route groups
 
 Mirrors the MCP tool list in [ARCHITECTURE.md §15](../ARCHITECTURE.md#15-layer-12--mcp--agentic-ai) —
 same underlying queries, plain HTTP/JSON instead of MCP tool calls:
 
-| Route | Mirrors MCP tool |
-|---|---|
-| `GET /customers`, `GET /customers/{id}` | `search_customers`, `get_customer` |
-| `GET /customers/{id}/churn` | `get_customer_churn` |
-| `GET /customers/{id}/quality` | `get_customer_quality` |
-| `GET /metrics` | `get_sales_metrics` |
-| `GET /data-quality` | `get_data_quality` |
-| `GET /pipeline-status` | `get_pipeline_status` |
+| Route | Mirrors MCP tool | Reads from |
+|---|---|---|
+| `POST /customer` | (intake, no MCP equivalent yet) | in-process intake list |
+| `GET /customer/{master_customer_id}` | `get_customer` | `data/mdm/golden_record.parquet` |
+| `GET /customer/score?master_customer_id=` | `get_customer_churn` | `data/ml/features/customer_features.parquet`, `data/ml/segmentation/customer_segments.parquet` |
+| `GET /customer/duplicates` | (MDM candidate pairs, no MCP equivalent yet) | `data/mdm/candidate_pairs_deterministic.parquet` |
+| `GET /metrics` | `get_sales_metrics` | `snowflake/local_runner.py::run_all_metrics()` |
+| `GET /health` | — | liveness check |
+
+## How to run
+
+```bash
+uvicorn api.main:app --reload --port 8010
+```
+
+Then, e.g.:
+
+```bash
+curl http://127.0.0.1:8010/health
+curl http://127.0.0.1:8010/customer/MC00000000
+curl "http://127.0.0.1:8010/customer/score?master_customer_id=MC00000000"
+curl "http://127.0.0.1:8010/customer/duplicates?limit=5"
+curl http://127.0.0.1:8010/metrics
+```
+
+Interactive docs at `http://127.0.0.1:8010/docs` (FastAPI's auto-generated Swagger UI).
 
 ## Why this duplicates `mcp/` — on purpose
 

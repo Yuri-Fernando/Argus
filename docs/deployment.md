@@ -46,9 +46,10 @@ Provisioning is entirely through Terraform, never ClickOps:
 
 ```bash
 cd terraform/environments/dev
+cp terraform.tfvars.example terraform.tfvars   # fill in your own subscription/account values
 terraform init
-terraform plan  -var-file=environments/dev.tfvars
-terraform apply -var-file=environments/dev
+terraform plan
+terraform apply
 ```
 
 This wires up the modules under [`terraform/modules/{azure,databricks,snowflake}/`](../terraform/README.md) — owned by the infrastructure workstream, not this document — against a personal-budget sandbox subscription. Only `environments/dev/` ships full HCL in this repo; `staging/` and `prod/` are documented as the same module graph with progressively stricter approval gates (see [`terraform/README.md`](../terraform/README.md)).
@@ -61,7 +62,7 @@ Cloud components are **provisioned on demand and torn down between demo sessions
 
 ```bash
 cd terraform/environments/dev
-terraform destroy -var-file=environments/dev
+terraform destroy
 ```
 
 This is safe because:

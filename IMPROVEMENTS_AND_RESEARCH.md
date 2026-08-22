@@ -82,3 +82,56 @@ Conclusão prática: todas as quatro ferramentas têm sinais de manutenção ati
 ### 4.3 Backlog: otimização de LLM (quantização/fine-tuning)
 
 Não implementado nesta consolidação — alvo concreto documentado para uma extensão futura: substituir a chamada LLM de classificação de categoria de causa-raiz do Data Quality Agent (hoje roteada para `azure-gpt-4o-mini` via `agents/llm_gateway/models.yaml`) por um classificador local pequeno (ex: `distilbert`), fine-tuned sobre categorias de DQ rotuladas e quantizado (INT8, via `onnxruntime` ou `bitsandbytes`) para inferência em CPU — eliminando custo de chamada LLM e round-trip de rede para uma tarefa de classificação de conjunto fechado que não precisa de um LLM de propósito geral. Ver [`agents/llm_gateway/README.md`](agents/llm_gateway/README.md).
+
+## 5. Integração dos requisitos de `tributario.txt` + complemento de `add2.txt` (agosto/2026)
+
+Segunda rodada de requisitos de mercado coletados pelo usuário, no mesmo espírito do §4: dois
+trechos de vaga real (`tributario.txt` — Dados da Controladoria/Reforma Tributária, e um segundo
+posting embutido de "Dev Python + AI Agents + AWS") mais um complemento ao `add2.txt` original
+(post sobre taxonomia de tipos de modelo de IA — LLM/LCM/LAM/MoE/VLM/SLM/MLM/SAM). Mesma disciplina
+do resto do projeto: cada item só entra onde resolve um problema nomeado, não como "tecnologia
+solta pra engordar a lista".
+
+### 5.1 Gap analysis — o que os novos requisitos pedem vs. o que o projeto já tinha
+
+| Requisito | Já coberto? | Onde / decisão |
+|---|---|---|
+| Python + frameworks IA/ML | ✅ | Todo o projeto |
+| NLP, visão computacional, GenAI (LLM, agentes, RAG, MCP) | ✅ (NLP/GenAI/RAG/MCP) · ⚠️ visão computacional parcial | `rag/`, `agents/`, `mcp/`; visão computacional não tinha nenhum módulo dedicado — ver VLM abaixo |
+| Boas práticas de engenharia (modularização, testes, observabilidade, versionamento, code review) | ✅ | estrutura modular já existente, `tests/`, `monitoring/`, `versioning/` |
+| CI/CD, Docker | ✅ | `.github/workflows/`, `docker-compose.yml` |
+| **Kubernetes** | ❌ **gap real** | nunca existiu manifest nenhum no projeto — adicionado em `k8s/` (§5.2) |
+| Cloud para deploy/monitoramento de IA | ✅ | `terraform/`, `monitoring/` |
+| Integração modelos/APIs/microsserviços | ✅ | `api/`, `mcp/` |
+| Documentação de decisões técnicas p/ rastreabilidade/governança | ✅ | ADRs, `governance/` |
+| Contexto financeiro/fiscal/contábil/regulatório | ❌ gap de domínio | fora do escopo do dataset (Olist/CRM é e-commerce, não fiscal) — decisão: **não** forçar um domínio fiscal falso dentro de uma plataforma de customer intelligence; documentado como transferível (a disciplina de governança/LGPD/rastreabilidade já demonstrada é o que uma vaga fiscal realmente avalia, não um dataset de imposto de brinquedo) |
+| MCP Server/Client | ✅ | `mcp/server/`, `mcp/tools/` |
+| **AWS Bedrock** (agentes) | ❌ gap real | projeto escolheu Azure como nuvem principal (decisão explícita do usuário, ver `rascunho.md` final) — Bedrock adicionado como provider stub em `agents/llm_gateway/` (§5.2), mesmo padrão dos providers já stubados (nenhum precisa de credencial pra existir no código) |
+| **A2A (Agent2Agent protocol)** | ❌ **gap real e notável** | os agentes existentes (`orchestrator`, `quality`, `recommendation`, `monitoring`, `knowledge_ingestion`) se comunicam hoje por chamada Python direta / LangGraph interno — nunca por um protocolo padronizado entre agentes. Adicionado `agents/a2a/` (§5.2) |
+| Ingestão via S3 / pipelines | ✅ (equivalente ADLS) | `terraform/modules/azure/adls/`; AWS é "portability target" já documentado em `cloud/architecture-comparison.md` |
+| Vector DB (OpenSearch/Neptune) | ✅ por analogia | ChromaDB/FAISS local (`rag/local_stack/`), Neo4j já no backlog do §3 item 6 para o grafo |
+| Git, testes automatizados | ✅ | todo o projeto, `tests/` |
+| **Arquitetura Hexagonal (Ports & Adapters)** | ⚠️ implícita, nunca formalizada | `mcp/tools/` e `api/` já funcionam como adapters de fato ao redor do núcleo de domínio (`mdm/`, `ml/`, `agents/`), mas nunca foi documentado como tal — formalizado em [ADR-014](docs/decisions/ADR-014-hexagonal-architecture.md) (§5.2) |
+| Clean Code, baixo acoplamento/coesão/testabilidade | ✅ | já é a disciplina seguida (módulos pequenos e focados, ver `ml/reinforcement/README.md` como referência de estilo citada por vários agentes desta sessão) |
+| 8 tipos de modelo de IA (add2.txt complemento) | parcialmente conceitual | ver §5.3 — mapeado, não é uma lista de "requisitos" para implementar |
+
+### 5.2 O que foi efetivamente adicionado
+
+| Item novo | Onde | Por quê ali |
+|---|---|---|
+| Manifests Kubernetes | `k8s/` (Deployments/Services para `api/`, `mcp/server/`, `dashboard/`; `k8s/README.md` com `kubectl apply` de verdade documentado) | Gap explícito e repetido nos dois postings; k8s é puramente declarativo — dá pra construir de forma correta e testável (`kubectl apply --dry-run=client`) sem precisar de um cluster real rodando |
+| A2A (Agent2Agent) | `agents/a2a/` — `AgentCard` de descoberta + endpoint `tasks/send` no formato JSON-RPC da spec A2A, envolvendo os agentes já existentes sem duplicá-los | Não exige nenhuma credencial externa — é uma camada de protocolo/interface, testável localmente de ponta a ponta |
+| AWS Bedrock provider | `agents/llm_gateway/router.py` — novo adaptador `_complete_bedrock()`, mesmo padrão de stub documentado dos adaptadores OpenAI-compatible/Gemini já existentes | Segue o padrão já estabelecido do projeto: a estrutura existe e funciona assim que uma credencial AWS real for configurada; não finge uma resposta que não aconteceu |
+| ADR-014 (Hexagonal Architecture) | `docs/decisions/ADR-014-hexagonal-architecture.md` | Formaliza um padrão que já existia de fato na estrutura de pastas, em vez de refatorar código que já funciona só para caber num nome bonito |
+
+### 5.3 Complemento ao add2.txt — taxonomia de tipos de modelo de IA (LLM/LCM/LAM/MoE/VLM/SLM/MLM/SAM)
+
+Conteúdo majoritariamente conceitual (post de LinkedIn), não uma lista de requisitos de vaga — mapeado honestamente contra o que a plataforma realmente usa, sem forçar encaixe:
+
+| Tipo | Usado na plataforma? | Onde |
+|---|---|---|
+| **LLM** | ✅ core | `agents/llm_gateway/`, todos os agentes |
+| **SLM** | ⚠️ backlog documentado, não implementado | já citado em `agents/llm_gateway/README.md` §4.3 (classificador local quantizado para causa-raiz de DQ) |
+| **VLM** | ❌ não usado | `rag/local_stack/document_parser.py` (Docling) faz parsing de documento mas não usa um modelo de visão-linguagem explicitamente — anotado como extensão possível futura (parsing de documentos com imagens/scans), não implementado agora por não ter caso de uso real no dataset atual (os 4 documentos de política são texto puro) |
+| **MoE** | ❌ não aplicável | é uma característica de arquitetura interna de modelo, não algo que uma plataforma consumidora de API escolhe — fora do escopo deste projeto |
+| **LAM, LCM, MLM, SAM** | ❌ não aplicável | LAM se sobrepõe conceitualmente com o que os agentes LangGraph já fazem (entender intenção → planejar → agir), mas não é uma categoria de modelo separada disponível via API hoje; LCM/MLM/SAM não têm caso de uso neste domínio (customer intelligence não é segmentação de imagem nem MLM de treinamento) |

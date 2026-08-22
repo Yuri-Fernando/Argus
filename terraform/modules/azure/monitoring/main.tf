@@ -11,7 +11,7 @@ resource "azurerm_log_analytics_workspace" "this" {
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "PerGB2018"
-  retention_in_days    = var.log_retention_days
+  retention_in_days   = var.log_retention_days
 
   tags = var.tags
 }
@@ -21,7 +21,7 @@ resource "azurerm_application_insights" "this" {
   location            = var.location
   resource_group_name = var.resource_group_name
   workspace_id        = azurerm_log_analytics_workspace.this.id
-  application_type     = "other" # data platform, not a classic web app
+  application_type    = "other" # data platform, not a classic web app
 
   tags = var.tags
 }
@@ -41,7 +41,8 @@ resource "azurerm_monitor_diagnostic_setting" "targets" {
     category_group = "allLogs"
   }
 
-  metric {
-    category = "AllMetrics"
-  }
+  # NOTE: the `metric` block was removed from azurerm_monitor_diagnostic_setting
+  # in azurerm v4+ (AllMetrics diagnostic category is no longer configurable
+  # this way in the provider) — enabled_log above covers the resources this
+  # module targets (ADLS, ADF, Event Hubs, Key Vault).
 }

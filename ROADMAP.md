@@ -173,3 +173,15 @@ Legend: 🟢 not started · 🟡 in progress · ✅ done — update as you go, t
 ## What comes after Sprint 16
 
 See [IMPROVEMENTS_AND_RESEARCH.md](IMPROVEMENTS_AND_RESEARCH.md) for a prioritized backlog beyond the MVP scope: hosted public demo, data contracts/CDC, DR strategy, SLA/SLO dashboard, Databricks Metric Views ↔ Genie deep integration, and cost-guardrails automation.
+
+### Sprint 17 — market-requirements gap closure (tributario.txt + add2.txt addendum, 2026-08-21)
+
+Not a core-scope sprint — closes concrete gaps surfaced by a second round of job-market
+requirements. See [IMPROVEMENTS_AND_RESEARCH.md §5](IMPROVEMENTS_AND_RESEARCH.md#5-integração-dos-requisitos-de-tributariotxt--complemento-de-add2txt-agosto2026)
+for the full gap analysis and rationale; status tracked live in [BUILD_LOG.md](BUILD_LOG.md).
+
+- [x] `k8s/` — Kubernetes manifests (Deployment/Service) for `api/`, `mcp/server/`, `dashboard/`, validated with `kubectl apply --dry-run=client` (no cluster required — a live cluster was not available in this environment; see `k8s/README.md` for the manual YAML-schema sanity check run instead, and the honest record of the `kubectl` attempt)
+- [x] `agents/a2a/` — Agent2Agent (A2A) protocol layer (AgentCard discovery + `tasks/send`) wrapping the existing agents, testable end-to-end locally, no external credentials needed
+- [x] `agents/llm_gateway/` — AWS Bedrock provider adapter, same documented-stub pattern as the existing providers (works once real AWS credentials are configured)
+- [x] `docs/decisions/ADR-014-hexagonal-architecture.md` — formalizes the Ports & Adapters pattern already implicit in `mcp/tools/`/`api/`
+- **Acceptance criteria:** all four items runnable/testable locally without any new external credential; anything that *does* need a credential (AWS Bedrock, live A2A calls to a real second party) is stubbed exactly like the existing LLM Gateway providers, never silently skipped.

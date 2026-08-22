@@ -1,0 +1,76 @@
+version: 2
+
+# Source declarations for the Silver lakehouse tables (lakehouse/silver/*.py) and
+# the two Gold-adjacent artifacts (MDM golden record, ML feature/segment outputs)
+# that the intermediate layer needs. Table/column names mirror the pandas SCHEMA
+# dicts in lakehouse/silver/*.py exactly — see each staging model for the mapping.
+#
+# NOTE: these `database`/`schema` values assume the Silver/MDM/ML parquet outputs
+# are loaded into warehouse schemas named `silver` / `mdm` / `ml` (e.g. via
+# Snowflake external tables or a COPY INTO job upstream of dbt — out of dbt's
+# scope, see snowflake/README.md "Local development"). Adjust per-environment via
+# profiles.yml if the loader lands them elsewhere.
+
+sources:
+  - name: silver
+    description: >
+      Cleaned, schema-enforced Silver layer (lakehouse/silver/*.py) — one table per
+      source system, deduplicated and type-cast, but not yet resolved to a single
+      customer identity (that happens in mdm/ and is consumed here in intermediate/).
+    schema: silver
+    tables:
+      - name: crm_customer
+        description: "One row per CRM customer record (data/lakehouse/silver/crm_customer.parquet)."
+        columns:
+          - name: crm_customer_id
+            description: "Source-system customer id, unresolved (pre-MDM)."
+            tests: [not_null, unique]
+      - name: payment_finance
+        description: "One row per payment (data/lakehouse/silver/payment_finance.parquet)."
+        columns:
+          - name: payment_id
+            tests: [not_null, unique]
+      - name: support_ticket
+        description: "One row per support ticket (data/lakehouse/silver/support_ticket.parquet)."
+        columns:
+          - name: ticket_id
+            tests: [not_null, unique]
+      - name: campaign_interaction
+        description: "One row per campaign touch (data/lakehouse/silver/campaign_interaction.parquet)."
+        columns:
+          - name: interaction_id
+            tests: [not_null, unique]
+      - name: web_event
+        description: "One row per web/clickstream event (data/lakehouse/silver/web_event.parquet)."
+
+  - name: mdm
+    description: "Master Data Management outputs (mdm/ module) — the resolved Golden Record."
+    schema: mdm
+    tables:
+      - name: golden_record
+        description: >
+          One row per resolved master_customer_id (data/mdm/golden_record.parquet).
+          `source_customer_ids` is a semicolon-delimited list of every source
+          crm_customer_id survivorship-merged into this golden record.
+        columns:
+          - name: master_customer_id
+            tests: [not_null, unique]
+
+  - name: ml
+    description: "ML feature/segmentation outputs (ml/ module, read-only from dbt's perspective)."
+    schema: ml
+    tables:
+      - name: customer_features
+        description: >
+          RFM + behavioral features per master_customer_id
+          (data/ml/features/customer_features.parquet).
+        columns:
+          - name: master_customer_id
+            tests: [not_null, unique]
+      - name: customer_segments
+        description: >
+          Cluster/segment label per master_customer_id
+          (data/ml/segmentation/customer_segments.parquet).
+        columns:
+          - name: master_customer_id
+            tests: [not_null, unique]

@@ -51,9 +51,42 @@ implemented this test is expected to skip gracefully — same pattern as
 without `DATABRICKS_HOST`/`DATABRICKS_TOKEN` and `SNOWFLAKE_ACCOUNT`
 configured, rather than fail CI runs that can't reach cloud infrastructure
 (e.g. forked-repo PRs).
+
+---
+
+STATUS (see BUILD_LOG.md): every other layer of this platform now has a real,
+local, runnable implementation — this is the one test in the suite that
+genuinely cannot be satisfied locally, because "Databricks Gold" and
+"Snowflake CORE" as two separate synced systems don't both exist in this
+environment (there's one local DuckDB stand-in — `snowflake/local_runner.py`
+— not two systems with a sync job between them). The skip condition below was
+tightened from an unconditional skip to a credential check, matching the
+graceful-degradation behavior this docstring already specified, so that the
+day real `DATABRICKS_HOST`/`DATABRICKS_TOKEN`/`SNOWFLAKE_ACCOUNT` credentials
+are configured (BUILD_LOG.md's "Pendências que só você pode resolver"), this
+test starts actually running instead of needing a code change to un-skip it.
+The test body itself is still the Sprint 7 stub — implementing the real
+Delta-write + Task-poll + field-by-field diff described above requires those
+live credentials to develop against, which is exactly what's missing here.
 """
+import os
+
 import pytest
 
+_REQUIRED_ENV_VARS = ("DATABRICKS_HOST", "DATABRICKS_TOKEN", "SNOWFLAKE_ACCOUNT")
 
+
+@pytest.mark.skipif(
+    not all(os.environ.get(v) for v in _REQUIRED_ENV_VARS),
+    reason=(
+        f"Requires live Databricks + Snowflake credentials ({', '.join(_REQUIRED_ENV_VARS)}) — "
+        "none configured in this environment. See BUILD_LOG.md's 'Pendências que só você pode "
+        "resolver'. This is the one acceptance test in the suite that cannot be satisfied by a "
+        "local-only build (ADR-010) since it verifies sync between two separate cloud systems."
+    ),
+)
 def test_databricks_gold_row_appears_in_snowflake_core():
-    pytest.skip("Sprint 7 — Databricks<->Snowflake Streams/Tasks sync not yet implemented")
+    pytest.skip(
+        "Credentials are present but the Delta-write + Task-poll + field-by-field-diff "
+        "implementation (Sprint 7 body) is still a stub — see the docstring's numbered plan."
+    )

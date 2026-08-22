@@ -78,8 +78,13 @@ variable "databricks_catalog" {
 
 # ---- Snowflake (mirrors SNOWFLAKE_* in .env.example) ----
 
+variable "snowflake_organization_name" {
+  description = "Snowflake organization name (the part before the account name in the org-account identifier). Required alongside snowflake_account by the snowflakedb/snowflake and Snowflake-Labs/snowflake provider schemas — see https://docs.snowflake.com/en/user-guide/organizations-gs."
+  type        = string
+}
+
 variable "snowflake_account" {
-  description = "Snowflake account identifier. Maps to SNOWFLAKE_ACCOUNT."
+  description = "Snowflake account name (account_name). Maps to SNOWFLAKE_ACCOUNT."
   type        = string
 }
 

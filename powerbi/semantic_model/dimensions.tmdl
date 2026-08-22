@@ -1,0 +1,234 @@
+// powerbi/semantic_model/dimensions.tmdl
+// Dimension tables — mirror dbt/models/marts/dim_*.sql and snowflake/ddl/0[1-4]_dim_*.sql
+// column-for-column. All four are Import mode (small, slowly-changing) unless noted.
+
+table dim_customer
+	lineageTag: dim-customer
+
+	column master_customer_id
+		dataType: string
+		isKey
+		summarizeBy: none
+		sourceColumn: master_customer_id
+
+	column canonical_name
+		dataType: string
+		summarizeBy: none
+
+	column canonical_email
+		dataType: string
+		summarizeBy: none
+
+	column canonical_phone
+		dataType: string
+		summarizeBy: none
+
+	column city
+		dataType: string
+		summarizeBy: none
+
+	column state
+		dataType: string
+		summarizeBy: none
+
+	column source_record_count
+		dataType: int64
+		summarizeBy: sum
+
+	column golden_record_created_at
+		dataType: dateTime
+		summarizeBy: none
+
+	column golden_record_updated_at
+		dataType: dateTime
+		summarizeBy: none
+
+	column recency_days
+		dataType: int64
+		summarizeBy: average
+
+	column frequency
+		dataType: int64
+		summarizeBy: average
+
+	column monetary
+		dataType: double
+		formatString: "R$ #,0.00"
+		summarizeBy: sum
+
+	column event_count
+		dataType: int64
+		summarizeBy: sum
+
+	column distinct_event_types
+		dataType: int64
+		summarizeBy: average
+
+	column days_since_last_activity
+		dataType: int64
+		summarizeBy: average
+
+	column ticket_count
+		dataType: int64
+		summarizeBy: sum
+
+	column avg_sentiment_score
+		dataType: double
+		summarizeBy: average
+
+	column unresolved_count
+		dataType: int64
+		summarizeBy: sum
+
+	column cluster
+		dataType: int64
+		summarizeBy: none
+
+	column segment
+		dataType: string
+		summarizeBy: none
+
+	column is_repeat_customer
+		dataType: boolean
+		summarizeBy: none
+
+	column churn_score
+		dataType: double
+		formatString: "0.0%"
+		summarizeBy: average
+		/// Proxy churn score in [0,1] — recency_days > 90 -> "at risk" per DAX
+		/// [Churn Rate] measure filter. See powerbi/dax/measures.md.
+
+	column lifetime_value
+		dataType: double
+		formatString: "R$ #,0.00"
+		summarizeBy: average
+		/// Pre-computed proxy CLV, surfaced not re-derived — see powerbi/dax/measures.md [CLV].
+
+	partition dim_customer = entity
+		mode: directQuery
+		source
+			entityName: dim_customer
+			schemaName: SEMANTIC_VIEWS
+
+table dim_date
+	lineageTag: dim-date
+
+	column date_key
+		dataType: int64
+		isKey
+		summarizeBy: none
+
+	column full_date
+		dataType: dateTime
+		summarizeBy: none
+		formatString: "yyyy-mm-dd"
+
+	column year
+		dataType: int64
+		summarizeBy: none
+
+	column quarter
+		dataType: int64
+		summarizeBy: none
+
+	column month
+		dataType: int64
+		summarizeBy: none
+
+	column month_name
+		dataType: string
+		summarizeBy: none
+
+	column day
+		dataType: int64
+		summarizeBy: none
+
+	column day_of_week
+		dataType: int64
+		summarizeBy: none
+
+	column day_name
+		dataType: string
+		summarizeBy: none
+
+	column is_weekend
+		dataType: boolean
+		summarizeBy: none
+
+	partition dim_date = entity
+		mode: directQuery
+		source
+			entityName: dim_date
+			schemaName: SEMANTIC_VIEWS
+
+	annotation __PBI_TimeIntelligenceEnabled = 1
+
+table dim_geography
+	lineageTag: dim-geography
+
+	column geography_id
+		dataType: string
+		isKey
+		summarizeBy: none
+
+	column city
+		dataType: string
+		summarizeBy: none
+
+	column state
+		dataType: string
+		summarizeBy: none
+
+	column country
+		dataType: string
+		summarizeBy: none
+
+	partition dim_geography = entity
+		mode: directQuery
+		source
+			entityName: dim_geography
+			schemaName: SEMANTIC_VIEWS
+
+table dim_campaign
+	lineageTag: dim-campaign
+
+	column campaign_id
+		dataType: string
+		isKey
+		summarizeBy: none
+
+	column primary_channel
+		dataType: string
+		summarizeBy: none
+
+	column first_seen_at
+		dataType: dateTime
+		summarizeBy: none
+
+	column last_seen_at
+		dataType: dateTime
+		summarizeBy: none
+
+	column total_impressions
+		dataType: int64
+		summarizeBy: sum
+
+	column total_clicks
+		dataType: int64
+		summarizeBy: sum
+
+	column total_conversions
+		dataType: int64
+		summarizeBy: sum
+
+	column total_cost
+		dataType: double
+		formatString: "R$ #,0.00"
+		summarizeBy: sum
+
+	partition dim_campaign = entity
+		mode: directQuery
+		source
+			entityName: dim_campaign
+			schemaName: SEMANTIC_VIEWS

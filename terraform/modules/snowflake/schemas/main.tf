@@ -9,8 +9,8 @@ resource "snowflake_schema" "layers" {
   for_each = toset(["RAW", "STAGING", "CORE", "ANALYTICS", "SEMANTIC", "AI"])
 
   database = var.database_name
-  name      = each.value
-  comment    = "${each.value} schema — ARCHITECTURE.md §12"
+  name     = each.value
+  comment  = "${each.value} schema — ARCHITECTURE.md §12"
 
   data_retention_time_in_days = each.value == "RAW" ? 1 : var.default_retention_days
 }

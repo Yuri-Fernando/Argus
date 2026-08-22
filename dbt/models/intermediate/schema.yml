@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: int_customer_bridge
+    description: >
+      crm_customer_id -> master_customer_id, exploded from
+      mdm.golden_record.source_customer_ids. Every resolved-facts model in
+      intermediate/ joins through this bridge exactly once.
+    columns:
+      - name: crm_customer_id
+        tests: [not_null]
+      - name: master_customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: source('mdm', 'golden_record')
+              field: master_customer_id
+
+  - name: int_customer_golden_record
+    description: >
+      One row per master_customer_id: Golden Record identity + ML RFM features +
+      segmentation label + the three derived columns (is_repeat_customer,
+      churn_score, lifetime_value) that dim_customer selects verbatim. Every
+      formula here is copied 1:1 from snowflake/local_runner.py build_warehouse().
+    columns:
+      - name: master_customer_id
+        tests: [not_null, unique]
+      - name: churn_score
+        description: "Proxy churn score in [0,1]: LEAST(1.0, recency_days / 365.0)."
+      - name: lifetime_value
+        description: >
+          Proxy CLV: (monetary / NULLIF(frequency,0)) * frequency * (1 - churn_score),
+          rounded to 2 decimals. Matches docs/semantic-dictionary.md CLV formula
+          structurally (AOV x purchase frequency x (1 - churn probability)).
+      - name: is_repeat_customer
+        description: "frequency >= 2 (missing frequency treated as 0)."
+
+  - name: int_payments_resolved
+    description: "stg_payment_finance resolved to master_customer_id, with date_key."
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+      - name: master_customer_id
+        tests:
+          - relationships:
+              to: ref('int_customer_golden_record')
+              field: master_customer_id
+
+  - name: int_support_tickets_resolved
+    description: "stg_support_ticket resolved to master_customer_id, with date_key_*."
+    columns:
+      - name: ticket_id
+        tests: [not_null, unique]
+
+  - name: int_campaign_interactions_resolved
+    description: "stg_campaign_interaction resolved to master_customer_id, with date_key."
+    columns:
+      - name: interaction_id
+        tests: [not_null, unique]
+
+  - name: int_web_events_resolved
+    description: "stg_web_event resolved to master_customer_id, with date_key."
+    columns:
+      - name: event_id
+        tests: [not_null, unique]

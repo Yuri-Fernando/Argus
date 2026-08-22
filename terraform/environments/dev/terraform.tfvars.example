@@ -19,6 +19,7 @@ databricks_token = "" # prefer `az login` + Entra ID auth over a PAT; leave empt
 databricks_catalog = "customer_intelligence"
 
 # ---- Snowflake ----
+snowflake_organization_name = "MYORG" # https://docs.snowflake.com/en/user-guide/organizations-gs
 snowflake_account        = "ab12345.sa-east-1"
 snowflake_user            = "TF_SERVICE_USER"
 snowflake_password        = "" # do not commit; inject via TF_VAR_snowflake_password in CI

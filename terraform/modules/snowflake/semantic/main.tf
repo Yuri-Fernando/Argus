@@ -8,16 +8,22 @@
 # resource type — Semantic Views are a newer object kind (GA Mar/2026)
 # that Terraform provider coverage hasn't fully caught up with. The
 # documented workaround, per ADR-008, is to declare the CREATE SEMANTIC
-# VIEW DDL via `snowflake_unsafe_execute` on the FALLBACK
-# Snowflake-Labs/snowflake provider, which requires
-# `preview_features_enabled` to be set explicitly (done in
-# environments/dev/main.tf's `provider "snowflakelabs"` block).
+# VIEW DDL via `snowflake_execute` on the FALLBACK Snowflake-Labs/snowflake
+# provider. NOTE: this resource was `snowflake_unsafe_execute` (behind
+# `preview_features_enabled`) in older provider releases; the pinned
+# provider version (confirmed via `terraform providers schema`) renamed it
+# to the now-stable `snowflake_execute` and no longer gates it as preview.
 #
 # Revisit this module every sprint that touches terraform/modules/snowflake
 # — migrate to a native resource the moment either provider ships one.
 
-resource "snowflakelabs_unsafe_execute" "customer_semantic_view" {
-  # preview_features_enabled required — see ADR-008
+resource "snowflake_execute" "customer_semantic_view" {
+  # Resource type is "snowflake_execute" (the provider's own type name,
+  # unrelated to our local provider alias) — `provider = snowflakelabs`
+  # disambiguates which of the two configured Snowflake providers
+  # (snowflake vs snowflakelabs local names, both source-address-different)
+  # this resource actually uses, since the type prefix "snowflake_" would
+  # otherwise default-associate with the primary `snowflake` provider.
   provider = snowflakelabs
 
   execute = <<-SQL

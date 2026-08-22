@@ -8,11 +8,11 @@
 resource "azurerm_storage_account" "this" {
   # Storage account names: lowercase, no hyphens, <= 24 chars.
   name                     = "${var.project}${var.environment}adls${var.location_short}"
-  resource_group_name     = var.resource_group_name
-  location                = var.location
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
   account_tier             = "Standard"
   account_replication_type = var.replication_type
-  account_kind              = "StorageV2"
+  account_kind             = "StorageV2"
 
   is_hns_enabled = true # hierarchical namespace = ADLS Gen2, not flat Blob
 

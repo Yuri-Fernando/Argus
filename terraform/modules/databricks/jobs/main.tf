@@ -12,10 +12,10 @@
 
 resource "databricks_instance_pool" "job_pool" {
   instance_pool_name = "${var.environment}-job-pool"
-  node_type_id         = var.node_type_id
+  node_type_id       = var.node_type_id
 
   min_idle_instances = 0
-  max_capacity         = var.max_capacity
+  max_capacity       = var.max_capacity
 
   idle_instance_autotermination_minutes = 15
 
@@ -26,5 +26,5 @@ resource "databricks_instance_pool" "job_pool" {
 
 resource "databricks_service_principal" "jobs_runner" {
   display_name = "${var.environment}-jobs-runner"
-  active        = true
+  active       = true
 }

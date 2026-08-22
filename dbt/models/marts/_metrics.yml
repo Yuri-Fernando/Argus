@@ -1,0 +1,145 @@
+version: 2
+
+# MetricFlow semantic models + metrics — one of the three semantic layer
+# implementations named in ADR-005 (docs/decisions/ADR-005-semantic-layer.md).
+# Every metric here traces to exactly one canonical definition in
+# docs/semantic-dictionary.md and must produce the same value as
+# snowflake/local_runner.py::run_metric() and the Snowflake Semantic Views
+# implementation (enforced by tests/data/test_metric_parity.py).
+#
+# NOTE: this repo snapshot has no data/raw/olist fact_orders, so Revenue/Orders/AOV
+# metrics below use fact_payments (settled payments) as the local stand-in, per the
+# documented deviation in snowflake/local_runner.py run_metric(). Orders,
+# Delivery SLA, and NPS are NOT implemented here — see SKIPPED_METRICS in
+# snowflake/local_runner.py and the semantic-dictionary "Implemented in" columns.
+
+semantic_models:
+  - name: sm_fact_payments
+    description: "Semantic model over fact_payments — backs Revenue, AOV."
+    model: ref('fact_payments')
+    defaults:
+      agg_time_dimension: settled_at
+    entities:
+      - name: payment_id
+        type: primary
+      - name: master_customer_id
+        type: foreign
+    dimensions:
+      - name: settled_at
+        type: time
+        type_params:
+          time_granularity: day
+      - name: status
+        type: categorical
+      - name: method
+        type: categorical
+    measures:
+      - name: net_amount_settled
+        description: "SUM(net_amount) WHERE status = 'settled'. Revenue numerator."
+        agg: sum
+        expr: "case when status = 'settled' then net_amount else 0 end"
+      - name: gross_amount_settled
+        description: "SUM(gross_amount) WHERE status = 'settled'. AOV numerator."
+        agg: sum
+        expr: "case when status = 'settled' then gross_amount else 0 end"
+      - name: settled_payment_count
+        description: "COUNT(DISTINCT payment_id) WHERE status = 'settled'. AOV denominator."
+        agg: count_distinct
+        expr: "case when status = 'settled' then payment_id else null end"
+
+  - name: sm_dim_customer
+    description: "Semantic model over dim_customer — backs Churn Rate, Repeat Rate, CLV."
+    model: ref('dim_customer')
+    defaults:
+      agg_time_dimension: golden_record_updated_at
+    entities:
+      - name: master_customer_id
+        type: primary
+    dimensions:
+      - name: golden_record_updated_at
+        type: time
+        type_params:
+          time_granularity: day
+      - name: segment
+        type: categorical
+    measures:
+      - name: churned_customers
+        description: >
+          COUNT(master_customer_id) WHERE recency_days > 90 AND frequency >= 2.
+          Churn Rate numerator, matches snowflake/local_runner.py run_metric('churn_rate').
+        agg: count_distinct
+        expr: "case when recency_days > 90 and frequency >= 2 then master_customer_id else null end"
+      - name: eligible_customers
+        description: "COUNT(master_customer_id) WHERE frequency >= 2. Churn Rate denominator."
+        agg: count_distinct
+        expr: "case when frequency >= 2 then master_customer_id else null end"
+      - name: repeat_customers
+        description: "COUNT(master_customer_id) WHERE frequency >= 2. Repeat Rate numerator."
+        agg: count_distinct
+        expr: "case when frequency >= 2 then master_customer_id else null end"
+      - name: active_customers
+        description: "COUNT(master_customer_id) WHERE frequency >= 1. Repeat Rate denominator."
+        agg: count_distinct
+        expr: "case when frequency >= 1 then master_customer_id else null end"
+      - name: avg_lifetime_value
+        description: "AVG(lifetime_value). Surfaces the pre-computed CLV, not re-derived here."
+        agg: average
+        expr: lifetime_value
+
+metrics:
+  - name: revenue
+    description: >
+      SUM(net_amount) over settled payments (fact_payments) — local stand-in for
+      SUM(order_value) over completed orders (docs/semantic-dictionary.md Revenue).
+      Matches snowflake/local_runner.py run_metric('revenue') exactly:
+      R$ 15,515,805.42 against this repo's synthetic data snapshot.
+    type: simple
+    label: "Revenue"
+    type_params:
+      measure: net_amount_settled
+
+  - name: aov
+    description: >
+      SUM(gross_amount) / COUNT(DISTINCT payment_id) over settled payments — local
+      stand-in for SUM(order_value + freight_value) / COUNT(DISTINCT order_id) over
+      completed orders (docs/semantic-dictionary.md AOV). Matches
+      snowflake/local_runner.py run_metric('aov') exactly: R$ 1,751.79.
+    type: ratio
+    label: "AOV"
+    type_params:
+      numerator: gross_amount_settled
+      denominator: settled_payment_count
+
+  - name: churn_rate
+    description: >
+      COUNT(recency_days > 90) / COUNT(frequency >= 2) — snapshot proxy for the
+      canonical period-over-period churn definition (docs/semantic-dictionary.md
+      Churn Rate), since no ml/churn/ time-series label exists in this snapshot.
+      Matches snowflake/local_runner.py run_metric('churn_rate') exactly: 0.5308.
+    type: ratio
+    label: "Churn Rate"
+    type_params:
+      numerator: churned_customers
+      denominator: eligible_customers
+
+  - name: repeat_rate
+    description: >
+      COUNT(frequency >= 2) / COUNT(frequency >= 1) (docs/semantic-dictionary.md
+      Repeat Rate). Matches snowflake/local_runner.py run_metric('repeat_rate')
+      exactly: 0.4033.
+    type: ratio
+    label: "Repeat Rate"
+    type_params:
+      numerator: repeat_customers
+      denominator: active_customers
+
+  - name: clv
+    description: >
+      AVG(dim_customer.lifetime_value) — surfaces the pre-computed ML-modeled CLV
+      projection, per docs/semantic-dictionary.md CLV ("the semantic layer exposes
+      a model output, it does not re-derive it"). Matches
+      snowflake/local_runner.py run_metric('clv')['avg'] exactly: R$ 990.26.
+    type: simple
+    label: "CLV (avg)"
+    type_params:
+      measure: avg_lifetime_value

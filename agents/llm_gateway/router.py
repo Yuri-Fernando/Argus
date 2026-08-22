@@ -131,6 +131,8 @@ def complete(
         text = _complete_openai_compatible(prompt, spec, max_tokens=max_tokens, temperature=temperature)
     elif provider == "gemini":
         text = _complete_gemini(prompt, spec, max_tokens=max_tokens, temperature=temperature)
+    elif provider == "bedrock":
+        text = _complete_bedrock(prompt, spec, max_tokens=max_tokens, temperature=temperature)
     else:
         raise LLMGatewayError(f"No adapter implemented for provider={provider!r} yet.")
 
@@ -171,6 +173,53 @@ def _complete_gemini(prompt: str, spec: dict[str, Any], *, max_tokens: int, temp
         from google import genai
         client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         response = client.models.generate_content(model=spec["model"], contents=prompt, ...)
+    """
+    _ = (prompt, spec, max_tokens, temperature)
+    return ""
+
+
+def _complete_bedrock(prompt: str, spec: dict[str, Any], *, max_tokens: int, temperature: float) -> str:
+    """Adapter for AWS Bedrock — added in Sprint 17 (ROADMAP.md) per the gap identified in
+    IMPROVEMENTS_AND_RESEARCH.md §5: the project's cloud strategy is Azure-primary (ADR-001), so
+    AWS Bedrock is not a default anywhere — it exists here purely as an evaluated/documented
+    alternative provider, same status as deepseek-chat's honesty note in models.yaml, following
+    the exact same documented-stub pattern as `_complete_openai_compatible()` / `_complete_gemini()`
+    above: a real-wiring docstring plus a stub body returning "" until real AWS credentials exist.
+
+    Genuinely different SDK/call shape from both groups above — Bedrock's `invoke_model()` takes a
+    model-family-specific JSON request/response body (e.g. Anthropic Claude on Bedrock uses the
+    "anthropic_version" + "messages" shape; other Bedrock model families use their own shapes), so
+    this adapter cannot reuse `_complete_openai_compatible()`'s single request/response mapping.
+
+    TODO(when real AWS credentials are configured): wire `boto3`'s Bedrock Runtime client:
+        import json
+        import os
+        import boto3
+
+        client = boto3.client(
+            "bedrock-runtime",
+            region_name=os.environ["AWS_REGION"],  # per .env.example, e.g. "sa-east-1"
+            aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        )
+        response = client.invoke_model(
+            modelId=spec["model"],  # e.g. "anthropic.claude-3-5-sonnet-20240620-v1:0"
+            body=json.dumps(
+                {
+                    "anthropic_version": "bedrock-2023-05-31",
+                    "max_tokens": max_tokens,
+                    "temperature": temperature,
+                    "messages": [{"role": "user", "content": prompt}],
+                }
+            ),
+        )
+        payload = json.loads(response["body"].read())
+        return payload["content"][0]["text"]
+
+    boto3 is intentionally NOT imported at module level (and not added to pyproject.toml's core
+    `dependencies`) so importing agents/llm_gateway/router.py never requires installing an AWS SDK
+    that most local-dev/demo runs of this platform (Azure-primary, per ADR-001) will never use —
+    mirrors why `google-genai` lives in the optional `genai-extra` extra, not core dependencies.
     """
     _ = (prompt, spec, max_tokens, temperature)
     return ""

@@ -91,6 +91,23 @@ models:
       explicitly evaluated alternative, not the default, documented honestly rather than silently
       excluded.
 
+  - id: bedrock-claude-3-5-sonnet
+    provider: bedrock
+    model: anthropic.claude-3-5-sonnet-20240620-v1:0
+    cost_per_1m_tokens: 6.00
+    latency_tier: medium
+    best_fit_task_types:
+      - final_reasoning
+      - policy_qa
+    notes: >
+      Added Sprint 17 (ROADMAP.md) per IMPROVEMENTS_AND_RESEARCH.md §5 — the project's cloud
+      strategy is Azure-primary (ADR-001), so this is a documented, evaluated alternative, never a
+      default (see `defaults` below — no task_type routes here). Selectable via
+      complete(prompt, task_type, model_id="bedrock-claude-3-5-sonnet") once AWS_ACCESS_KEY_ID /
+      AWS_SECRET_ACCESS_KEY / AWS_REGION (.env.example) are set for real — until then
+      router._complete_bedrock() returns "" per the same documented-stub pattern every other
+      not-yet-credentialed provider in this file follows.
+
 # Default task_type -> model_id mapping the router falls back to when the caller doesn't pin a
 # specific model_id. Evaluated and changed only via the harness described in the README, never by
 # hand-editing this section without a benchmark run backing the change.

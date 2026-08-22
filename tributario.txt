@@ -1,0 +1,71 @@
+O time de Dados da Controladoria atua no desenvolvimento de soluções e produtos de dados voltados às necessidades das áreas contábil, financeira, fiscal e regulatória, em um contexto corporativo de alta complexidade, criticidade e responsabilidade.
+
+Nosso papel é transformar dados em capacidade analítica, eficiência operacional, suporte à tomada de decisão e segurança para o negócio, sempre com forte compromisso com compliance regulatório, rastreabilidade e qualidade da informação. Atuamos como ponte entre negócio e tecnologia, conectando demandas estratégicas a soluções escaláveis e sustentáveis.
+
+Dentro desse contexto, a pauta da Reforma Tributária representa um dos temas mais relevantes e desafiadores da nossa atuação. Ela exige rapidez de adaptação, inteligência aplicada aos dados, visão sistêmica e construção de soluções capazes de apoiar análises, simulações, decisões e adequações operacionais em um ambiente regulado e em transformação.
+
+Requisitos e qualificações
+
+    Proficiência em Python ou Java, com experiência no uso de bibliotecas e frameworks de IA/ML.
+    Vivência com NLP, visão computacional e IA generativa, incluindo LLMs, agentes, arquiteturas RAG e protocolos como MCP.
+    Domínio de boas práticas de engenharia de software, incluindo modularização, testes, observabilidade, versionamento, revisão de código e qualidade de entrega.
+    Experiência com CI/CD, containers (Docker) e orquestração (Kubernetes).
+    Vivência com serviços de nuvem para deploy, monitoramento e operação de soluções de IA em produção.
+    Capacidade de desenhar integrações entre modelos, APIs, microsserviços e aplicações corporativas.
+    Experiência na documentação de decisões técnicas, modelos, fluxos e arquiteturas, garantindo rastreabilidade e governança.
+    Habilidade para comunicar resultados técnicos de forma clara para áreas de negócio e stakeholders não técnicos.
+    Capacidade de traduzir problemas de negócio em soluções de IA escaláveis e sustentáveis
+    Liderança técnica, com atuação em definição de padrões e orientação de equipes
+    Alta colaboração com áreas de negócio e tecnologia
+    Pensamento crítico e visão sistêmica para revisão e evolução de soluções
+    Comunicação clara com públicos técnicos e executivos
+    Interesse contínuo por tendências e uso responsável de IA
+
+
+Diferenciais:
+
+    Experiência em contextos financeiros, fiscais, contábeis ou regulatórios
+    Vivência com temas ligados à Reforma Tributária ou compliance
+    Experiência com MLOps/LLMOps e operação de IA em produção
+    Atuação com produtos de dados voltados a automação e suporte à decisão
+    Experiência em arquiteturas modernas e ambientes com alta governança de dados
+
+
+🚨 Oportunidade: 𝗗𝗲𝘃 𝗣𝘆𝘁𝗵𝗼𝗻 + 𝗔𝗜 𝗔𝗴𝗲𝗻𝘁𝘀 + 𝗔𝗪𝗦
+
+Estamos ampliando a busca por profissionais que estejam construindo soluções com Agentes de IA na prática. 🤖🚀
+
+Se você tem experiência com 𝙋𝙮𝙩𝙝𝙤𝙣, 𝙈𝘾𝙋, 𝘼2𝘼, 𝙍𝘼𝙂 𝙚 𝘼𝙒𝙎 𝘽𝙚𝙙𝙧𝙤𝙘𝙠, essa oportunidade pode ser para você!
+
+🔥 O desafio:
+Atuar no desenvolvimento de soluções baseadas em Agentes de IA, participando da construção de arquiteturas e fluxos inteligentes, integrações e aplicações escaláveis.
+
+🧠 Buscamos experiência com:
+🔹 Python
+🔹 Construção de MCP Server / MCP Client
+🔹 Desenvolvimento de Agentes de IA com AWS Bedrock
+🔹 Comunicação entre agentes utilizando protocolo A2A (Agent2Agent)
+🔹 Construção de soluções RAG
+🔹 Ingestão de dados via Amazon S3 ou pipelines de dados
+🔹 Bases de dados vetoriais com Amazon OpenSearch e/ou Neptune
+🔹 Git
+🔹 Testes unitários automatizados
+
+Também é importante ter conhecimento em engenharia de software e arquitetura, incluindo:
+🏗️ Microsserviços x arquitetura monolítica e seus trade-offs
+🧩 Arquitetura Hexagonal (Ports & Adapters)
+🧼 Clean Code
+🔗 Baixo acoplamento, coesão e testabilidade
+
+📍 Informações da oportunidade:
+Modelo: Híbrido - Vila Olímpia – São Paulo/SP
+Inglês: Nível intermediário
+
+💡 Importante: buscamos alguém com experiência prática. Se você já desenvolveu agentes, trabalhou com MCP/A2A ou colocou soluções de IA generativa em produção, queremos conhecer seu perfil!
+
+📩 Tem interesse?
+Envie seu currículo para edna.torres@datum.inf.br ou me chame por mensagem.
+
+👉 E se você conhece aquele profissional que respira Python e IA, marque aqui ou compartilhe essa oportunidade com ele!
+
+

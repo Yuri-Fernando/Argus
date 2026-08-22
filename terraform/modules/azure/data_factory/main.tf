@@ -20,8 +20,8 @@ resource "azurerm_data_factory" "this" {
 # Linked service pointing ADF at the ADLS Gen2 account so pipelines can
 # read/write landing/ and raw/ containers directly.
 resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "adls" {
-  name                = "ls_adls_${var.environment}"
-  data_factory_id     = azurerm_data_factory.this.id
+  name                 = "ls_adls_${var.environment}"
+  data_factory_id      = azurerm_data_factory.this.id
   use_managed_identity = true
   url                  = "https://${var.adls_storage_account}.dfs.core.windows.net"
 }

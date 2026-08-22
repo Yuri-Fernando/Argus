@@ -1,0 +1,17 @@
+# Service for eci-mcp. Port 8765 matches MCP_SERVER_PORT in .env.example. See mcp-deployment.yaml
+# for the stdio-vs-network-transport caveat this Service's port number assumes gets resolved.
+apiVersion: v1
+kind: Service
+metadata:
+  name: eci-mcp
+  labels:
+    app: eci-mcp
+    component: mcp-server
+spec:
+  type: ClusterIP
+  selector:
+    app: eci-mcp
+  ports:
+    - name: mcp
+      port: 8765
+      targetPort: 8765

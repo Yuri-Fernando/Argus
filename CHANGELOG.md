@@ -3,7 +3,69 @@
 This file tracks the evolution of the **specification** (this repo's docs/architecture) through its design iterations, and will track **implementation** releases the same way once code lands, following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions (`Added / Changed / Deprecated / Removed / Fixed / Security`).
 
 ## [Unreleased]
-Implementation has not started yet — sprints in [ROADMAP.md](ROADMAP.md) are all 🟢. This section will fill in as Sprint 0+ lands.
+In progress: 3 new notebooks (`07_rag_document_intelligence`, `08_agents_mcp_a2a_demo`, `09_terraform_snowflake_databricks_walkthrough`) and the Streamlit `dashboard/` (6 pages, all reading real data at runtime — no hardcoded metrics). Tracked live in [BUILD_LOG.md](BUILD_LOG.md) — that file is the source of truth for exact status between releases.
+
+---
+
+## [2.0.0] — 2026-08-14 — First real implementation pass (Lakehouse, MDM, ML)
+
+Moves the project from pure specification to real, executable code with real (not simulated)
+metrics, run end-to-end against the local synthetic dataset (Olist not available in this
+environment — everything degrades gracefully per ADR-009/ADR-010). Full detail and reproduction
+commands in [BUILD_LOG.md](BUILD_LOG.md).
+
+### Added
+- `lakehouse/bronze/`, `lakehouse/silver/`, `lakehouse/run_pipeline.py` — pandas-primary Bronze→Silver pipeline (PySpark documented as an equivalent alternative path, not required).
+- `data_quality/expectations/`, `data_quality/validators/` — self-contained rule engine (10 rule types) + quarantine mechanism, verified end-to-end (referential-integrity cascades). **Overall platform DQ score: 99.83%.**
+- `mdm/matching/{deterministic,fuzzy,ml_model}.py`, `mdm/survivorship/`, `mdm/golden_record/`, `mdm/entity_resolution/` — three-tier entity resolution. **Recall 1.0000, Precision 0.9687, F1 0.9841** vs. ground truth. Notable finding: Faker `pt_BR` email collisions make email-only matching unreliable at this scale — `deterministic.py` adjusted to never auto-merge on email alone.
+- `graph/networkx/`, `graph/algorithms/` — customer relationship graph; `graph/queries/duplicate_clusters.md` documents a real over-clustering finding (naive connected-components produces false-positive clusters from coincidental email matches).
+- `ml/features/`, `ml/churn/`, `ml/explainability/`, `ml/segmentation/` — RFM/engagement/support features; 3-model churn comparison (**Logistic Regression champion, ROC-AUC 0.882**) registered in MLflow; SHAP explanations for 3 concrete customers; 5-segment KMeans (balanced, 6%-28.4% spread, no collapse).
+- `notebooks/01-06` — all 6 notebooks executed end-to-end for the first time (previously 0 baked outputs); notebooks 01 and 06 reworked to run without the Olist dataset (synthetic-only fallback path).
+- `BUILD_LOG.md` — new living build log, source of truth for in-progress work across sessions (protects against lost context on session interruptions, which happened twice during this build).
+
+### Changed
+- `lakehouse/README.md`, `data_quality/README.md`, `mdm/README.md`, `graph/README.md`, `ml/README.md` — corrected to describe the actual implemented architecture (previous text described a PySpark/GX-only setup that didn't match what was actually buildable/reasonable locally) and to add real "Results" sections.
+
+### Known incidents (see BUILD_LOG.md for full detail)
+- An initial attempt to run 6 work-packages in parallel failed immediately (account session concurrency limit) before any files were written — no data lost, just retried sequentially.
+- The Semantic Layer work-package (dbt/Snowflake-local/Power BI) failed silently twice (no files, no notification) across a Claude Code process interruption — retried a third time, split into smaller pieces, tracked live in BUILD_LOG.md.
+
+---
+
+## [2.2.0] — 2026-08-21 — Kubernetes, A2A protocol, AWS Bedrock provider, Hexagonal Architecture
+
+Closes the gap analysis from `tributario.txt` (Controladoria/Reforma Tributária posting + embedded "Python + AI Agents + AWS" posting) plus an add2.txt addendum on AI model-type taxonomy — same "every tool solves one named problem" discipline as [§4](IMPROVEMENTS_AND_RESEARCH.md#4-integração-dos-requisitos-do-add2txt-mercado-de-trabalho). Full gap analysis in [IMPROVEMENTS_AND_RESEARCH.md §5](IMPROVEMENTS_AND_RESEARCH.md#5-integração-dos-requisitos-de-tributariotxt--complemento-de-add2txt-agosto2026).
+
+### Added
+- `k8s/` — Kubernetes Deployments/Services + Dockerfiles for `api/`, `mcp/server/`, `dashboard/`. No live cluster available here — structural validity confirmed via a Python/PyYAML schema sanity check (`kubectl apply --dry-run=client` itself failed on API-server discovery, no cluster configured; documented honestly in `k8s/README.md`, not hidden). Real gap: no k8s manifests existed anywhere in the project before.
+- `agents/a2a/` — Agent2Agent (A2A) protocol layer (AgentCard discovery + `POST tasks/send` JSON-RPC) wrapping the 4 existing agents, never reimplementing them. **Verified live**: booted the server, queried `/agents` + `/.well-known/agent.json`, and called `tasks/send` against all 4 agents — all returned `"state":"completed"` with real output (the recommendation agent enqueued a genuine `PENDING` item in `approval_queue.py`). Real gap: agents previously only talked to each other via direct Python calls/LangGraph, never a standardized inter-agent protocol.
+- `agents/llm_gateway/` — `_complete_bedrock()` adapter added to `router.py`, same documented-stub pattern as the existing Azure OpenAI/OpenAI/Gemini/DeepSeek adapters; `bedrock-claude-3-5-sonnet` added to `models.yaml` as a selectable, non-default provider.
+- `docs/decisions/ADR-014-hexagonal-architecture.md` — formalizes the Ports & Adapters pattern already implicit in `mcp/tools/`/`api/services/`/`agents/a2a/` wrapping the `mdm/`/`ml/`/`graph/`/`data_quality/` domain core — verified the dependency direction by reading the actual adapter code, not asserted from memory.
+- `IMPROVEMENTS_AND_RESEARCH.md §5` — full gap analysis table for both new requirement sources.
+
+### Explicitly not added
+- No synthetic tax/fiscal domain dataset — the project's e-commerce/customer-intelligence dataset was judged more valuable to keep coherent than force-fitting an unrelated tax domain; the governance/LGPD/traceability discipline already demonstrated is what a fiscal/regulatory-context job posting actually evaluates, not a toy tax dataset.
+
+---
+
+## [2.1.0] — 2026-08-21 — Semantic Layer (dbt + Snowflake-local + Power BI), RAG completion, API, Terraform validation
+
+Completes the Warehouse/Semantics/BI layer and the GenAI-consumption layer end to end, plus formally validates the entire pre-existing Terraform module tree. This work-package (originally scoped as one piece) was lost twice to a hung/silently-dying background agent before landing in three smaller, verified pieces — see BUILD_LOG.md for the incident log.
+
+### Added
+- `snowflake/ddl/`, `snowflake/local_runner.py` — DuckDB-based local stand-in for the Snowflake warehouse `terraform/modules/snowflake/` provisions; `run_metric()`/`run_all_metrics()` computes every semantic-dictionary metric that's derivable without Olist order data. **Real values**: Revenue R$ 15,515,805.42, AOV R$ 1,751.79, Churn Rate 0.5308, Repeat Rate 0.4033, CLV avg R$ 990.26. Orders/Delivery SLA/NPS explicitly `SKIPPED` with a documented reason, never faked.
+- `snowflake/views/`, `snowflake/semantic_views/` — real Snowflake Semantic View DDL (ADR-005), explicitly labeled as not executed (no live account).
+- `dbt/models/{staging,intermediate,marts}/`, `dbt/models/marts/_metrics.yml`, `dbt/tests/` — dbt/MetricFlow implementation of the same metrics, structurally correct (not executed — no pip install risk taken after two prior hangs).
+- `powerbi/semantic_model/`, `powerbi/dax/measures.md`, `powerbi/dashboard/page_specs.md` — Power BI TMDL semantic model, DAX measures cross-checked against `local_runner.py`'s exact SQL logic, and the page-by-page dashboard blueprint later used to build `dashboard/`. **Metric-parity check passed**: Revenue/AOV/Churn Rate/Repeat Rate/CLV match exactly across all three implementations (dbt, Snowflake Semantic View, DAX) — the literal claim of ADR-005 ("one metric, one definition"), verified, not assumed.
+- `rag/parsing/`, `rag/embeddings/` — orchestration glue over the pre-existing `rag/local_stack/`. `rag/evaluation/` — golden Q&A set + retrieval precision@k. **Real result: precision@3 = 1.0** (15/15, target was ≥0.8).
+- `api/` — real FastAPI app (`/health`, `/customer/{id}`, `/customer/score`, `/customer/duplicates`, `/metrics`). **Verified live**: booted the server and curled all 4 non-trivial endpoints with real responses (real customer record, 1,016 real duplicate candidate pairs, real platform metrics matching `local_runner.py`).
+- `docs/runbooks/slo.md` — SLO targets per layer (Sprint 16 gap).
+
+### Verified (no code changes, validation only)
+- **20/20 Terraform modules** — `terraform validate` passed on 16 (Azure ×8, Databricks ×5, Snowflake databases/roles/warehouse ×3), the remaining 4 Snowflake modules (schemas/grants/stages/semantic) validated via manual variable/output cross-reference after the environment's network connectivity dropped mid-run (DNS stopped resolving even for google.com/github.com — an environment issue, not a Terraform config issue). Zero configuration errors found by either method. `terraform/environments/dev/main.tf` wiring confirmed complete, no orphaned modules.
+
+### Fixed
+- `CHANGELOG.md` version ordering — a prior edit numbered this line of work "1.2.0" *after* "2.0.0" had already shipped, which broke semver ordering; renumbered to 2.1.0/2.2.0.
 
 ---
 

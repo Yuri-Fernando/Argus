@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c ' *)",
+      "Bash(git submodule *)",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m jupyter nbconvert --to notebook --execute --inplace notebooks/01_data_quality_overview.ipynb notebooks/02_entity_resolution_golden_record.ipynb)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m jupyter nbconvert --to notebook --execute --inplace notebooks/03_churn_model_explainability.ipynb notebooks/04_customer_segmentation.ipynb notebooks/05_customer_graph_analysis.ipynb notebooks/06_platform_kpis_dashboard.ipynb)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe mdm/matching/deterministic.py)",
+      "Bash(rm -rf /c/Temp/pp_clone)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe mdm/matching/fuzzy.py)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe mdm/matching/ml_model.py)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe mdm/entity_resolution/run.py)",
+      "Bash(tee __TRACKED_VAR__/run_output.log)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe graph/algorithms/components.py)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe graph/algorithms/centrality.py)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe graph/algorithms/community.py)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe graph/networkx/build_graph.py)",
+      "Bash(\"/c/Users/Yuir_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.features.build_features)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.features.build_features)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.churn.train)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.explainability.shap_analysis)",
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.segmentation.kmeans_segments)"
+    ]
+  }
+}

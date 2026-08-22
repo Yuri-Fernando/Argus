@@ -1,0 +1,216 @@
+// powerbi/semantic_model/facts.tmdl
+// Fact tables — mirror dbt/models/marts/fact_*.sql and snowflake/ddl/0[5-8]_fact_*.sql
+// column-for-column. All four are DirectQuery mode (event-grain, not imported).
+
+table fact_payments
+	lineageTag: fact-payments
+	/// Local stand-in for order-level Revenue/AOV facts — no data/raw/olist fact_orders
+	/// exists in this platform snapshot. Revenue/AOV DAX filters status = "settled",
+	/// matching snowflake/local_runner.py run_metric() exactly. See powerbi/dax/measures.md.
+
+	column payment_id
+		dataType: string
+		isKey
+		summarizeBy: none
+
+	column master_customer_id
+		dataType: string
+		summarizeBy: none
+
+	column date_key
+		dataType: int64
+		summarizeBy: none
+
+	column gross_amount
+		dataType: double
+		formatString: "R$ #,0.00"
+		summarizeBy: sum
+
+	column fee_amount
+		dataType: double
+		formatString: "R$ #,0.00"
+		summarizeBy: sum
+
+	column net_amount
+		dataType: double
+		formatString: "R$ #,0.00"
+		summarizeBy: sum
+
+	column method
+		dataType: string
+		summarizeBy: none
+
+	column status
+		dataType: string
+		summarizeBy: none
+		/// settled | pending | chargeback — Revenue/AOV measures filter to "settled".
+
+	column settled_at
+		dataType: dateTime
+		summarizeBy: none
+
+	partition fact_payments = entity
+		mode: directQuery
+		source
+			entityName: fact_payments
+			schemaName: SEMANTIC_VIEWS
+
+table fact_support_interactions
+	lineageTag: fact-support-interactions
+
+	column ticket_id
+		dataType: string
+		isKey
+		summarizeBy: none
+
+	column master_customer_id
+		dataType: string
+		summarizeBy: none
+
+	column date_key_created
+		dataType: int64
+		summarizeBy: none
+
+	column date_key_resolved
+		dataType: int64
+		summarizeBy: none
+
+	column category
+		dataType: string
+		summarizeBy: none
+
+	column priority
+		dataType: string
+		summarizeBy: none
+
+	column sentiment
+		dataType: string
+		summarizeBy: none
+
+	column resolution_status
+		dataType: string
+		summarizeBy: none
+
+	column resolution_days
+		dataType: int64
+		summarizeBy: average
+
+	column created_at
+		dataType: dateTime
+		summarizeBy: none
+
+	column resolved_at
+		dataType: dateTime
+		summarizeBy: none
+
+	partition fact_support_interactions = entity
+		mode: directQuery
+		source
+			entityName: fact_support_interactions
+			schemaName: SEMANTIC_VIEWS
+
+table fact_campaign_interactions
+	lineageTag: fact-campaign-interactions
+
+	column interaction_id
+		dataType: string
+		isKey
+		summarizeBy: none
+
+	column master_customer_id
+		dataType: string
+		summarizeBy: none
+
+	column campaign_id
+		dataType: string
+		summarizeBy: none
+
+	column date_key
+		dataType: int64
+		summarizeBy: none
+
+	column channel
+		dataType: string
+		summarizeBy: none
+
+	column impressions
+		dataType: int64
+		summarizeBy: sum
+
+	column clicks
+		dataType: int64
+		summarizeBy: sum
+
+	column conversion
+		dataType: int64
+		summarizeBy: sum
+		/// 0/1 flag — SUM gives conversion count.
+
+	column cost
+		dataType: double
+		formatString: "R$ #,0.00"
+		summarizeBy: sum
+
+	column event_timestamp
+		dataType: dateTime
+		summarizeBy: none
+
+	partition fact_campaign_interactions = entity
+		mode: directQuery
+		source
+			entityName: fact_campaign_interactions
+			schemaName: SEMANTIC_VIEWS
+
+table fact_web_events
+	lineageTag: fact-web-events
+
+	column session_id
+		dataType: string
+		summarizeBy: none
+
+	column event_id
+		dataType: string
+		isKey
+		summarizeBy: none
+
+	column master_customer_id
+		dataType: string
+		summarizeBy: none
+
+	column date_key
+		dataType: int64
+		summarizeBy: none
+
+	column event_type
+		dataType: string
+		summarizeBy: none
+
+	column product_id
+		dataType: string
+		summarizeBy: none
+
+	column device
+		dataType: string
+		summarizeBy: none
+
+	column browser
+		dataType: string
+		summarizeBy: none
+
+	column source
+		dataType: string
+		summarizeBy: none
+
+	column campaign
+		dataType: string
+		summarizeBy: none
+
+	column event_timestamp
+		dataType: dateTime
+		summarizeBy: none
+
+	partition fact_web_events = entity
+		mode: directQuery
+		source
+			entityName: fact_web_events
+			schemaName: SEMANTIC_VIEWS

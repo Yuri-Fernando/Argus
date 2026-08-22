@@ -9,7 +9,7 @@ resource "azurerm_virtual_network" "this" {
   name                = "${var.project}-${var.environment}-vnet-${var.location_short}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  address_space        = [var.vnet_cidr]
+  address_space       = [var.vnet_cidr]
 
   tags = var.tags
 }
@@ -19,9 +19,9 @@ resource "azurerm_virtual_network" "this" {
 # Microsoft.Databricks/workspaces.
 resource "azurerm_subnet" "public" {
   name                 = "snet-databricks-public"
-  resource_group_name = var.resource_group_name
+  resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.this.name
-  address_prefixes      = [var.public_subnet_cidr]
+  address_prefixes     = [var.public_subnet_cidr]
 
   delegation {
     name = "databricks-public-delegation"
@@ -34,9 +34,9 @@ resource "azurerm_subnet" "public" {
 
 resource "azurerm_subnet" "private" {
   name                 = "snet-databricks-private"
-  resource_group_name = var.resource_group_name
+  resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.this.name
-  address_prefixes      = [var.private_subnet_cidr]
+  address_prefixes     = [var.private_subnet_cidr]
 
   delegation {
     name = "databricks-private-delegation"

@@ -13,3 +13,61 @@ Mecanismos de extração inteligente: Usar web scraping (Crawl4AI) e parsing de 
 
     Conhecimento sobre otimização de LLMs (quantização, fine-tuning, etc.).
 
+
+
+🚀 AI Is No Longer Just About LLMs
+
+Most people hear AI model and immediately think LLM.
+
+But modern AI systems are becoming far more specialized.
+
+Here are 8 AI model types worth understanding in 2026:
+
+🧠 LLM — Large Language Model
+Built for understanding and generating language.
+Think: chatbots, coding assistants, RAG and reasoning applications.
+
+🌐 LCM — Large Concept Model
+Works at a higher semantic/conceptual level rather than relying only on token-level processing.
+
+🤖 LAM — Large Action Model
+Designed around understanding intent, planning actions and completing tasks — especially relevant to AI agents.
+
+⚡ MoE — Mixture of Experts
+Routes an input through selected specialized experts instead of activating the entire model for every request.
+
+👁️ VLM — Vision-Language Model
+Combines visual and language understanding for images, documents, screenshots and multimodal applications.
+
+📱 SLM — Small Language Model
+Smaller and more efficient models designed for lower latency, lower cost and resource-constrained environments.
+
+🔤 MLM — Masked Language Model
+Learns by predicting masked tokens using context from both directions.
+
+🎯 SAM — Segment Anything Model
+Specialized for identifying and segmenting objects/regions within images.
+
+The bigger picture?
+
+The future isn't necessarily:
+
+“One huge AI model does everything.”
+
+It's increasingly:
+
+Right model + right task + right architecture.
+
+An AI system might eventually combine:
+
+VLM → understand the screen
+LLM → reason about information
+LAM → decide what action to take
+SLM → handle lightweight tasks
+MoE → efficiently route specialized computation
+
+That's where AI architecture gets really interesting. 🔥
+
+📌 Save this visual if you're learning Generative AI, AI Agents or modern AI architecture.
+
+💬 Which model type do you think will have the biggest impact over the next 2–3 years: LLM, SLM, VLM, LAM, or MoE?

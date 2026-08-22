@@ -1,0 +1,33 @@
+# Dockerfile.mcp — containerizes mcp/server/server.py (custom MCP server, ROADMAP.md Sprint 13).
+#
+# Built for Sprint 17 (k8s gap closure). `mcp/server/server.py` is read-only in this sprint's
+# scope (not edited here) and its `main()` calls `mcp.run()` with the FastMCP SDK's default
+# transport (stdio) — fine for `python mcp/server/server.py` invoked by a local MCP client
+# (Claude Desktop/Code), but stdio has no meaning for a long-running Pod with no attached
+# terminal. This image still runs the process as-is (CMD below) so the container is honest about
+# what the current code does; k8s/README.md documents this transport mismatch explicitly as a
+# known follow-up (switching `mcp.run(transport="sse")` in server.py, out of this sprint's
+# read-only scope for mcp/) rather than silently masking it.
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir \
+        "mcp>=1.0" \
+        pandas>=2.2 \
+        pyyaml>=6.0 \
+        networkx>=3.3 \
+        scikit-learn>=1.4
+
+COPY mcp/ ./mcp/
+COPY mdm/ ./mdm/
+COPY ml/ ./ml/
+COPY graph/ ./graph/
+COPY data_quality/ ./data_quality/
+
+EXPOSE 8765
+
+ENV MCP_SERVER_PORT=8765
+CMD ["python", "-m", "mcp.server.server"]

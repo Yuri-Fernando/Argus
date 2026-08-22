@@ -1,0 +1,27 @@
+# Dockerfile.dashboard — containerizes dashboard/app.py, a Streamlit app on port 8501.
+#
+# Built for Sprint 17 (k8s gap closure). `dashboard/` does not exist yet in this repo (explicitly
+# out of this sprint's scope — DO NOT TOUCH dashboard/ per the task brief; it is a sibling
+# workstream). This Dockerfile/manifest pair is written ahead of that code landing, exactly the
+# way `dashboard-deployment.yaml` references `streamlit run dashboard/app.py` as the eventual
+# entrypoint — so the day `dashboard/app.py` exists, `docker build -f k8s/Dockerfile.dashboard .`
+# and `kubectl apply -f k8s/dashboard-*.yaml` work with zero further edits. If `dashboard/`
+# grows its own `requirements.txt`, prefer `COPY dashboard/requirements.txt` + `pip install -r`
+# over the hard-coded `streamlit` pin below.
+FROM python:3.10-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir streamlit>=1.35 pandas>=2.2 pyyaml>=6.0 requests>=2.32
+
+# Not present yet — see the module docstring above. Build will fail until dashboard/ lands;
+# that is intentional (no placeholder app faked here, per Article IV "No Invention").
+COPY dashboard/ ./dashboard/
+
+EXPOSE 8501
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')" || exit 1
+
+CMD ["streamlit", "run", "dashboard/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

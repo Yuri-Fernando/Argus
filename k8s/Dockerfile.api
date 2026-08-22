@@ -1,0 +1,33 @@
+# Dockerfile.api — containerizes api/main.py (FastAPI, port 8010).
+#
+# Built for Sprint 17 (k8s gap closure, ROADMAP.md). Mirrors the dependency set api/main.py
+# actually needs from pyproject.toml's core `dependencies` list (fastapi/uvicorn plus whatever
+# the api/services/*.py layer imports from mdm/ml/graph/data_quality) — no genai-extra/pyspark/dbt
+# extras, which api/ never imports. Build context is the repo root (see k8s/README.md), so this
+# file can `COPY` the packages it needs without a wheel/publish step.
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install only this component's dependency surface — avoids dragging pyspark/dbt/genai-extra
+# (chromadb, docling, crawl4ai...) into an image that never imports them.
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir \
+        fastapi>=0.111 \
+        "uvicorn[standard]>=0.30" \
+        pandas>=2.2 \
+        pyyaml>=6.0 \
+        networkx>=3.3 \
+        scikit-learn>=1.4
+
+# Application code — the hexagonal core (ADR-014) this adapter wraps, plus the adapter itself.
+COPY api/ ./api/
+COPY mdm/ ./mdm/
+COPY ml/ ./ml/
+COPY graph/ ./graph/
+COPY data_quality/ ./data_quality/
+
+EXPOSE 8010
+
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8010"]

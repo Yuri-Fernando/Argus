@@ -11,7 +11,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.116"
+      version = "~> 5.0"
     }
     databricks = {
       source  = "databricks/databricks"
@@ -69,19 +69,29 @@ provider "databricks" {
 }
 
 provider "snowflake" {
-  account   = var.snowflake_account
-  user      = var.snowflake_user
-  password  = var.snowflake_password
-  role      = var.snowflake_role
-  warehouse = var.snowflake_warehouse
+  # NOTE: both the primary (snowflakedb/snowflake) and fallback
+  # (Snowflake-Labs/snowflake) provider schemas replaced the old single
+  # `account` argument with the pair `organization_name` + `account_name`
+  # (both required together) and renamed `username` to `user` — confirmed
+  # via `terraform providers schema` against the pinned provider versions.
+  organization_name = var.snowflake_organization_name
+  account_name      = var.snowflake_account
+  user              = var.snowflake_user
+  password          = var.snowflake_password
+  role              = var.snowflake_role
+  warehouse         = var.snowflake_warehouse
 }
 
 provider "snowflakelabs" {
-  account                = var.snowflake_account
-  username                = var.snowflake_user
-  password                = var.snowflake_password
-  role                     = var.snowflake_role
-  preview_features_enabled = ["snowflake_unsafe_execute_resource"] # ADR-008
+  organization_name = var.snowflake_organization_name
+  account_name      = var.snowflake_account
+  user              = var.snowflake_user
+  password          = var.snowflake_password
+  role              = var.snowflake_role
+  # NOTE: the CREATE SEMANTIC VIEW workaround (modules/snowflake/semantic)
+  # now uses the stable `snowflake_execute` resource, not the older
+  # preview-gated `snowflake_unsafe_execute` — `preview_features_enabled`
+  # is no longer needed for it (see ADR-008 and modules/snowflake/semantic/main.tf).
 }
 
 locals {
@@ -120,7 +130,7 @@ module "key_vault" {
   environment         = var.environment
   location            = var.azure_region
   resource_group_name = module.resource_group.name
-  tenant_id            = var.azure_tenant_id
+  tenant_id           = var.azure_tenant_id
   tags                = local.standard_tags
 }
 
@@ -134,14 +144,14 @@ module "adls" {
 }
 
 module "data_factory" {
-  source                = "../../modules/azure/data_factory"
-  project               = var.project
-  environment           = var.environment
-  location              = var.azure_region
-  resource_group_name   = module.resource_group.name
-  adls_storage_account   = module.adls.storage_account_name
-  key_vault_id           = module.key_vault.id
-  tags                  = local.standard_tags
+  source               = "../../modules/azure/data_factory"
+  project              = var.project
+  environment          = var.environment
+  location             = var.azure_region
+  resource_group_name  = module.resource_group.name
+  adls_storage_account = module.adls.storage_account_name
+  key_vault_id         = module.key_vault.id
+  tags                 = local.standard_tags
 }
 
 module "event_hubs" {
@@ -183,16 +193,16 @@ module "databricks_workspace" {
   location            = var.azure_region
   resource_group_name = module.resource_group.name
   vnet_id             = module.networking.vnet_id
-  public_subnet_id     = module.networking.public_subnet_id
-  private_subnet_id    = module.networking.private_subnet_id
+  public_subnet_id    = module.networking.public_subnet_id
+  private_subnet_id   = module.networking.private_subnet_id
   tags                = local.standard_tags
 }
 
 module "databricks_unity_catalog" {
-  source                = "../../modules/databricks/unity_catalog"
-  catalog_name          = var.databricks_catalog
-  adls_storage_account   = module.adls.storage_account_name
-  adls_container         = module.adls.container_names["gold"]
+  source                  = "../../modules/databricks/unity_catalog"
+  catalog_name            = var.databricks_catalog
+  adls_storage_account    = module.adls.storage_account_name
+  adls_container          = module.adls.container_names["gold"]
   databricks_workspace_id = module.databricks_workspace.workspace_id
 
   depends_on = [module.databricks_workspace]
@@ -213,9 +223,9 @@ module "databricks_jobs" {
 }
 
 module "databricks_permissions" {
-  source        = "../../modules/databricks/permissions"
-  cluster_id     = module.databricks_clusters.job_cluster_policy_id
-  catalog_name   = module.databricks_unity_catalog.catalog_name
+  source       = "../../modules/databricks/permissions"
+  cluster_id   = module.databricks_clusters.job_cluster_policy_id
+  catalog_name = module.databricks_unity_catalog.catalog_name
 
   depends_on = [module.databricks_unity_catalog, module.databricks_clusters]
 }
@@ -225,9 +235,9 @@ module "databricks_permissions" {
 # ---------------------------------------------------------------------------
 
 module "snowflake_warehouse" {
-  source           = "../../modules/snowflake/warehouse"
-  warehouse_name    = var.snowflake_warehouse
-  warehouse_size    = var.snowflake_warehouse_size
+  source         = "../../modules/snowflake/warehouse"
+  warehouse_name = var.snowflake_warehouse
+  warehouse_size = var.snowflake_warehouse_size
 }
 
 module "snowflake_databases" {
@@ -249,18 +259,19 @@ module "snowflake_roles" {
 module "snowflake_grants" {
   source        = "../../modules/snowflake/grants"
   database_name = module.snowflake_databases.database_name
-  schema_names   = module.snowflake_schemas.schema_names
-  role_names     = module.snowflake_roles.role_names
+  schema_names  = module.snowflake_schemas.schema_names
+  role_names    = module.snowflake_roles.role_names
 
   depends_on = [module.snowflake_schemas, module.snowflake_roles]
 }
 
 module "snowflake_stages" {
-  source              = "../../modules/snowflake/stages"
+  source               = "../../modules/snowflake/stages"
   database_name        = module.snowflake_databases.database_name
-  raw_schema_name       = module.snowflake_schemas.schema_names["RAW"]
-  adls_storage_account   = module.adls.storage_account_name
-  adls_container         = module.adls.container_names["gold"]
+  raw_schema_name      = module.snowflake_schemas.schema_names["RAW"]
+  adls_storage_account = module.adls.storage_account_name
+  adls_container       = module.adls.container_names["gold"]
+  azure_tenant_id      = var.azure_tenant_id
 
   depends_on = [module.snowflake_schemas]
 }
@@ -268,7 +279,7 @@ module "snowflake_stages" {
 module "snowflake_semantic" {
   source        = "../../modules/snowflake/semantic"
   database_name = module.snowflake_databases.database_name
-  schema_name    = module.snowflake_schemas.schema_names["SEMANTIC"]
+  schema_name   = module.snowflake_schemas.schema_names["SEMANTIC"]
 
   providers = {
     snowflakelabs = snowflakelabs

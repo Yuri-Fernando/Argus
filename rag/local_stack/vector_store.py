@@ -97,16 +97,30 @@ class ChromaVectorStore(VectorStore):
             embedding_fn: optional injected embedding function; if omitted, callers are expected
                 to pass already-embedded `VectorRecord.embedding` values.
         """
+        import chromadb
+
         self.persist_directory = persist_directory
         self.embedding_fn = embedding_fn
-        # TODO(Sprint 12 extension): replace with a real client:
-        #   import chromadb
-        #   self._client = chromadb.PersistentClient(path=persist_directory)
-        #   self._collection = self._client.get_or_create_collection("policy_docs__rag")
+        self._client = chromadb.PersistentClient(path=persist_directory)
+        # embedding_function=None: this class always upserts/queries with pre-computed vectors
+        # (VectorRecord.embedding / query_embedding), so Chroma's own embedding pipeline stays
+        # disabled — the injected `embedding_fn` (or a caller's own embedding step) is the single
+        # source of truth for vectors, matching the EmbeddingFunction Protocol's "don't hard-code
+        # one vendor" contract above.
+        self._collection = self._client.get_or_create_collection(
+            "policy_docs__rag", embedding_function=None
+        )
         self._records: dict[str, VectorRecord] = {}
 
     def upsert(self, records: list[VectorRecord]) -> None:
-        # TODO(Sprint 12 extension): self._collection.upsert(ids=..., embeddings=..., metadatas=..., documents=...)
+        if not records:
+            return
+        self._collection.upsert(
+            ids=[r.id for r in records],
+            embeddings=[r.embedding for r in records],
+            metadatas=[r.metadata or {} for r in records],
+            documents=[r.text for r in records],
+        )
         for record in records:
             self._records[record.id] = record
 
@@ -117,14 +131,33 @@ class ChromaVectorStore(VectorStore):
         top_k: int = 5,
         where: dict[str, Any] | None = None,
     ) -> list[QueryMatch]:
-        # TODO(Sprint 12 extension): self._collection.query(query_embeddings=[query_embedding],
-        #   n_results=top_k, where=where) — Chroma applies the `where` filter natively at query
-        #   time, before the similarity search, which is the specific ergonomic win over FAISS.
-        _ = (query_embedding, top_k, where)
-        return []
+        # Chroma applies the `where` filter natively at query time, before the similarity search,
+        # which is the specific ergonomic win over FAISS documented in the README's trade-off
+        # table.
+        result = self._collection.query(
+            query_embeddings=[query_embedding],
+            n_results=top_k,
+            where=where,
+            include=["documents", "metadatas", "distances"],
+        )
+        matches: list[QueryMatch] = []
+        ids = result.get("ids", [[]])[0]
+        documents = result.get("documents", [[]])[0]
+        metadatas = result.get("metadatas", [[]])[0]
+        distances = result.get("distances", [[]])[0]
+        for record_id, text, metadata, distance in zip(ids, documents, metadatas, distances):
+            record = self._records.get(record_id) or VectorRecord(
+                id=record_id, text=text, embedding=[], metadata=metadata or {}
+            )
+            # Chroma's default space is squared L2 distance; convert to a similarity-like score
+            # (higher = more relevant) so callers don't need to know the distance metric in use.
+            score = 1.0 / (1.0 + distance)
+            matches.append(QueryMatch(record=record, score=score))
+        return matches
 
     def delete(self, ids: list[str]) -> None:
-        # TODO(Sprint 12 extension): self._collection.delete(ids=ids)
+        if ids:
+            self._collection.delete(ids=ids)
         for record_id in ids:
             self._records.pop(record_id, None)
 

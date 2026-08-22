@@ -10,12 +10,12 @@ resource "snowflake_warehouse" "this" {
   warehouse_size = var.warehouse_size
 
   auto_suspend        = var.auto_suspend_seconds
-  auto_resume          = true
+  auto_resume         = true
   initially_suspended = true
 
   min_cluster_count = 1
   max_cluster_count = var.max_cluster_count
-  scaling_policy     = "STANDARD"
+  scaling_policy    = "STANDARD"
 
   comment = "Customer Intelligence DWH warehouse — cost boundary per ARCHITECTURE.md §16"
 }
