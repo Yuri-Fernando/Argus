@@ -466,6 +466,12 @@ implemented")`) desde a especificação original — mas o que eles pediam já e
 Qualquer outra coisa que eu não conseguir resolver sozinho, registro aqui em uma nova entrada
 "⚠️ PRECISA DE VOCÊ" antes de seguir em frente, para você ver quando acordar.
 
+## ✅ SESSÃO CONCLUÍDA — 2026-08-21
+
+Commit final: `c0db5ec` (`git log --oneline -3` a partir do baseline `aca0f8d`). Versão: `2.2.0`
+(`pyproject.toml` + `CHANGELOG.md`). Todos os 9 work-packages + integração final + suíte de testes
++ versionamento estão completos. Ver o resumo enviado ao usuário para o guia "como rodar tudo".
+
 ## Como continuar esta sessão se o contexto cair
 
 1. Leia este arquivo do topo — cada seção "✅ CONCLUÍDO" já está validada e não precisa refazer.
