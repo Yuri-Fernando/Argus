@@ -62,26 +62,58 @@ class Recommendation:
 
 
 def gather_customer_context(master_customer_id: str) -> CustomerContext:
-    """Assemble the four input signals for one customer.
+    """Assemble the four input signals for one customer, from the real local artifacts built
+    across this session — no live LLM or cloud call needed for any of it.
+
+    Sources (all real, all local):
+        - churn: `mcp.tools.ml.get_customer_churn()` — champion model + SHAP, MLflow Model Registry.
+        - clv: same proxy formula as `snowflake/local_runner.py::build_warehouse()` and
+          `mcp/tools/ml.py::recommend_action()` (documented reuse, not re-derived independently —
+          `data/ml/features/customer_features.parquet` has no persisted CLV column of its own):
+          AOV(monetary/frequency) * frequency * (1 - churn_probability).
+        - support_ticket_count_90d / support_sentiment_avg: `customer_features.parquet`'s
+          `unresolved_count`/`avg_sentiment_score` columns (built by `ml/features/support.py`).
+        - segment: `data/ml/segmentation/customer_segments.parquet`.
 
     Returns:
-        A CustomerContext with all fields populated (or None where a signal is unavailable).
+        A CustomerContext with all fields populated (or None where the customer/feature row
+        genuinely isn't found — never a guessed value).
     """
-    # TODO(Sprint 10-14 wiring): call the MCP tools directly (or the underlying functions in
-    # mcp/tools/ml.py, mcp/tools/quality.py) plus:
-    #   - CLV: ml/features/ (RFM-derived, ARCHITECTURE.md §10)
-    #   - support_ticket_count_90d / support_sentiment_avg: data/synthetic/support ->
-    #     AI_SENTIMENT (ARCHITECTURE.md §12)
-    #   - segment: ml/segmentation/ (ROADMAP.md Sprint 11)
-    # This function intentionally has the final signature already — only the TODO'd data reads
-    # are missing.
+    from api.services.customer_service import _features_df, _segments_df
+    from mcp.tools.ml import get_customer_churn
+
+    churn_raw = get_customer_churn(master_customer_id)
+    churn = ChurnSignal(
+        churn_probability=churn_raw["churn_probability"],
+        risk_band=churn_raw["risk_band"],
+        top_features=churn_raw["top_features"],
+    )
+
+    features = _features_df()
+    feat_match = features[features["master_customer_id"] == master_customer_id]
+    segments = _segments_df()
+    seg_match = segments[segments["master_customer_id"] == master_customer_id]
+
+    clv: float | None = None
+    support_ticket_count_90d: int | None = None
+    support_sentiment_avg: float | None = None
+    if not feat_match.empty and churn.churn_probability is not None:
+        row = feat_match.iloc[0]
+        monetary, frequency = float(row["monetary"]), float(row["frequency"])
+        avg_order_value = (monetary / frequency) if frequency else 0.0
+        clv = round(avg_order_value * frequency * (1 - churn.churn_probability), 2)
+        support_ticket_count_90d = int(row["unresolved_count"])
+        support_sentiment_avg = float(row["avg_sentiment_score"])
+
+    segment = seg_match.iloc[0]["segment"] if not seg_match.empty else None
+
     return CustomerContext(
         master_customer_id=master_customer_id,
-        churn=ChurnSignal(churn_probability=None, risk_band=None, top_features=[]),
-        clv=None,
-        support_ticket_count_90d=None,
-        support_sentiment_avg=None,
-        segment=None,
+        churn=churn,
+        clv=clv,
+        support_ticket_count_90d=support_ticket_count_90d,
+        support_sentiment_avg=support_sentiment_avg,
+        segment=segment,
     )
 
 
@@ -90,8 +122,16 @@ def score_recommendation(context: CustomerContext) -> Recommendation:
 
     This is pure decision logic (no I/O), so it is fully unit-testable against synthetic
     CustomerContext fixtures without needing live data — see
-    agents/recommendation/evaluation/golden_questions.yaml for example cases once real scoring
-    logic replaces the placeholder below.
+    agents/recommendation/evaluation/golden_questions.yaml for example cases.
+
+    Rules (documented, not tuned against a labeled outcome set — there is no real "did the
+    customer actually churn after this action" ground truth in a synthetic dataset, so this is a
+    reasonable, explainable heuristic rather than a claimed-optimal policy; `ml/reinforcement/
+    next_best_action.py` is the explicitly-labeled extension for learning this from outcomes):
+        - high churn risk + high value (VIP/Loyal segment or CLV >= R$1,000) -> retention discount
+        - high churn risk + negative support signal -> escalate to a human supervisor
+        - high/medium churn risk + negative support signal, or high risk alone -> CS outreach
+        - otherwise -> no action
 
     Args:
         context: the four combined signals for one customer.
@@ -99,21 +139,57 @@ def score_recommendation(context: CustomerContext) -> Recommendation:
     Returns:
         A Recommendation with `action` drawn from CANDIDATE_ACTIONS.
     """
-    # TODO(Sprint 14): implement the actual weighted-scoring / rules logic combining
-    # churn_probability, clv, support_sentiment_avg and segment into a priority + action choice
-    # (e.g. high churn risk + high CLV + negative sentiment => "offer_retention_discount" at
-    # "high" priority). Until then this returns the safe default: no action, zero confidence,
-    # so nothing downstream mistakes an unimplemented scorer for a real recommendation.
     evidence: list[str] = []
-    if context.churn.churn_probability is None:
-        evidence.append("churn score unavailable — see mcp/tools/ml.py TODO")
+    probability = context.churn.churn_probability
+
+    if probability is None:
+        evidence.append(f"No churn score available for {context.master_customer_id} (not found in ml/features/).")
+        return Recommendation(
+            master_customer_id=context.master_customer_id,
+            action="no_action_recommended",
+            confidence=0.0,
+            evidence=evidence,
+            priority="low",
+        )
+
+    risk_band = context.churn.risk_band
+    evidence.append(f"Churn probability {probability:.2f} ({risk_band} risk).")
+    if context.churn.top_features:
+        top = context.churn.top_features[0]
+        evidence.append(f"Top SHAP driver: {top['feature']} ({top['shap_value']:+.4f}).")
+    if context.segment:
+        evidence.append(f"Segment: {context.segment}.")
+    if context.clv is not None:
+        evidence.append(f"Estimated CLV: R$ {context.clv:,.2f}.")
+    if context.support_ticket_count_90d:
+        evidence.append(f"{context.support_ticket_count_90d} unresolved support ticket(s).")
+    if context.support_sentiment_avg is not None:
+        evidence.append(f"Average support sentiment: {context.support_sentiment_avg:+.2f}.")
+
+    high_value = context.segment in ("VIP", "Loyal") or (context.clv is not None and context.clv >= 1000)
+    negative_support_signal = (context.support_ticket_count_90d or 0) > 0 or (
+        context.support_sentiment_avg is not None and context.support_sentiment_avg < 0
+    )
+
+    if risk_band == "high" and high_value:
+        action, confidence, priority = "offer_retention_discount", round(min(0.95, 0.5 + probability / 2), 2), "high"
+    elif risk_band == "high" and negative_support_signal:
+        action, confidence, priority = "escalate_to_support_supervisor", round(min(0.9, 0.45 + probability / 2), 2), "high"
+    elif risk_band in ("high", "medium") and negative_support_signal:
+        action, confidence, priority = "assign_customer_success_outreach", round(0.3 + probability / 2, 2), "medium"
+    elif risk_band == "high":
+        action, confidence, priority = "assign_customer_success_outreach", round(0.3 + probability / 2, 2), "medium"
+    else:
+        action, confidence, priority = "no_action_recommended", round(1 - probability, 2), "low"
+
+    assert action in CANDIDATE_ACTIONS, f"{action!r} not in CANDIDATE_ACTIONS"
 
     return Recommendation(
         master_customer_id=context.master_customer_id,
-        action="no_action_recommended",
-        confidence=0.0,
+        action=action,
+        confidence=confidence,
         evidence=evidence,
-        priority="low",
+        priority=priority,
     )
 
 

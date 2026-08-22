@@ -21,15 +21,12 @@ WIRED (this session):
     already-loaded champion model instead of shelling out to that script. See
     `_shap_explainer()`.
   - `get_model_metrics` queries the real local MLflow Model Registry / tracking store.
-  - `recommend_action` composes a real recommendation from `get_customer_churn` (this module) +
-    CLV + segment + support signals from `data/ml/features/` and `data/ml/segmentation/`.
-    `agents/recommendation/recommendation_agent.py::score_recommendation` — the function the
-    task brief points at to reuse/mirror — is itself still an unimplemented TODO stub (verified
-    by reading it; it always returns `no_action_recommended`/confidence 0.0), so there is no
-    real scoring logic there yet to import. The composite below is implemented directly in this
-    module instead, reusing that agent module's `CANDIDATE_ACTIONS` closed set (so both files
-    stay in sync on what a valid action string is) rather than duplicating a second list.
-    `agents/recommendation/recommendation_agent.py` itself is out of this task's edit scope.
+  - `recommend_action` now delegates to `agents.recommendation.recommendation_agent
+    .generate_recommendation()`, which composes a real recommendation from `get_customer_churn`
+    (this module) + CLV + segment + support signals. It previously duplicated that logic inline
+    because `recommendation_agent.py`'s own scorer was still a stub — since fixed (second wiring
+    pass), so this tool is back to being a thin MCP-shaped adapter over the real agent, matching
+    the separation of concerns that module's docstring always intended.
 """
 
 from __future__ import annotations
@@ -43,9 +40,7 @@ import mlflow.sklearn
 import pandas as pd
 import shap
 
-from agents.recommendation.approval_queue import enqueue_recommendation
-from agents.recommendation.recommendation_agent import CANDIDATE_ACTIONS
-from api.services.customer_service import _features_df, _segments_df
+from api.services.customer_service import _features_df
 from ml.churn.train import FEATURE_COLUMNS, MLFLOW_TRACKING_URI, REGISTERED_MODEL_NAME
 
 RISK_BAND_LOW_MAX = 0.3  # < 0.3 -> "low"
@@ -282,93 +277,22 @@ def recommend_action(master_customer_id: str) -> dict[str, Any]:
             "queue_id": str,                          # id of the enqueued PENDING approval item
         }
     """
-    # TODO(Sprint 14 / agents/recommendation): replace the placeholder evidence/confidence
-    # below with the real composite computed by
-    # agents/recommendation/recommendation_agent.py, which combines:
-    #   - churn score + SHAP evidence (this module, get_customer_churn)
-    #   - CLV (ml/features/, RFM-derived)
-    #   - support ticket sentiment (data/synthetic/support -> AI_SENTIMENT, ARCHITECTURE.md §12)
-    #   - segment (ml/segmentation/)
-    # Wired: see module docstring — recommendation_agent.py's own scorer is still an
-    # unimplemented stub, so the composite below is implemented directly here instead of
-    # importing a function that doesn't do anything real yet.
-    churn = get_customer_churn(master_customer_id)
-    evidence: list[str] = []
-    recommendation: str = "no_action_recommended"
-    confidence: float = 0.0
+    # Wired (this session, second pass): agents/recommendation/recommendation_agent.py's
+    # gather_customer_context()/score_recommendation() are now real — this MCP tool delegates to
+    # generate_recommendation() (which itself enqueues via approval_queue) instead of duplicating
+    # the composite scoring logic inline, per the agent module's own stated design intent
+    # ("the composite scoring logic itself lives here so it can be unit tested independently of
+    # the MCP transport"). This closes the duplication the previous wiring pass had to introduce
+    # because recommendation_agent.py was still a stub at the time.
+    from agents.recommendation.recommendation_agent import generate_recommendation
 
-    if not churn["found"]:
-        evidence.append(f"No churn score available for {master_customer_id} (not found in ml/features/).")
-    else:
-        probability = churn["churn_probability"]
-        risk_band = churn["risk_band"]
-        evidence.append(f"Churn probability {probability:.2f} ({risk_band} risk).")
-        if churn["top_features"]:
-            top = churn["top_features"][0]
-            evidence.append(f"Top SHAP driver: {top['feature']} ({top['shap_value']:+.4f}).")
-
-        feat_row = _features_df()
-        feat_match = feat_row[feat_row["master_customer_id"] == master_customer_id]
-        seg_row = _segments_df()
-        seg_match = seg_row[seg_row["master_customer_id"] == master_customer_id]
-
-        segment = seg_match.iloc[0]["segment"] if not seg_match.empty else None
-        if segment:
-            evidence.append(f"Segment: {segment}.")
-
-        clv = None
-        unresolved_count = None
-        avg_sentiment = None
-        if not feat_match.empty:
-            f = feat_match.iloc[0]
-            monetary = float(f["monetary"])
-            frequency = float(f["frequency"])
-            # Same proxy CLV formula as snowflake/local_runner.py::build_warehouse() —
-            # AOV(monetary/frequency) * frequency * (1 - churn_probability) — documented reuse
-            # of that formula, not an independent one; customer_features.parquet has no
-            # persisted CLV column of its own.
-            avg_order_value = (monetary / frequency) if frequency else 0.0
-            clv = round(avg_order_value * frequency * (1 - probability), 2)
-            unresolved_count = int(f["unresolved_count"])
-            avg_sentiment = float(f["avg_sentiment_score"])
-            evidence.append(f"Estimated CLV: R$ {clv:,.2f}.")
-            if unresolved_count > 0:
-                evidence.append(f"{unresolved_count} unresolved support ticket(s).")
-            evidence.append(f"Average support sentiment: {avg_sentiment:+.2f}.")
-
-        high_value = segment in ("VIP", "Loyal") or (clv is not None and clv >= 1000)
-        negative_support_signal = (unresolved_count or 0) > 0 or (avg_sentiment is not None and avg_sentiment < 0)
-
-        if risk_band == "high" and high_value:
-            recommendation = "offer_retention_discount"
-            confidence = round(min(0.95, 0.5 + probability / 2), 2)
-        elif risk_band == "high" and negative_support_signal:
-            recommendation = "escalate_to_support_supervisor"
-            confidence = round(min(0.9, 0.45 + probability / 2), 2)
-        elif risk_band in ("high", "medium") and negative_support_signal:
-            recommendation = "assign_customer_success_outreach"
-            confidence = round(0.3 + probability / 2, 2)
-        elif risk_band == "high":
-            recommendation = "assign_customer_success_outreach"
-            confidence = round(0.3 + probability / 2, 2)
-        else:
-            recommendation = "no_action_recommended"
-            confidence = round(1 - probability, 2)
-
-    assert recommendation in CANDIDATE_ACTIONS, f"{recommendation!r} not in agents.recommendation.recommendation_agent.CANDIDATE_ACTIONS"
-
-    queue_id = enqueue_recommendation(
-        master_customer_id=master_customer_id,
-        recommendation=recommendation,
-        confidence=confidence,
-        evidence=evidence,
-    )
+    item = generate_recommendation(master_customer_id)
 
     return {
         "master_customer_id": master_customer_id,
-        "recommendation": recommendation,
-        "confidence": confidence,
-        "evidence": evidence,
+        "recommendation": item.recommendation,
+        "confidence": item.confidence,
+        "evidence": item.evidence,
         "requires_human_approval": True,
-        "queue_id": queue_id,
+        "queue_id": item.queue_id,
     }

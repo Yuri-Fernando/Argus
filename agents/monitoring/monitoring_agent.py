@@ -15,7 +15,7 @@ on-call engineer, not an automatic action.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
 
@@ -66,18 +66,39 @@ DEFAULT_THRESHOLDS: dict[str, float] = {
 def fetch_health_signals() -> list[HealthSignal]:
     """Collect the current value of every tracked health signal.
 
+    `dq_score` is wired to the real `data_quality/reports/dq_report.json` (produced by
+    `lakehouse/run_pipeline.py`) — no Prometheus needed for a point-in-time snapshot read. The
+    remaining four signals genuinely need a running Prometheus exporter accumulating values over
+    time (job duration history, per-request ML/agent latency, MCP call error rate) — none of
+    that infra runs in this environment (ADR-010, local-first), so they stay honestly `None`
+    rather than a fabricated point estimate. See the TODO below for exactly what wiring those
+    needs once Sprint 16's `monitoring/prometheus/` stack is actually running.
+
     Returns:
         A list of HealthSignal, one per metric ARCHITECTURE.md §17 lists.
     """
-    # TODO(Sprint 16 / monitoring): query Prometheus (via its HTTP API, or the
-    # `prometheus-client` registry directly if this agent runs in-process with the exporter) for
-    # the latest value of each metric in DEFAULT_THRESHOLDS. Until that's wired, this returns an
-    # empty-valued signal per tracked metric so evaluate_signals() has a stable shape to run
-    # against in tests.
-    return [
+    signals = [
         HealthSignal(name=name, value=None, unit="unknown", threshold=threshold)
         for name, threshold in DEFAULT_THRESHOLDS.items()
     ]
+
+    dq_signal = next(s for s in signals if s.name == "dq_score")
+    try:
+        import json
+        from pathlib import Path
+
+        report_path = Path(__file__).resolve().parents[2] / "data_quality" / "reports" / "dq_report.json"
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        dq_signal.value = report["overall_score"]
+        dq_signal.unit = "score"
+        dq_signal.source = "data_quality/reports/dq_report.json"
+    except (FileNotFoundError, KeyError, json.JSONDecodeError):
+        pass  # report not generated yet (`python lakehouse/run_pipeline.py` never ran) — stays None.
+
+    # TODO(Sprint 16 / monitoring): once monitoring/prometheus/ actually runs, replace the loop
+    # above for the remaining four signals with real queries against its HTTP API (or the
+    # `prometheus-client` registry directly if this agent runs in-process with the exporter).
+    return signals
 
 
 def evaluate_signals(signals: list[HealthSignal]) -> list[Alert]:

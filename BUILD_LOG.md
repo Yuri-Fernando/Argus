@@ -523,6 +523,39 @@ o segundo rebuild quebrava no `unlink()`. Corrigido compartilhando uma única co
 **Pendência real que ficou registrada, não meu escopo de agora**: `recommendation_agent.py`'s
 `score_recommendation` ainda é TODO stub — é o próximo item natural se quiser continuar fechando gaps.
 
+### Fechando os agentes #3 e #4 (eu, direto) — ✅ CONCLUÍDO
+
+Usuário pediu nova rodada de revisão. Achado real: `agents/recommendation/recommendation_agent.py`
+(agente #3) tinha `gather_customer_context`/`score_recommendation` ainda TODO stub — mas o WP10
+já tinha implementado a MESMA lógica composta direto dentro de `mcp/tools/ml.py::recommend_action`
+(duplicação, documentada honestamente pelo próprio WP10 como decisão temporária).
+
+- **`recommendation_agent.py`**: implementado de verdade — `gather_customer_context` busca churn
+  (via `mcp.tools.ml.get_customer_churn`, modelo campeão real+SHAP), CLV (mesma fórmula proxy do
+  `local_runner.py`), suporte e segmento; `score_recommendation` é a árvore de decisão real
+  (alto risco+alto valor → desconto de retenção; alto risco+sinal negativo de suporte → escalar;
+  etc.), documentada como heurística explicável, não uma política ótima (sem ground truth real de
+  "o cliente saiu de verdade" num dataset sintético — `ml/reinforcement/` é a extensão certa pra
+  aprender isso com resultado real).
+- **`mcp/tools/ml.py::recommend_action`**: refatorado pra delegar em
+  `agents.recommendation.recommendation_agent.generate_recommendation()` em vez de duplicar —
+  elimina a duplicação que o WP10 tinha documentado como gap temporário.
+- **Testado ao vivo**: `gather_customer_context('MC00003652')` → contexto real completo;
+  `score_recommendation` → `escalate_to_support_supervisor`, confiança 0,9, evidências reais;
+  chamada via MCP (`mcp.tools.ml.recommend_action`) produz exatamente a mesma decisão — confirma
+  que a consolidação não mudou o comportamento, só removeu a duplicação.
+- **`agents/monitoring/monitoring_agent.py`** (agente #4): `fetch_health_signals()` religado ao
+  `data_quality/reports/dq_report.json` real pro sinal `dq_score` (0,9983, sem alerta — abaixo do
+  threshold 0,90 dispararia). Os outros 4 sinais (duração de pipeline, latência ML/agente, taxa de
+  erro MCP) continuam honestamente `None` — genuinamente precisam do Prometheus do Sprint 16
+  rodando, que não existe neste ambiente local.
+
+Com isso, **todos os 4 agentes de ARCHITECTURE.md §15 têm sua parte mecânica/de-dados real e
+testada** — só o que precisa mesmo de uma chave de LLM ao vivo continua honestamente stubado
+(intent detection por LLM, raciocínio final, guardrails via Cortex).
+
+Suite de testes continua **7 passed, 1 skipped** após essas mudanças.
+
 ## ✅ SESSÃO CONCLUÍDA — 2026-08-21
 
 Commit final: `c0db5ec` (`git log --oneline -3` a partir do baseline `aca0f8d`). Versão: `2.2.0`
