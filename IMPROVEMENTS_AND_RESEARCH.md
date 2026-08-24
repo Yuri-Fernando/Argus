@@ -79,9 +79,31 @@ Diferente da maioria das ferramentas já presentes neste projeto (Databricks, Sn
 
 Conclusão prática: todas as quatro ferramentas têm sinais de manutenção ativa e adoção real em 2026, o que justifica usá-las — mas nenhuma tem o histórico de maturidade enterprise de Databricks/Snowflake, e por isso o projeto as posiciona onde essa maturidade não é crítica (desenvolvimento local, não o caminho de produção primário, que continua sendo Snowflake Cortex).
 
-### 4.3 Backlog: otimização de LLM (quantização/fine-tuning)
+### 4.3 Otimização de LLM (quantização/fine-tuning) — ✅ implementado (sessão de 2026-08-21, com escopo corrigido)
 
-Não implementado nesta consolidação — alvo concreto documentado para uma extensão futura: substituir a chamada LLM de classificação de categoria de causa-raiz do Data Quality Agent (hoje roteada para `azure-gpt-4o-mini` via `agents/llm_gateway/models.yaml`) por um classificador local pequeno (ex: `distilbert`), fine-tuned sobre categorias de DQ rotuladas e quantizado (INT8, via `onnxruntime` ou `bitsandbytes`) para inferência em CPU — eliminando custo de chamada LLM e round-trip de rede para uma tarefa de classificação de conjunto fechado que não precisa de um LLM de propósito geral. Ver [`agents/llm_gateway/README.md`](agents/llm_gateway/README.md).
+Estava documentado acima como backlog não implementado nesta consolidação; numa sessão posterior
+foi de fato implementado, com escopo honestamente ajustado — ver
+[`agents/quality/root_cause_classifier.py`](agents/quality/root_cause_classifier.py). **Não** é o
+`distilbert` fine-tuned + quantizado INT8 que o texto original abaixo propunha (desproporcional a
+uma tarefa de classificação fechada de 10 categorias — exigiria treino em GPU e download de
+modelo de centenas de MB). O que foi implementado, satisfazendo o benefício real do item de
+backlog ("eliminar custo de chamada LLM e round-trip de rede para uma tarefa de classificação de
+conjunto fechado"): um classificador **TF-IDF + Logistic Regression** genuinamente local
+(scikit-learn puro, sem `torch`/`transformers`), ~10KB em memória, treino em bem menos de um
+segundo em CPU, treinado nas 47 descrições reais do catálogo de regras de
+`data_quality/expectations/` (10 classes, uma por `rule.type`) + poucas paráfrases por classe.
+Resultado real (held-out): 75% de acurácia, F1 macro 0,739 (baseline aleatório ~10%). Conectado em
+`agents/quality/data_quality_agent.py::_recommend_action_for_cause()`, com fallback pro
+keyword-matching antigo se o classificador falhar. Texto original do pedido preservado abaixo
+para contexto histórico:
+
+> Substituir a chamada LLM de classificação de categoria de causa-raiz do Data Quality Agent (hoje
+> roteada para `azure-gpt-4o-mini` via `agents/llm_gateway/models.yaml`) por um classificador local
+> pequeno (ex: `distilbert`), fine-tuned sobre categorias de DQ rotuladas e quantizado (INT8, via
+> `onnxruntime` ou `bitsandbytes`) para inferência em CPU.
+
+Ver [`agents/llm_gateway/README.md`](agents/llm_gateway/README.md) e `BUILD_LOG.md` (entrada
+"Classificador SLM local de causa-raiz de DQ") para o histórico completo.
 
 ## 5. Integração dos requisitos de `tributario.txt` + complemento de `add2.txt` (agosto/2026)
 
@@ -131,7 +153,7 @@ Conteúdo majoritariamente conceitual (post de LinkedIn), não uma lista de requ
 | Tipo | Usado na plataforma? | Onde |
 |---|---|---|
 | **LLM** | ✅ core | `agents/llm_gateway/`, todos os agentes |
-| **SLM** | ⚠️ backlog documentado, não implementado | já citado em `agents/llm_gateway/README.md` §4.3 (classificador local quantizado para causa-raiz de DQ) |
+| **SLM** | ✅ implementado (escopo ajustado — ver §4.3) | `agents/quality/root_cause_classifier.py` — TF-IDF+LogReg local, não o transformer quantizado originalmente proposto, mas satisfaz o requisito real |
 | **VLM** | ❌ não usado | `rag/local_stack/document_parser.py` (Docling) faz parsing de documento mas não usa um modelo de visão-linguagem explicitamente — anotado como extensão possível futura (parsing de documentos com imagens/scans), não implementado agora por não ter caso de uso real no dataset atual (os 4 documentos de política são texto puro) |
 | **MoE** | ❌ não aplicável | é uma característica de arquitetura interna de modelo, não algo que uma plataforma consumidora de API escolhe — fora do escopo deste projeto |
 | **LAM, LCM, MLM, SAM** | ❌ não aplicável | LAM se sobrepõe conceitualmente com o que os agentes LangGraph já fazem (entender intenção → planejar → agir), mas não é uma categoria de modelo separada disponível via API hoje; LCM/MLM/SAM não têm caso de uso neste domínio (customer intelligence não é segmentação de imagem nem MLM de treinamento) |
