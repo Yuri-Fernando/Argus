@@ -129,7 +129,14 @@ def get_churn_score(master_customer_id: str) -> dict:
         return {"master_customer_id": master_customer_id, "found": False}
 
     feat_row = feat_match.iloc[0]
-    recency_days = int(feat_row["recency_days"])
+    # `local_runner.py::build_warehouse()` fills a missing recency_days with 365 (a full year —
+    # i.e. treated as maximally stale) before dividing; this endpoint previously skipped that
+    # `fillna` step, which a code-review pass flagged two ways: (1) the formulas silently diverge
+    # for any customer with a null recency_days, and (2) worse, `int(float("nan"))` raises
+    # ValueError — so this endpoint would 500 for exactly the customers whose churn score matters
+    # most to compute (no settled-payment activity at all). Matching the fillna fixes both.
+    raw_recency = feat_row["recency_days"]
+    recency_days = int(raw_recency) if pd.notna(raw_recency) else 365
     churn_score = round(min(recency_days / 365.0, 1.0), 4)
 
     result = {

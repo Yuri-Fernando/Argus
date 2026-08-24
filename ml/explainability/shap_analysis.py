@@ -4,23 +4,34 @@ Run directly:
 
     python -m ml.explainability.shap_analysis
 
-Trains the same three candidates `ml/churn/train.py` trains (deterministic given the fixed
-`RANDOM_STATE`, so this reproduces the exact champion and train/test split without needing to
-round-trip through the MLflow Model Registry), picks the ROC-AUC champion, and prints:
+Loads the champion model already trained and registered by `python -m ml.churn.train`
+(MLflow Model Registry — `models:/{REGISTERED_MODEL_NAME}/latest`), reconstructs the exact
+deterministic train/test split `ml/churn/train.py` used (same fixed `RANDOM_STATE`, so the held-out
+rows and their true labels line up with what the registered model was actually evaluated on,
+without needing to retrain), and prints:
 
   1. Global feature importance — mean |SHAP value| across a sample of the held-out test set.
   2. Per-customer explanations for three concrete example customers — their real
      `master_customer_id`, predicted churn probability, and their top SHAP feature
      contributions, so a prediction is demoable and auditable rather than an opaque score.
 
-Uses `shap.Explainer` against the fitted pipeline's `predict_proba`, not a model-specific
-explainer — this keeps the module correct regardless of which model type happens to win the
-ROC-AUC comparison (Logistic Regression today, but the champion is picked dynamically).
+Uses `shap.Explainer` against the loaded model's `predict_proba`, not a model-specific
+explainer — this keeps the module correct regardless of which model type happens to be
+registered as champion (Logistic Regression today).
+
+FIXED (code-review pass): this module previously called `ml.churn.train.train_and_compare()`
+on every run — retraining Logistic Regression, a 200-tree Random Forest, AND Gradient Boosting
+from scratch just to explain the one already-trained, already-registered champion. `mcp/tools/
+ml.py::_champion_model()` already does this correctly (load, don't retrain); this module now
+mirrors that same technique directly (not by importing from `mcp/tools/`, which is the adapter
+layer around this domain-core module per ADR-014 — the dependency only goes the other way).
 """
 from __future__ import annotations
 
 import logging
 
+import mlflow
+import mlflow.sklearn
 import numpy as np
 import pandas as pd
 import shap
@@ -29,10 +40,10 @@ from sklearn.model_selection import train_test_split
 from ml.churn.label import add_churn_label
 from ml.churn.train import (
     FEATURE_COLUMNS,
+    MLFLOW_TRACKING_URI,
     RANDOM_STATE,
+    REGISTERED_MODEL_NAME,
     TEST_SIZE,
-    ModelResult,
-    train_and_compare,
 )
 from ml.features.build_features import OUTPUT_PATH as FEATURES_PATH
 

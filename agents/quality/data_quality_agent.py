@@ -22,9 +22,12 @@ are lower-stakes than customer-facing ones.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 
 from mcp.tools.quality import get_data_quality, get_pipeline_status
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -70,7 +73,7 @@ def _infer_main_cause(dataset: str, dimension_scores: dict[str, float | None]) -
     return f"{dataset} {worst_dimension}."
 
 
-def _recommend_action_for_cause(main_cause: str) -> str:
+def _recommend_action_for_cause(main_cause: str, worst_rule: dict | None = None) -> str:
     """Map a diagnosed cause to a short, human-actionable recommendation.
 
     Backed by `agents/quality/root_cause_classifier.py` — a local, CPU-only, no-LLM-round-trip
@@ -79,14 +82,30 @@ def _recommend_action_for_cause(main_cause: str) -> str:
     backlog item it implements). Falls back to the original keyword-matching heuristic if the
     classifier is unavailable for any reason (e.g. scikit-learn not installed in a minimal
     deployment) — this function must never raise just because the optimization layer is missing.
+
+    Args:
+        main_cause: the coarse "{dataset} {dimension}." string from `_infer_main_cause`, used
+            only as the classifier fallback INPUT and for the keyword-matching path below.
+        worst_rule: `get_data_quality()`'s `worst_rule` dict, if available — a real rule
+            description (e.g. "Non-null emails must be well-formed"). A code-review pass caught
+            the classifier previously being fed `main_cause` unconditionally, which is a much
+            coarser, differently-shaped string than anything in its training set (a dimension
+            bucket like "completeness" can map to several distinct rule types — not_null AND
+            schema_check — so it's not even a well-defined classification target). Preferring
+            `worst_rule`'s real description fixes that: it's exactly the text shape (and, since
+            it's the literal rule that actually breached, the correct real answer) the classifier
+            was trained on.
     """
+    classifier_input = worst_rule["description"] if worst_rule and worst_rule.get("description") else main_cause
     try:
         from agents.quality.root_cause_classifier import classify_root_cause
 
-        result = classify_root_cause(main_cause)
+        result = classify_root_cause(classifier_input)
         return f"[{result.human_label}, confidence {result.confidence:.0%}] {result.recommended_action}"
     except Exception:
-        pass
+        logger.exception(
+            "root_cause_classifier failed for input %r — falling back to keyword heuristic", classifier_input
+        )
 
     if "completeness" in main_cause:
         return "Review the upstream extraction job for missing-field regressions."
@@ -101,7 +120,8 @@ def diagnose_quality_drop(dataset: str, previous_score: float | None = None) -> 
     """Diagnose a data quality score drop for a given dataset.
 
     Args:
-        dataset: dataset name, e.g. "silver.crm_customers" (see ARCHITECTURE.md §6/§7).
+        dataset: dataset name, e.g. "silver.crm_customer" (see ARCHITECTURE.md §6/§7 — table
+            names are singular; "crm_customers" is also accepted, see `_find_table()`'s docstring).
         previous_score: the last-known-good score to compare against. If omitted, the diagnosis
             reports only the current score with `previous_score=None` (i.e. "unknown" in the
             rendered text) rather than guessing a baseline.
@@ -114,7 +134,7 @@ def diagnose_quality_drop(dataset: str, previous_score: float | None = None) -> 
     pipeline = get_pipeline_status(dataset)
 
     main_cause = _infer_main_cause(dataset, dq["dimension_scores"])
-    recommended_action = _recommend_action_for_cause(main_cause)
+    recommended_action = _recommend_action_for_cause(main_cause, worst_rule=dq.get("worst_rule"))
 
     # TODO(Sprint 3 / data_quality): affected_rows should come from the specific failing GX
     # Expectation's `unexpected_count` in `data_quality/reports/`, not from `pipeline`'s

@@ -74,16 +74,41 @@ def _load_dq_report() -> dict[str, Any]:
 
 
 def _find_table(tables: list[dict[str, Any]], dataset: str) -> dict[str, Any] | None:
-    """Resolve a `dataset` argument (e.g. "crm_customer", "silver.crm_customer") to one entry
-    in the report's `tables` list."""
+    """Resolve a `dataset` argument (e.g. "crm_customer", "silver.crm_customer",
+    "silver.crm_customers") to one entry in the report's `tables` list.
+
+    Registered table names are singular ("crm_customer") throughout the real pipeline
+    (`lakehouse/run_pipeline.py::TABLE_ORDER`), but several docs/examples/golden-question fixtures
+    written before the naming was finalized use the plural "crm_customers" — a code-review pass
+    caught this breaking the Data Quality Agent's own canonical example end-to-end
+    (`diagnose_quality_drop("silver.crm_customers")` silently returning no scores). Rather than
+    hunt down and edit every doc reference, this resolver accepts the plural form defensively so
+    the mismatch can never silently break a caller again, whichever form they use.
+    """
     dataset_norm = dataset.strip().lower()
     # Accept a dotted qualifier ("silver.crm_customer") by matching on the last segment.
     short_name = dataset_norm.rsplit(".", 1)[-1]
+    candidates = {dataset_norm, short_name}
+    candidates |= {c[:-1] for c in candidates if c.endswith("s") and not c.endswith("ss")}
     for table in tables:
         name = str(table.get("table_name", "")).lower()
-        if name in (dataset_norm, short_name):
+        if name in candidates:
             return table
     return None
+
+
+def _worst_rule(rules: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """The lowest-scoring individual rule (not a dimension bucket average) — the specific,
+    real-description signal `agents/quality/root_cause_classifier.py` was actually trained on
+    (rule-level text like "Non-null emails must be well-formed"), as opposed to the coarse
+    "{dataset} {dimension}." string `data_quality_agent.py::_infer_main_cause` builds for display.
+    A code-review pass caught the two being conflated — the classifier was silently fed the coarse
+    string, far outside its training distribution. `get_data_quality()` now surfaces this
+    separately so a caller can classify on the real thing."""
+    scored = [r for r in rules if r.get("score") is not None]
+    if not scored:
+        return None
+    return min(scored, key=lambda r: r["score"])
 
 
 def _bucket_dimension_scores(rules: list[dict[str, Any]]) -> dict[str, float | None]:
@@ -205,6 +230,9 @@ def get_data_quality(dataset: str | None = None) -> dict[str, Any]:
                 "volume_anomaly": float | None,
             },
             "as_of": str | None,   # ISO-8601 timestamp of the report this was read from
+            "worst_rule": dict | None,  # the lowest-scoring individual rule — real rule.description
+                                          # text, type, column, score — see _worst_rule()'s docstring
+                                          # for why this exists separately from dimension_scores.
         }
     """
     report = _load_dq_report()
@@ -218,6 +246,7 @@ def get_data_quality(dataset: str | None = None) -> dict[str, Any]:
             "dq_score": report.get("overall_score"),
             "dimension_scores": _bucket_dimension_scores(all_rules),
             "as_of": as_of,
+            "worst_rule": _worst_rule(all_rules),
         }
 
     table = _find_table(tables, dataset)
@@ -227,6 +256,7 @@ def get_data_quality(dataset: str | None = None) -> dict[str, Any]:
             "dq_score": None,
             "dimension_scores": dict(_EMPTY_DIMENSION_SCORES),
             "as_of": as_of,
+            "worst_rule": None,
         }
 
     return {
@@ -234,6 +264,7 @@ def get_data_quality(dataset: str | None = None) -> dict[str, Any]:
         "dq_score": table.get("score"),
         "dimension_scores": _bucket_dimension_scores(table.get("rules", [])),
         "as_of": as_of,
+        "worst_rule": _worst_rule(table.get("rules", [])),
     }
 
 

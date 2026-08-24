@@ -36,11 +36,23 @@ class SurvivorshipDecision:
     rationale: str
 
 
+def _updated_at_sort_key(record: pd.Series) -> pd.Timestamp:
+    """`record.get("updated_at") or pd.Timestamp.min` looks right but is a real bug: `bool(pd.NaT)`
+    is `True` in pandas, so `NaT or pd.Timestamp.min` evaluates to `NaT` itself (the `or` never
+    falls through), not the intended fallback. A code-review pass caught this: `NaT` compares
+    `False` to everything, so sorting a list containing one silently produces an order that
+    depends on the record's original position rather than a correct chronological ranking — a
+    NaT-dated duplicate could beat a genuinely more-recent record for survivorship. Using
+    `pd.notna()` explicitly (never relying on Python truthiness for a pandas null) fixes it."""
+    val = record.get("updated_at")
+    return val if pd.notna(val) else pd.Timestamp.min
+
+
 def _most_recently_updated(records: list[pd.Series], value_field: str) -> tuple[object, str, list[str]]:
     """Pick the non-null `value_field` from the record with the latest
     `updated_at`; falls back to the next-most-recent if the latest record's
     value is null."""
-    ordered = sorted(records, key=lambda r: r.get("updated_at") or pd.Timestamp.min, reverse=True)
+    ordered = sorted(records, key=_updated_at_sort_key, reverse=True)
     for rec in ordered:
         val = rec.get(value_field)
         if pd.notna(val) and str(val).strip():
@@ -87,8 +99,16 @@ def survive_canonical_phone(records: list[pd.Series]) -> SurvivorshipDecision:
 
 
 def _is_abbreviated(name: str) -> bool:
-    """Heuristic for 'truncated/abbreviated variant', e.g. 'Caleb J. Silva'."""
-    return any(tok.endswith(".") and len(tok) <= 3 for tok in str(name).split())
+    """Heuristic for 'truncated/abbreviated variant', e.g. 'Caleb J. Silva' (the "J." token).
+
+    `len(tok) <= 3` was a real false-positive bug (code-review pass): it also matches legitimate
+    3-character name suffixes like "Jr." / "Sr." — so a complete name such as "Carlos Silva Jr."
+    got excluded from the survivorship candidate pool in favor of a genuinely truncated variant
+    like "Carlos S", the exact opposite of this rule's intent. A single-letter initial + period
+    ("J.", "A.") is 2 characters; tightening the threshold to `<= 2` catches real abbreviations
+    without matching common suffixes.
+    """
+    return any(tok.endswith(".") and len(tok) <= 2 for tok in str(name).split())
 
 
 def survive_canonical_name(records: list[pd.Series]) -> SurvivorshipDecision:

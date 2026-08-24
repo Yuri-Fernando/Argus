@@ -17,6 +17,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from agents.recommendation.approval_queue import RecommendationItem, enqueue_recommendation
+from ml.segmentation.kmeans_segments import SEGMENT_LOYAL, SEGMENT_VIP
 
 # Candidate actions this agent can recommend. Kept as a closed set (not free text) so that every
 # downstream executor only ever has to handle a known, reviewed list of consequential actions —
@@ -27,6 +28,12 @@ CANDIDATE_ACTIONS = (
     "escalate_to_support_supervisor",
     "no_action_recommended",
 )
+
+# CLV threshold (BRL) above which a customer counts as "high value" for the retention-discount
+# branch even outside the VIP/Loyal segments. Named here (was an inline `1000` literal — a
+# code-review pass flagged it alongside the SEGMENT_VIP/SEGMENT_LOYAL literals it sat next to)
+# so it's a single, greppable source of truth rather than a magic number.
+HIGH_VALUE_CLV_THRESHOLD = 1000
 
 
 @dataclass
@@ -97,13 +104,19 @@ def gather_customer_context(master_customer_id: str) -> CustomerContext:
     clv: float | None = None
     support_ticket_count_90d: int | None = None
     support_sentiment_avg: float | None = None
-    if not feat_match.empty and churn.churn_probability is not None:
+    if not feat_match.empty:
         row = feat_match.iloc[0]
-        monetary, frequency = float(row["monetary"]), float(row["frequency"])
-        avg_order_value = (monetary / frequency) if frequency else 0.0
-        clv = round(avg_order_value * frequency * (1 - churn.churn_probability), 2)
+        # Support/sentiment signals have no dependency on churn score — a code-review pass caught
+        # them previously being gated on `churn.churn_probability is not None` alongside CLV
+        # (which genuinely needs it), so a customer with real ticket/sentiment data but no
+        # registered churn model (e.g. `python -m ml.churn.train` never run) silently got these
+        # reported as unavailable even though the real values were sitting right there.
         support_ticket_count_90d = int(row["unresolved_count"])
         support_sentiment_avg = float(row["avg_sentiment_score"])
+        if churn.churn_probability is not None:
+            monetary, frequency = float(row["monetary"]), float(row["frequency"])
+            avg_order_value = (monetary / frequency) if frequency else 0.0
+            clv = round(avg_order_value * frequency * (1 - churn.churn_probability), 2)
 
     segment = seg_match.iloc[0]["segment"] if not seg_match.empty else None
 
@@ -166,7 +179,9 @@ def score_recommendation(context: CustomerContext) -> Recommendation:
     if context.support_sentiment_avg is not None:
         evidence.append(f"Average support sentiment: {context.support_sentiment_avg:+.2f}.")
 
-    high_value = context.segment in ("VIP", "Loyal") or (context.clv is not None and context.clv >= 1000)
+    high_value = context.segment in (SEGMENT_VIP, SEGMENT_LOYAL) or (
+        context.clv is not None and context.clv >= HIGH_VALUE_CLV_THRESHOLD
+    )
     negative_support_signal = (context.support_ticket_count_90d or 0) > 0 or (
         context.support_sentiment_avg is not None and context.support_sentiment_avg < 0
     )
@@ -182,7 +197,12 @@ def score_recommendation(context: CustomerContext) -> Recommendation:
     else:
         action, confidence, priority = "no_action_recommended", round(1 - probability, 2), "low"
 
-    assert action in CANDIDATE_ACTIONS, f"{action!r} not in CANDIDATE_ACTIONS"
+    # A real check, not `assert` — code-review pass caught that `assert` is stripped entirely
+    # under `python -O`/`PYTHONOPTIMIZE`, silently losing the one guarantee that keeps `action`
+    # inside the closed, auditable CANDIDATE_ACTIONS set (see this module's docstring on why that
+    # closure matters for the human-in-the-loop boundary).
+    if action not in CANDIDATE_ACTIONS:
+        raise ValueError(f"{action!r} not in CANDIDATE_ACTIONS — this is a bug in score_recommendation's branches.")
 
     return Recommendation(
         master_customer_id=context.master_customer_id,

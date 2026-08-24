@@ -562,6 +562,60 @@ Commit final: `c0db5ec` (`git log --oneline -3` a partir do baseline `aca0f8d`).
 (`pyproject.toml` + `CHANGELOG.md`). Todos os 9 work-packages + integração final + suíte de testes
 + versionamento estão completos. Ver o resumo enviado ao usuário para o guia "como rodar tudo".
 
+## 2026-08-24 — retomada pós limite de sessão, fechando pass de code-review
+
+Sessão anterior bateu o limite com 8 arquivos alterados no working tree e não commitados — todos
+correções reais de uma passagem de code-review, não trabalho pela metade. Revisei cada diff,
+rodei `ast.parse` em `mcp/tools/quality.py` (o mais extenso) e a suíte completa antes de commitar.
+Resultado: **7 passed, 1 skipped** (igual ao baseline — nenhuma regressão). Bugs corrigidos:
+
+- **`mdm/survivorship/rules.py`**: `record.get("updated_at") or pd.Timestamp.min` era bug real —
+  `bool(pd.NaT)` é `True` em pandas, então o `or` nunca caía no fallback; `NaT` num registro
+  duplicado podia vencer indevidamente a sobrevivência por "mais recente". Corrigido com
+  `pd.notna()` explícito. Também corrigido `_is_abbreviated`: `len(tok) <= 3` batia em sufixos
+  legítimos tipo "Jr."/"Sr." como se fossem abreviação, excluindo nomes completos do pool de
+  sobrevivência — apertado pra `<= 2`.
+- **`api/services/customer_service.py::get_churn_score`**: faltava o mesmo `fillna(365)` que
+  `local_runner.py` aplica em `recency_days` — sem isso, `int(float("nan"))` derrubava o endpoint
+  com 500 exatamente para os clientes sem atividade (os que mais importam pro churn score).
+- **`agents/recommendation/recommendation_agent.py`**: sinais de suporte/sentimento estavam
+  gateados por `churn.churn_probability is not None` junto com CLV (que precisa mesmo disso) —
+  cliente com ticket real mas sem modelo de churn registrado perdia dado real por engano. `assert`
+  de guarda de `CANDIDATE_ACTIONS` trocado por `raise ValueError` (assert some com `python -O`).
+  Literal `1000` de CLV promovido a `HIGH_VALUE_CLV_THRESHOLD` nomeado.
+- **`mcp/tools/quality.py`**: `_find_table` agora aceita forma plural ("crm_customers") além da
+  singular canônica, já que docs/fixtures anteriores usam a forma errada. Novo `_worst_rule()` +
+  campo `worst_rule` em `get_data_quality()` — expõe a regra individual de pior score (texto real,
+  ex. "Non-null emails must be well-formed") separado do bucket agregado por dimensão.
+- **`agents/quality/data_quality_agent.py`**: `_recommend_action_for_cause` agora recebe
+  `worst_rule` e classifica com a descrição real da regra em vez do string agregado
+  `"{dataset} {dimension}."`, que era muito mais grosso que qualquer coisa no dataset de treino do
+  classificador (`root_cause_classifier.py`) — dimensão "completeness" mapeia pra várias regras
+  diferentes, não é alvo de classificação bem definido. Falha do classificador agora loga
+  (`logger.exception`) em vez de engolir silenciosamente.
+- **`ml/explainability/shap_analysis.py`**: retreinava os 3 candidatos (LogReg + RandomForest 200
+  árvores + Gradient Boosting) do zero só pra explicar o campeão já treinado e registrado —
+  trocado por carregar `models:/{REGISTERED_MODEL_NAME}/latest` do MLflow Registry, igual
+  `mcp/tools/ml.py::_champion_model()` já fazia (mas sem importar de `mcp/tools/`, que é a camada
+  adapter — dependência só vai no sentido contrário, ADR-014).
+- **`rag/local_stack/document_parser.py`**: `page_number` estava hardcoded pra `None` em todo
+  lugar mesmo com o campo existindo pra citação futura ("ver página 4"); Docling expõe via
+  `item.prov[0].page_no` — agora capturado com `try/except (AttributeError, IndexError)` estreito
+  (prov pode legitimamente faltar em itens estruturais). Falha silenciosa de
+  `export_to_markdown` numa tabela agora loga um warning em vez de engolir.
+- **`tests/data/test_gold_snowflake_parity.py`**: correção de um overclaim no próprio docstring —
+  configurar as 3 credenciais não faz o teste "rodar de verdade", só troca *por que* ele é pulado
+  (de skip incondicional pra skipif por credencial); o corpo da função ainda é o stub do Sprint 7
+  que sempre pula sozinho. Dois gates distintos, documentados sem confundir um pelo outro.
+
+Commit: ver `git log --oneline -1` logo após este texto ser escrito — mensagem
+`fix: code-review pass — DQ classifier input, survivorship NaT/abbreviation bugs, churn-score
+NaN fix, SHAP retrain removal, doc parser page numbers`.
+
+Sem pendências novas além das já listadas em "Pendências que só você pode resolver" acima
+(dataset Olist real, API keys de LLM, Power BI/Databricks/Terraform apply real) — nada disso
+mudou nesta sessão.
+
 ## Como continuar esta sessão se o contexto cair
 
 1. Leia este arquivo do topo — cada seção "✅ CONCLUÍDO" já está validada e não precisa refazer.

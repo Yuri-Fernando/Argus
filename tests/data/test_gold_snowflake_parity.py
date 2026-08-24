@@ -59,15 +59,22 @@ local, runnable implementation — this is the one test in the suite that
 genuinely cannot be satisfied locally, because "Databricks Gold" and
 "Snowflake CORE" as two separate synced systems don't both exist in this
 environment (there's one local DuckDB stand-in — `snowflake/local_runner.py`
-— not two systems with a sync job between them). The skip condition below was
-tightened from an unconditional skip to a credential check, matching the
-graceful-degradation behavior this docstring already specified, so that the
-day real `DATABRICKS_HOST`/`DATABRICKS_TOKEN`/`SNOWFLAKE_ACCOUNT` credentials
-are configured (BUILD_LOG.md's "Pendências que só você pode resolver"), this
-test starts actually running instead of needing a code change to un-skip it.
-The test body itself is still the Sprint 7 stub — implementing the real
-Delta-write + Task-poll + field-by-field diff described above requires those
-live credentials to develop against, which is exactly what's missing here.
+— not two systems with a sync job between them). The `skipif` marker below is
+conditioned on `DATABRICKS_HOST`/`DATABRICKS_TOKEN`/`SNOWFLAKE_ACCOUNT` rather
+than an unconditional skip, so it correctly reports *why* the test is skipped
+in this environment specifically (credentials missing) instead of a generic
+"not implemented."
+
+Correction (a code-review pass caught this overclaim in an earlier version of
+this paragraph): configuring those three credentials does NOT make this test
+"start actually running" in any meaningful sense — the function body below is
+still the unimplemented Sprint 7 stub and calls `pytest.skip()` itself
+unconditionally, so even with credentials present the test collects, runs,
+and reports skipped, asserting nothing. Two separate gates exist here: the
+`skipif` marker (now credential-conditioned) and the stub body (still always
+skips). Implementing the real Delta-write + Task-poll + field-by-field diff
+described above — which needs live credentials to develop against, exactly
+what's missing here — is the only thing that removes the second gate.
 """
 import os
 

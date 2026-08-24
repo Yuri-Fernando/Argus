@@ -12,9 +12,12 @@ future extension adds.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
+
+logger = logging.getLogger(__name__)
 
 ChunkKind = Literal["paragraph", "table", "heading", "list_item"]
 
@@ -88,6 +91,7 @@ class DoclingDocumentParser:
         heading = "Introduction"
         body_parts: list[str] = []
         chunk_index = 0
+        current_page: int | None = None
 
         def _flush(kind: ChunkKind = "paragraph") -> None:
             nonlocal chunk_index, body_parts
@@ -99,7 +103,7 @@ class DoclingDocumentParser:
                         text=f"{heading}: {text}" if heading else text,
                         kind=kind,
                         source_path=str(source_path),
-                        page_number=None,
+                        page_number=current_page,
                         metadata={"section": heading, "doc_type": stem},
                     )
                 )
@@ -109,6 +113,16 @@ class DoclingDocumentParser:
         for item, _level in doc.iterate_items():
             label = getattr(item, "label", None)
             label_value = getattr(label, "value", label)
+            # Docling exposes the source page via `item.prov[0].page_no` — a code-review pass
+            # caught this being hardcoded to `page_number=None` everywhere below even though the
+            # DocumentChunk field and this module's docstring both intend it to carry real
+            # provenance (e.g. for a future "see page 4 of loyalty_policy.pdf" RAG citation).
+            # `prov` can legitimately be empty for structural items (e.g. a synthesized heading),
+            # so this stays a narrow, specific except rather than swallowing all errors.
+            try:
+                current_page = item.prov[0].page_no
+            except (AttributeError, IndexError):
+                pass
 
             if label_value in ("title", "section_header"):
                 _flush()
@@ -120,6 +134,11 @@ class DoclingDocumentParser:
                 try:
                     table_text = item.export_to_markdown(doc)
                 except Exception:
+                    logger.warning(
+                        "Docling export_to_markdown failed for a table in %s — falling back to "
+                        "plain item.text (loses row/column structure for this chunk).",
+                        source_path, exc_info=True,
+                    )
                     table_text = item.text or ""
                 raw_chunks.append(
                     DocumentChunk(
@@ -127,7 +146,7 @@ class DoclingDocumentParser:
                         text=f"{heading}: {table_text}",
                         kind="table",
                         source_path=str(source_path),
-                        page_number=None,
+                        page_number=current_page,
                         metadata={"section": heading, "doc_type": stem},
                     )
                 )
