@@ -368,8 +368,8 @@ Documented, not duplicated — see [`cloud/architecture-comparison.md`](cloud/ar
 
 ```
 enterprise-customer-intelligence-platform/
-├── README.md · README-pt.md · ARCHITECTURE.md · ROADMAP.md · CHANGELOG.md
-├── DATA_MODEL.md · IMPROVEMENTS_AND_RESEARCH.md · LICENSE
+├── README.md (PT-BR) · README-en.md (EN) · ARCHITECTURE.md · ROADMAP.md · CHANGELOG.md
+├── DATA_MODEL.md · LICENSE
 ├── architecture/            # diagrams (drawio/png), this file's source of truth for visuals
 ├── data/                    # raw/, synthetic/{crm,marketing,support,web,finance}, documents/
 ├── ingestion/                # api/, olist/, files/, streaming/

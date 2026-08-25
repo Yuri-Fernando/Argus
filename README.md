@@ -1,142 +1,282 @@
-# Enterprise Customer Intelligence Platform
+# 🧠 Enterprise Customer Intelligence Platform
 
-**Lakehouse · Data Warehouse · MDM · Machine Learning · Generative AI · MCP · Governance**
+### Python · Databricks · Snowflake · dbt · MLflow · LangGraph · Agno · MCP · RAG · Kubernetes · Terraform
 
-> A production-oriented, cloud-native Data & AI platform that turns fragmented, duplicated, low-trust customer data scattered across CRM, e-commerce, marketing, support and payment systems into a single governed **Golden Record**, exposes it through **governed metrics** (dbt/MetricFlow, Unity Catalog Metric Views, Snowflake Semantic Views), and lets both humans (Power BI) and AI agents (Snowflake Cortex, Databricks Genie, custom MCP tools, Claude) query, explain and act on it — with a human always in the loop for consequential decisions.
+## Status
 
-[![Status](https://img.shields.io/badge/status-in%20development-yellow)]()
-[![License](https://img.shields.io/badge/license-MIT-blue)]()
-[![Docs](https://img.shields.io/badge/docs-EN%20%2F%20PT--BR-informational)]()
+🟡 **Em desenvolvimento — pipeline completo funcional localmente, com deploy real em nuvem (Azure/Databricks/Snowflake/Power BI) ainda pendente**
 
-🇧🇷 Leia em português: [README-pt.md](README-pt.md)
+Plataforma full-stack de Dados & IA para **Customer Intelligence corporativo**, construída para cobrir de ponta a ponta as competências mais pedidas em vagas reais de Engenharia de Dados, MDM/Governança, MLOps e Engenharia de IA (LLMs, agentes, RAG, MCP) — inspirada em requisitos de vagas reais do mercado, mas **não representa nenhuma empresa real**. É uma plataforma simulada, construída inteiramente como peça de portfólio.
+
+🇺🇸 Read in English: [README-en.md](README-en.md)
 
 ---
 
-## 1. The problem
+# Sobre o Projeto
 
-A mid-size Brazilian e-commerce company has customer data spread across independent systems — online store, CRM, marketing automation, support desk, payments — each with its own idea of who a customer is. That produces:
+Uma empresa de e-commerce de médio porte tem dados de clientes espalhados por sistemas independentes — loja online, CRM, marketing, atendimento, pagamentos — cada um com sua própria visão de quem é o cliente. Isso gera cadastros duplicados, métricas inconsistentes ("Receita" significa uma coisa em cada dashboard), nenhuma forma confiável de detectar churn/fraude/clientes VIP, agentes de IA respondendo sem embasamento confiável, e dashboards manuais que nunca batem entre si.
 
-- Duplicated customer records across systems
-- Inconsistent metrics ("Revenue" means something different in every dashboard)
-- No reliable way to detect churn, fraud clusters or VIP customers
-- LLMs/agents answering questions with no trustworthy grounding
-- Manual, ad-hoc dashboards that never agree with each other
+Este projeto é a resposta ponta a ponta a esse problema: uma arquitetura coerente onde **cada tecnologia existe para resolver um problema real e nomeado** — não para inflar uma lista de skills. Essa disciplina ("Article I — No Invention") é uma regra formal seguida em toda a base de código, documentada em cada decisão de arquitetura (ver `docs/decisions/`).
 
-This platform is the answer: a coherent, end-to-end architecture where **every technology exists to solve one specific, real problem** — not to pad a resume.
+---
 
-## 2. Architecture at a glance
+# 🎯 Objetivo
 
-```mermaid
-flowchart TD
-    SRC[Data Sources\nOlist + synthetic CRM/Marketing/Support/Web/Finance + Documents] --> ADF[Azure Data Factory / Event Hubs]
-    ADF --> ADLS[(Azure Data Lake Storage Gen2\nlanding / raw / bronze / silver / gold)]
-    ADLS --> DBX{{Azure Databricks Lakehouse\nDelta Lake · PySpark · Unity Catalog · MLflow}}
-    DBX --> DQ[Data Quality\nGX Core + native monitoring]
-    DBX --> MDM[MDM / Entity Resolution\nGolden Record]
-    DQ --> GOLD[(Gold Layer\nDimensional Model)]
-    MDM --> GOLD
-    GOLD --> ML[ML: Churn · Segmentation · Matching\nMLflow + SHAP]
-    GOLD --> SF[(Snowflake\nEnterprise DWH)]
-    SF --> SEM[Semantic Layer\ndbt/MetricFlow · UC Metric Views · Snowflake Semantic Views]
-    SEM --> PBI[Power BI]
-    SEM --> CORTEX[Snowflake Cortex\nAnalyst · Search · Agents · AI Functions]
-    PBI --> MCP{{MCP / Agent Layer}}
-    CORTEX --> MCP
-    DBX -. Genie MCP .-> MCP
-    MCP --> AGENTS[Agentic AI\nCustomer · Data Quality · Recommendation · Monitoring]
-    AGENTS --> HITL[Human-in-the-loop approval]
-    subgraph GOV[Governance & Observability]
-      UC[Unity Catalog] --- PURVIEW[Microsoft Purview]
-      OTEL[OpenTelemetry] --- PROM[Prometheus/Grafana] --- FINOPS[FinOps]
-    end
-    DBX -.-> GOV
-    SF -.-> GOV
+- Construir um **Golden Record** único e governado de cliente a partir de fontes fragmentadas e propositalmente sujas (MDM/Entity Resolution);
+- Garantir **qualidade de dado mensurável e rastreável** (Data Quality Engine com quarentena real);
+- Expor **métricas governadas** através de três implementações de semantic layer (dbt/MetricFlow, Databricks Unity Catalog Metric Views, Snowflake Semantic Views) — uma métrica, uma definição, três motores;
+- Treinar e explicar modelos de **Machine Learning** (churn, segmentação, recomendação por reforço) com rastreabilidade completa via MLflow;
+- Construir **agentes de IA** (LangGraph + Agno) que consultam esse dado governado via **MCP (Model Context Protocol)**, sempre com humano no loop para decisões consequentes;
+- Demonstrar **RAG** de ponta a ponta, tanto na versão cloud (Snowflake Cortex) quanto local-first (Crawl4AI + Docling + ChromaDB/FAISS), incluindo um pipeline real de **VLM** (Vision-Language Model);
+- Cobrir a disciplina de engenharia que sustenta tudo isso: IaC (Terraform + Kubernetes), CI/CD, observabilidade, governança/LGPD e segurança de IA generativa.
+
+---
+
+# 🏗️ Arquitetura
+
+```text
+Fontes de dados (Olist real + CRM/Marketing/Suporte/Web/Financeiro/Fiscal sintéticos + documentos)
+   │
+   ▼
+Ingestão (Azure Data Factory / Event Hubs)
+   │
+   ▼
+Azure Data Lake Storage Gen2  (landing → raw → bronze → silver → gold)
+   │
+   ▼
+Azure Databricks Lakehouse  (Delta Lake · PySpark · Unity Catalog · MLflow)
+   │
+   ├──► Data Quality (engine próprio, 10 tipos de regra + quarentena real)
+   ├──► MDM / Entity Resolution → Golden Record
+   └──► Camada Gold (modelo dimensional)
+              │
+              ▼
+        Snowflake (Enterprise DWH)
+              │
+   ┌──────────┴──────────┐
+   ▼                      ▼
+Semantic Layer         Snowflake Cortex
+(dbt/MetricFlow ·      (Analyst · Search ·
+UC Metric Views ·       Agents · AI Functions)
+Snowflake Semantic
+Views)
+   │                      │
+   ▼                      ▼
+Power BI              Camada MCP / Agentic AI
+                       (Customer · Data Quality ·
+                        Recommendation · Monitoring ·
+                        Knowledge Ingestion · Fiscal)
+                              │
+                              ▼
+                     Aprovação humana obrigatória
+                     para toda ação consequente
 ```
 
-Full layer-by-layer breakdown, diagrams and rationale: **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+Diagrama completo (Mermaid), detalhamento camada-a-camada e o racional de cada ferramenta: **[ARCHITECTURE.md](ARCHITECTURE.md)**.
 
-## 3. Why Databricks *and* Snowflake?
+## Por que Databricks *e* Snowflake?
 
-They are not redundant — they own different responsibilities:
+Não são redundantes — cada um tem uma responsabilidade clara:
 
-| Layer | Owns |
+| Camada | Responsabilidade |
 |---|---|
-| **Azure Data Lake (ADLS Gen2)** | Raw, cheap, durable storage. Landing zone. |
-| **Azure Databricks** | Lakehouse: ingestion, ETL/ELT, PySpark, Delta Lake, Bronze/Silver/Gold, MDM, feature engineering, ML training, MLflow. |
-| **Snowflake** | Enterprise Data Warehouse: governed dimensional model, Semantic Views, Cortex (Analyst/Search/Agents/AI Functions) as the **AI serving layer**. |
-| **Power BI** | Traditional enterprise BI for humans. |
-| **MCP + Claude** | Agentic interface — the same governed data, queried in natural language by AI agents instead of dashboards. |
+| **Azure Data Lake (ADLS Gen2)** | Armazenamento bruto, barato e durável — landing zone |
+| **Azure Databricks** | Lakehouse: ingestão, ETL/ELT, PySpark, Delta Lake, Bronze/Silver/Gold, MDM, feature engineering, treino de ML, MLflow |
+| **Snowflake** | Enterprise Data Warehouse: modelo dimensional governado, Semantic Views, Cortex (Analyst/Search/Agents/AI Functions) como camada de **serving de IA** |
+| **Power BI** | BI corporativo tradicional para humanos |
+| **MCP + agentes** | Interface agentic — o mesmo dado governado, consultado em linguagem natural por IA em vez de dashboards |
 
-See [`docs/decisions/ADR-002-lakehouse-vs-warehouse.md`](docs/decisions/ADR-002-lakehouse-vs-warehouse.md) for the full trade-off analysis.
+Detalhamento completo do trade-off: [`docs/decisions/ADR-002-lakehouse-vs-warehouse.md`](docs/decisions/ADR-002-lakehouse-vs-warehouse.md).
 
-## 4. Tech stack
+---
 
-`Python` `PySpark` `Azure Data Factory` `Azure Databricks` `Delta Lake` `Unity Catalog` `MLflow` `dbt / MetricFlow` `Great Expectations (GX Core)` `Snowflake` `Snowflake Cortex (Analyst/Search/Agents/AI Functions)` `Power BI` `LangGraph` `Agno` `Azure OpenAI` `LLM Gateway (OpenAI/Gemini/DeepSeek)` `Crawl4AI` `Docling` `ChromaDB` `FAISS` `MCP (Model Context Protocol)` `FastAPI` `Terraform` `Docker` `GitHub Actions` `OpenTelemetry` `Prometheus` `Grafana` `NetworkX` — full rationale per tool in [ARCHITECTURE.md §3](ARCHITECTURE.md#3-tech-stack-rationale).
+# ⚙️ Funcionamento
 
-## 5. Repository structure
+1. **Ingestão** — dataset real (Olist, ~100 mil pedidos) + 6 geradores sintéticos determinísticos (CRM, Marketing, Suporte, Web Events, Financeiro, **Fiscal/Tributário**), cada um injetando problemas de dado propositais e nomeados (duplicatas, e-mails ausentes, telefones malformados, NCM/CFOP/CST inconsistentes na Reforma Tributária) para o pipeline de DQ/MDM resolver de verdade.
+2. **Bronze → Silver** — padronização, cast de tipos, deduplicação estrutural.
+3. **Data Quality** — engine próprio em pandas (10 tipos de regra fechados: `not_null`, `unique`, `valid_email`, `valid_phone`, `valid_date`, `referential_integrity`, `range_check`, `duplicate_rate`, `schema_check`, `freshness`), quarentena real de linhas que falham regra `hard`, relatório JSON/Markdown.
+4. **MDM / Entity Resolution** — matching determinístico + fuzzy (Jaro-Winkler) + ML, sobrevivência de campo (survivorship) com trilha de auditoria, benchmark contra ground truth conhecido.
+5. **Gold / Semantic Layer** — modelo dimensional consumido por três implementações de semantic layer em paralelo, com teste automatizado de paridade de métrica entre elas.
+6. **ML** — features RFM/engajamento/suporte → churn (comparação de 3 modelos, campeão registrado no MLflow), segmentação (KMeans), próxima-melhor-ação (bandit epsilon-greedy), explicabilidade real via SHAP.
+7. **Agentes + MCP** — 6 agentes (orquestrador conversacional, qualidade de dado, recomendação, monitoramento, ingestão de conhecimento, causa-raiz fiscal) consultam o dado governado por 7 grupos de ferramentas MCP; toda ação consequente passa por uma fila de aprovação humana.
+8. **RAG** — duas implementações lado a lado (Snowflake Cortex Search na nuvem; Crawl4AI + Docling + ChromaDB/FAISS localmente), incluindo um pipeline real de VLM para documentos escaneados.
+9. **Observabilidade e governança** — OpenTelemetry, Prometheus/Grafana, Unity Catalog, guardrails de IA generativa, conformidade LGPD.
 
-See the full annotated tree in [ARCHITECTURE.md §11](ARCHITECTURE.md#11-repository-structure). Every top-level module has its own `README.md` explaining its purpose and which sprint builds it.
+---
 
-## 6. Roadmap
+# 🧠 Inteligência / Modelagem
 
-Built in 16 sprints across 8 phases (Foundation → Data Engineering → MDM → Warehouse/BI → ML → GenAI/RAG → Agentic/MCP → Enterprise hardening). Full breakdown with epics, stories and acceptance criteria: **[ROADMAP.md](ROADMAP.md)**.
+| Categoria | O que foi implementado |
+|---|---|
+| **ML supervisionado** | Comparação de 3 modelos de churn (Logistic Regression, Random Forest, Gradient Boosting) — campeão real: **Logistic Regression, ROC-AUC 0,882**, registrado no MLflow Model Registry |
+| **ML não supervisionado** | Segmentação KMeans, 5 segmentos balanceados (6%–28,4% de distribuição, sem colapso) |
+| **ML por reforço** | Bandit epsilon-greedy para próxima-melhor-ação, gated pela mesma fila de aprovação humana das recomendações baseadas em regra |
+| **Explicabilidade** | SHAP real (não simulado) — carrega o modelo campeão já registrado, nunca retreina só para explicar |
+| **IA generativa / Agentes** | Orquestrador conversacional (LangGraph, máquina de estados com gate de aprovação humana) + Agente de Ingestão de Conhecimento (Agno, seleção autônoma de ferramenta) |
+| **MCP (Model Context Protocol)** | Servidor customizado com 12 ferramentas reais, camada de registro fina sem lógica de negócio própria |
+| **A2A (Agent2Agent)** | Protocolo padronizado de comunicação entre agentes (`AgentCard` de descoberta + endpoint JSON-RPC) |
+| **LLM Gateway multi-provider** | Roteador único (`complete(prompt, task_type)`) para Azure OpenAI / OpenAI / DeepSeek (mesmo cliente HTTP compatível) / Gemini / AWS Bedrock — registro de custo/latência por tarefa, avaliado, não "vibes-based" |
+| **SLM (Small Language Model)** | Classificador local TF-IDF + Logistic Regression para causa-raiz de problemas de qualidade de dado — zero custo de LLM, zero round-trip de rede, **75–80% de acurácia real** |
+| **VLM (Vision-Language Model)** | Pipeline real (Docling + IBM Granite-Docling-258M) para documentos escaneados — testado ao vivo, com resultado documentado honestamente (ver seção abaixo) |
+| **RAG** | Duas implementações completas: Snowflake Cortex Search (nuvem) e Crawl4AI + Docling + ChromaDB/FAISS (local-first, zero custo) |
 
-## 7. Production readiness
+---
 
-| Component | Status | Notes |
-|---|---|---|
-| Data Lake (ADLS) | Production-like | |
-| Databricks Lakehouse (Delta/PySpark/UC) | Production-like | |
-| Data Quality (GX Core) | Production-like | |
-| MDM / Golden Record | Prototype → Production-like | ML-based matching validated with a labeled benchmark |
-| ML (churn/segmentation) | Production-like | Tracked in MLflow Model Registry |
-| Snowflake DWH + Semantic Views | Production-like | Semantic Views SQL querying reached GA Mar/2026 |
-| Snowflake Cortex Analyst/Agents | Production-like | GA since Nov/2025 (Agents) and evaluated with a golden-question harness |
-| Power BI | Production-like | |
-| Power BI MCP | **Experimental** | Still Public Preview as of mid-2026 — see [IMPROVEMENTS_AND_RESEARCH.md](IMPROVEMENTS_AND_RESEARCH.md) |
-| Databricks Managed MCP (Genie) | Production-like | Reached GA in early 2026 |
-| Terraform (Azure/Databricks/Snowflake) | Production-like | |
-| Agents (LangGraph, custom MCP) | Prototype → Production-like | Human-in-the-loop required for all write actions |
-| Governance (Unity Catalog/Purview/LGPD) | Production-like | |
+# 💼 Extensão Fiscal / Tributária (Reforma Tributária)
 
-Full detail and what "production-like" means here (this is a portfolio project, not a bank's production system — see the honesty note): [ARCHITECTURE.md §10](ARCHITECTURE.md#10-production-readiness--honesty-note).
+Módulo dedicado simulando itens de nota fiscal sob a Reforma Tributária brasileira (IBS/CBS/Imposto Seletivo) — 100% sintético, com discrepâncias injetadas de propósito (NCM inválido, combinação CST/CFOP inconsistente, alíquota fora da faixa), um agente próprio de diagnóstico de causa-raiz, e o caso de uso real que fecha o pipeline de VLM: documentos fiscais **escaneados** gerados sinteticamente e processados pelo pipeline de visão-linguagem.
 
-## 8. Datasets
+**Achado de engenharia honesto, documentado sem retoque**: o pipeline VLM roda de ponta a ponta sem erro (baixa e carrega um modelo real, sem exigir credencial paga), mas produziu saída de baixa qualidade num teste real — enquanto o OCR tradicional do mesmo framework leu o mesmo documento quase perfeitamente. Um modelo VLM pequeno de propósito geral perdendo para OCR tradicional num documento de texto plano é uma conclusão de engenharia real, registrada em [`docs/decisions/ADR-015-fiscal-tax-reform-extension.md`](docs/decisions/ADR-015-fiscal-tax-reform-extension.md) em vez de escondida atrás de um exemplo escolhido a dedo.
 
-- **Olist Brazilian E-Commerce Public Dataset** (real, anonymized, ~100k orders) — core transactional data.
-- **Synthetic CRM / Marketing / Support / Web Events / Finance** — generated with reproducible seeds, deliberately containing duplicates, missing fields and inconsistencies to give the MDM/DQ pipeline something real to solve.
-- **Synthetic corporate documents** (refund/delivery/loyalty/privacy policies) — feed RAG / Cortex Search.
+---
 
-Full schema and generation strategy: [DATA_MODEL.md](DATA_MODEL.md).
+# 🛠️ Tecnologias
 
-## 9. Getting started (local dev)
+| Categoria | Stack |
+|---|---|
+| Linguagem | Python 3.10+ |
+| Ingestão / Lake | Azure Data Factory, Azure Data Lake Storage Gen2, Azure Databricks, Delta Lake, PySpark, Unity Catalog |
+| Data Quality | Engine próprio (pandas), Great Expectations (GX Core) documentado como alternativa |
+| MDM | Jellyfish (Jaro-Winkler), scikit-learn, NetworkX (grafo de relacionamento) |
+| Warehouse / Semantic Layer | Snowflake, dbt / MetricFlow, Unity Catalog Metric Views |
+| BI | Power BI, Power BI MCP |
+| ML / MLOps | scikit-learn, XGBoost, SHAP, MLflow |
+| GenAI / Agentes | LangGraph, Agno, Azure OpenAI, OpenAI, Gemini, DeepSeek, AWS Bedrock, MCP, A2A |
+| RAG local | Crawl4AI, Docling (texto + VLM), ChromaDB, FAISS |
+| API | FastAPI, GraphQL |
+| Infraestrutura | Terraform (Azure/Databricks/Snowflake), Kubernetes, Docker, GitHub Actions |
+| Observabilidade | OpenTelemetry, Prometheus, Grafana |
+| Governança | Unity Catalog, Microsoft Purview, LGPD |
+
+Racional completo de cada escolha de ferramenta: [ARCHITECTURE.md §3](ARCHITECTURE.md#3-tech-stack-rationale).
+
+---
+
+# 📊 Resultados
+
+Métricas reais, medidas em execução local contra os dados sintéticos + Olist — nenhum número estimado ou "de vitrine":
+
+- **Qualidade de dado**: score geral da plataforma **99,83%**; domínio fiscal isolado **99,64%**, com 10/10 discrepâncias injetadas corretamente quarentenadas.
+- **MDM / Entity Resolution**: **Recall 1,0000, Precision 0,9687, F1 0,9841** contra benchmark com ground truth conhecido.
+- **Churn (ML)**: **ROC-AUC 0,882** (Logistic Regression, campeão entre 3 modelos comparados).
+- **Segmentação**: 5 segmentos balanceados, sem colapso.
+- **Classificador de causa-raiz (DQ)**: 75% acurácia held-out, F1 macro 0,739.
+- **Classificador de discrepância fiscal**: 80% acurácia held-out, F1 macro 0,822.
+- **Testes automatizados**: suíte de dados/integração passando de ponta a ponta (pirâmide unit/integration/data/ML/contract).
+- **Terraform**: 20/20 módulos validados (`terraform validate`) nos 3 ambientes (dev/staging/prod).
+
+---
+
+# 🎯 Aplicações
+
+Este projeto cobre, na prática, os requisitos técnicos mais recorrentes em vagas reais de:
+
+- Engenharia de Dados (ETL/ELT, Lakehouse, Data Warehouse, modelagem dimensional);
+- Governança de Dados / MDM (Golden Record, lineage, RBAC, LGPD);
+- Data Science / MLOps (feature engineering, MLflow, SHAP, ciclo de vida de modelo);
+- Engenharia de IA / GenAI (LLMs multi-provider, agentes autônomos, RAG, MCP, A2A, VLM, human-in-the-loop);
+- Contextos regulados/fiscais (a extensão de Reforma Tributária demonstra a mesma disciplina de rastreabilidade e governança que uma vaga fiscal/contábil real avalia).
+
+---
+
+# 🔭 Visão de Longo Prazo
+
+```text
+Especificação (ARCHITECTURE.md)
+   │
+   ▼
+Implementação local (dados sintéticos + Olist, tudo real e testado)
+   │
+   ▼
+Deploy em nuvem real (Terraform apply · Databricks · Snowflake · Power BI)
+   │
+   ▼
+Demo hospedada pública (dashboard Streamlit/FastAPI apontando pra um snapshot Gold)
+```
+
+---
+
+# 🗺️ Roadmap
+
+Construído em 16 sprints ao longo de 8 fases (Fundação → Engenharia de Dados → MDM → Warehouse/BI → ML → GenAI/RAG → Agentic/MCP → Hardening Enterprise), com épicos, stories e critérios de aceite. Detalhamento completo: **[ROADMAP.md](ROADMAP.md)**.
+
+## Próximos Passos
+
+- [ ] `terraform apply` real contra contas Azure/Databricks/Snowflake (hoje só `validate`/`plan` — decisão deliberada para não gerar custo de nuvem sem aprovação explícita);
+- [ ] Configurar chaves de LLM reais (`AZURE_OPENAI_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` / `DEEPSEEK_API_KEY`) para os agentes gerarem raciocínio de LLM de verdade;
+- [ ] Baixar o dataset Olist real via `make download-olist` (login Kaggle interativo — a plataforma já degrada graciosamente sem ele);
+- [ ] Conectar Power BI e Databricks Genie reais (artefatos — semantic model, DAX, DDL — já prontos);
+- [ ] Demo hospedada pública + vídeo curto de walkthrough no README.
+
+---
+
+# 🚀 Como rodar localmente
 
 ```bash
-git clone <repo-url> && cd enterprise-customer-intelligence-platform
+git clone https://github.com/Yuri-Fernando/enterprise-customer-intelligence-platform.git
+cd enterprise-customer-intelligence-platform
 cp .env.example .env
 make up        # docker-compose: MinIO, Postgres, MLflow, GX
-make seed       # generates synthetic datasets
-make test       # unit + data tests
+make seed      # gera os datasets sintéticos + tenta baixar o Olist
+make test      # testes de unidade + dados
 ```
 
-Cloud components (Azure, Databricks, Snowflake, Power BI, Cortex) are opt-in via `terraform/environments/dev` and are **not required** to explore the local pipeline. See [docs/deployment.md](docs/deployment.md).
+Os componentes de nuvem (Azure, Databricks, Snowflake, Power BI, Cortex) são opt-in via `terraform/environments/dev` e **não são necessários** para explorar o pipeline local. Guia completo: [docs/deployment.md](docs/deployment.md).
 
-## 10. Documentation index
+---
 
-| Doc | Purpose |
+# 📂 Estrutura do repositório
+
+```text
+agents/            6 agentes (orquestrador, qualidade, recomendação, monitoramento,
+                    ingestão de conhecimento, causa-raiz fiscal) + MCP/A2A + LLM Gateway
+api/                FastAPI + GraphQL
+data/               Geradores sintéticos + documentos (RAG)
+data_quality/       Engine de regras + quarentena
+dashboard/          Dashboard Streamlit
+dbt/                Semantic layer (dbt/MetricFlow)
+docs/decisions/     ADRs — Architecture Decision Records
+governance/         LGPD, segurança de IA, políticas
+k8s/                Manifests Kubernetes
+lakehouse/          Pipeline Bronze → Silver
+mcp/                Servidor MCP + ferramentas
+mdm/                Entity Resolution + Golden Record
+ml/                 Features, churn, segmentação, reforço, explicabilidade
+notebooks/          9 notebooks executáveis, um por camada
+powerbi/            Semantic model, DAX, dashboard
+rag/                RAG cloud (Cortex) + local-first (Crawl4AI/Docling/Chroma/FAISS)
+snowflake/          DDL, semantic views, local runner (DuckDB)
+terraform/          IaC — Azure/Databricks/Snowflake, 3 ambientes
+tests/              Pirâmide de testes (unit/integration/data/ml/ai)
+```
+
+Árvore completa e anotada: [ARCHITECTURE.md §20](ARCHITECTURE.md#20-repository-structure).
+
+---
+
+# 📚 Índice de documentação
+
+| Doc | Conteúdo |
 |---|---|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Full architecture, diagrams, tool rationale |
-| [ROADMAP.md](ROADMAP.md) | Sprints, epics, stories, acceptance criteria |
-| [CHANGELOG.md](CHANGELOG.md) | Version history of this specification |
-| [DATA_MODEL.md](DATA_MODEL.md) | Datasets, schemas, dimensional model |
-| [IMPROVEMENTS_AND_RESEARCH.md](IMPROVEMENTS_AND_RESEARCH.md) | Gaps found in the original design + Aug/2026 platform research (PT-BR) |
-| [docs/decisions/](docs/decisions/) | ADRs (PT-BR) |
-| [governance/](governance/), [governance/security.md](governance/security.md) | Governance & AI security model |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Arquitetura completa, diagramas, racional de cada ferramenta |
+| [ROADMAP.md](ROADMAP.md) | Sprints, épicos, stories, critérios de aceite |
+| [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
+| [DATA_MODEL.md](DATA_MODEL.md) | Datasets, schemas, modelo dimensional |
+| [docs/decisions/](docs/decisions/) | ADRs — 15 decisões de arquitetura documentadas |
+| [governance/](governance/) | Governança, LGPD, segurança de IA |
 
-## 11. Author's note
+---
 
-This project demonstrates end-to-end ownership across Data Engineering (ETL/ELT, PySpark, Delta, dbt), Data Governance (MDM, Golden Record, lineage, RBAC, LGPD), Data Science/MLOps (feature engineering, MLflow, SHAP), and AI Engineering (RAG, agents, MCP, human-in-the-loop) — built on Azure/Databricks as the primary cloud, with AWS documented as a portability target based on hands-on experience with both.
+# 👤 Autor
 
-## License
+**Yuri Fernando Dubbern**
 
-MIT — see [LICENSE](LICENSE). All data is either public/anonymized (Olist) or synthetically generated; no real PII is used anywhere in this repository.
+Engenheiro de Dados · AI Engineer · Data Science · MLOps · Automação · Sistemas Embarcados · Pesquisa e Desenvolvimento
+
+[LinkedIn](https://www.linkedin.com/in/yuridubbern) · [GitHub](https://github.com/Yuri-Fernando) · [Lattes](http://lattes.cnpq.br/7151392692642166) · [Linktree](https://linktr.ee/yuri.f.dubbern)
+
+---
+
+# Licença
+
+MIT — ver [LICENSE](LICENSE). Todo dado é público/anonimizado (Olist) ou sintético; nenhum PII real é usado neste repositório.
