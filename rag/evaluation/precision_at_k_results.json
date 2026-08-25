@@ -1,0 +1,416 @@
+{
+  "k": 3,
+  "chunk_count": 15,
+  "num_questions": 15,
+  "hits": 15,
+  "precision_at_k": 1.0,
+  "target": 0.8,
+  "meets_target": true,
+  "results": [
+    {
+      "question": "How many days does a customer have to request a refund after delivery?",
+      "expected_doc_types": [
+        "refund_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "refund_policy-3",
+          "doc_type": "refund_policy",
+          "score": 0.7101,
+          "text": "Process: Customer opens a support ticket with category refund_request . Support validates order status and delivery date"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.6876,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        },
+        {
+          "chunk_id": "delivery_policy-3",
+          "doc_type": "delivery_policy",
+          "score": 0.5734,
+          "text": "Failed delivery attempts: After 3 failed delivery attempts, the order is returned to the seller and the customer is noti"
+        }
+      ]
+    },
+    {
+      "question": "What is the right of withdrawal (arrependimento) window under Brazilian consumer law?",
+      "expected_doc_types": [
+        "refund_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.5291,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        },
+        {
+          "chunk_id": "privacy_policy-3",
+          "doc_type": "privacy_policy",
+          "score": 0.4956,
+          "text": "Customer rights: Access, correction, deletion, portability and revocation of consent, per LGPD Art. 18. Requests are han"
+        },
+        {
+          "chunk_id": "refund_policy-2",
+          "doc_type": "refund_policy",
+          "score": 0.4361,
+          "text": "Non-eligible cases: Products marked as final sale / clearance. Requests made more than 30 days after delivery. Items sho"
+        }
+      ]
+    },
+    {
+      "question": "Which refunds require supervisor approval / human-in-the-loop?",
+      "expected_doc_types": [
+        "refund_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "refund_policy-3",
+          "doc_type": "refund_policy",
+          "score": 0.6093,
+          "text": "Process: Customer opens a support ticket with category refund_request . Support validates order status and delivery date"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.4957,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        },
+        {
+          "chunk_id": "delivery_policy-3",
+          "doc_type": "delivery_policy",
+          "score": 0.4947,
+          "text": "Failed delivery attempts: After 3 failed delivery attempts, the order is returned to the seller and the customer is noti"
+        }
+      ]
+    },
+    {
+      "question": "Are final sale or clearance products eligible for a refund?",
+      "expected_doc_types": [
+        "refund_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "refund_policy-3",
+          "doc_type": "refund_policy",
+          "score": 0.6072,
+          "text": "Process: Customer opens a support ticket with category refund_request . Support validates order status and delivery date"
+        },
+        {
+          "chunk_id": "refund_policy-2",
+          "doc_type": "refund_policy",
+          "score": 0.5812,
+          "text": "Non-eligible cases: Products marked as final sale / clearance. Requests made more than 30 days after delivery. Items sho"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.5517,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        }
+      ]
+    },
+    {
+      "question": "How long does it take to process an approved refund back to the original payment method?",
+      "expected_doc_types": [
+        "refund_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "refund_policy-3",
+          "doc_type": "refund_policy",
+          "score": 0.6954,
+          "text": "Process: Customer opens a support ticket with category refund_request . Support validates order status and delivery date"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.6198,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        },
+        {
+          "chunk_id": "delivery_policy-3",
+          "doc_type": "delivery_policy",
+          "score": 0.5405,
+          "text": "Failed delivery attempts: After 3 failed delivery attempts, the order is returned to the seller and the customer is noti"
+        }
+      ]
+    },
+    {
+      "question": "What is the estimated delivery window for the Southeast region (SP, RJ, MG, ES)?",
+      "expected_doc_types": [
+        "delivery_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "delivery_policy-1",
+          "doc_type": "delivery_policy",
+          "score": 0.6523,
+          "text": "Estimated delivery windows: Southeast region (SP, RJ, MG, ES): 3\u20137 business days. South region (RS, SC, PR): 5\u20139 busines"
+        },
+        {
+          "chunk_id": "delivery_policy-0",
+          "doc_type": "delivery_policy",
+          "score": 0.4464,
+          "text": "Delivery Policy (Synthetic): Synthetic document \u2014 portfolio project only."
+        },
+        {
+          "chunk_id": "loyalty_policy-1",
+          "doc_type": "loyalty_policy",
+          "score": 0.4302,
+          "text": "Tiers: | Tier     | Requirement (rolling 12 months)   | Benefit                            |\n|----------|---------------"
+        }
+      ]
+    },
+    {
+      "question": "When is an order considered late?",
+      "expected_doc_types": [
+        "delivery_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "delivery_policy-2",
+          "doc_type": "delivery_policy",
+          "score": 0.6632,
+          "text": "Late delivery: An order is considered late if it has not been delivered by the estimated delivery date shown at checkout"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.4739,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        },
+        {
+          "chunk_id": "refund_policy-2",
+          "doc_type": "refund_policy",
+          "score": 0.4551,
+          "text": "Non-eligible cases: Products marked as final sale / clearance. Requests made more than 30 days after delivery. Items sho"
+        }
+      ]
+    },
+    {
+      "question": "What happens after 3 failed delivery attempts?",
+      "expected_doc_types": [
+        "delivery_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "delivery_policy-3",
+          "doc_type": "delivery_policy",
+          "score": 0.6639,
+          "text": "Failed delivery attempts: After 3 failed delivery attempts, the order is returned to the seller and the customer is noti"
+        },
+        {
+          "chunk_id": "refund_policy-2",
+          "doc_type": "refund_policy",
+          "score": 0.5116,
+          "text": "Non-eligible cases: Products marked as final sale / clearance. Requests made more than 30 days after delivery. Items sho"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.4722,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        }
+      ]
+    },
+    {
+      "question": "Does a late delivery qualify for any automatic refund?",
+      "expected_doc_types": [
+        "delivery_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "delivery_policy-2",
+          "doc_type": "delivery_policy",
+          "score": 0.706,
+          "text": "Late delivery: An order is considered late if it has not been delivered by the estimated delivery date shown at checkout"
+        },
+        {
+          "chunk_id": "refund_policy-3",
+          "doc_type": "refund_policy",
+          "score": 0.6185,
+          "text": "Process: Customer opens a support ticket with category refund_request . Support validates order status and delivery date"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.5999,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        }
+      ]
+    },
+    {
+      "question": "How many orders in a rolling 12 months are required to reach Gold loyalty tier?",
+      "expected_doc_types": [
+        "loyalty_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "loyalty_policy-1",
+          "doc_type": "loyalty_policy",
+          "score": 0.5503,
+          "text": "Tiers: | Tier     | Requirement (rolling 12 months)   | Benefit                            |\n|----------|---------------"
+        },
+        {
+          "chunk_id": "loyalty_policy-2",
+          "doc_type": "loyalty_policy",
+          "score": 0.4707,
+          "text": "VIP flag: Customers classified as VIP by the ML segmentation model (see ml/segmentation/ ) automatically receive Gold-ti"
+        },
+        {
+          "chunk_id": "refund_policy-3",
+          "doc_type": "refund_policy",
+          "score": 0.4679,
+          "text": "Process: Customer opens a support ticket with category refund_request . Support validates order status and delivery date"
+        }
+      ]
+    },
+    {
+      "question": "What benefit does the Platinum loyalty tier give?",
+      "expected_doc_types": [
+        "loyalty_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "loyalty_policy-2",
+          "doc_type": "loyalty_policy",
+          "score": 0.5104,
+          "text": "VIP flag: Customers classified as VIP by the ML segmentation model (see ml/segmentation/ ) automatically receive Gold-ti"
+        },
+        {
+          "chunk_id": "loyalty_policy-0",
+          "doc_type": "loyalty_policy",
+          "score": 0.457,
+          "text": "Loyalty Program Policy (Synthetic): Synthetic document \u2014 portfolio project only."
+        },
+        {
+          "chunk_id": "loyalty_policy-1",
+          "doc_type": "loyalty_policy",
+          "score": 0.4565,
+          "text": "Tiers: | Tier     | Requirement (rolling 12 months)   | Benefit                            |\n|----------|---------------"
+        }
+      ]
+    },
+    {
+      "question": "Do VIP-segmented customers automatically get Gold-tier loyalty benefits?",
+      "expected_doc_types": [
+        "loyalty_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "loyalty_policy-2",
+          "doc_type": "loyalty_policy",
+          "score": 0.6852,
+          "text": "VIP flag: Customers classified as VIP by the ML segmentation model (see ml/segmentation/ ) automatically receive Gold-ti"
+        },
+        {
+          "chunk_id": "loyalty_policy-0",
+          "doc_type": "loyalty_policy",
+          "score": 0.4758,
+          "text": "Loyalty Program Policy (Synthetic): Synthetic document \u2014 portfolio project only."
+        },
+        {
+          "chunk_id": "loyalty_policy-1",
+          "doc_type": "loyalty_policy",
+          "score": 0.464,
+          "text": "Tiers: | Tier     | Requirement (rolling 12 months)   | Benefit                            |\n|----------|---------------"
+        }
+      ]
+    },
+    {
+      "question": "What personal data does the platform collect about customers?",
+      "expected_doc_types": [
+        "privacy_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "privacy_policy-1",
+          "doc_type": "privacy_policy",
+          "score": 0.5602,
+          "text": "Data we collect: Name, email, phone, address, order history, support interactions and website browsing events \u2014 always w"
+        },
+        {
+          "chunk_id": "privacy_policy-3",
+          "doc_type": "privacy_policy",
+          "score": 0.452,
+          "text": "Customer rights: Access, correction, deletion, portability and revocation of consent, per LGPD Art. 18. Requests are han"
+        },
+        {
+          "chunk_id": "loyalty_policy-2",
+          "doc_type": "loyalty_policy",
+          "score": 0.4302,
+          "text": "VIP flag: Customers classified as VIP by the ML segmentation model (see ml/segmentation/ ) automatically receive Gold-ti"
+        }
+      ]
+    },
+    {
+      "question": "How are government ID numbers stored, if at all?",
+      "expected_doc_types": [
+        "privacy_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "privacy_policy-2",
+          "doc_type": "privacy_policy",
+          "score": 0.6922,
+          "text": "Data we never store: Full unmasked government ID numbers. All document identifiers are one-way hashed (SHA-256) before s"
+        },
+        {
+          "chunk_id": "privacy_policy-1",
+          "doc_type": "privacy_policy",
+          "score": 0.4625,
+          "text": "Data we collect: Name, email, phone, address, order history, support interactions and website browsing events \u2014 always w"
+        },
+        {
+          "chunk_id": "privacy_policy-0",
+          "doc_type": "privacy_policy",
+          "score": 0.4029,
+          "text": "Privacy Policy (Synthetic): Synthetic document \u2014 portfolio project only. Written to be consistent with LGPD (Lei Geral d"
+        }
+      ]
+    },
+    {
+      "question": "How long does the company take to fulfil a data access or deletion request under LGPD?",
+      "expected_doc_types": [
+        "privacy_policy"
+      ],
+      "hit": true,
+      "retrieved": [
+        {
+          "chunk_id": "privacy_policy-3",
+          "doc_type": "privacy_policy",
+          "score": 0.5599,
+          "text": "Customer rights: Access, correction, deletion, portability and revocation of consent, per LGPD Art. 18. Requests are han"
+        },
+        {
+          "chunk_id": "refund_policy-1",
+          "doc_type": "refund_policy",
+          "score": 0.4783,
+          "text": "Eligibility: Customers may request a refund within 30 days of the delivery date if: The product arrived damaged or mater"
+        },
+        {
+          "chunk_id": "refund_policy-2",
+          "doc_type": "refund_policy",
+          "score": 0.4741,
+          "text": "Non-eligible cases: Products marked as final sale / clearance. Requests made more than 30 days after delivery. Items sho"
+        }
+      ]
+    }
+  ]
+}

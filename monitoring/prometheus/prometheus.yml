@@ -1,0 +1,76 @@
+# Prometheus scrape configuration — local development stack.
+# Mounted read-only by the `prometheus` service in docker-compose.yml at
+# /etc/prometheus/prometheus.yml. See ARCHITECTURE.md §17 and
+# monitoring/README.md for the metrics this feeds into Grafana.
+#
+# Targets use docker-compose service DNS names, not localhost, since
+# Prometheus itself runs inside the compose network. When running a target
+# service directly on the host (outside compose) during development, point
+# it at host.docker.internal instead, or run it inside compose too.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    platform: customer-intelligence
+
+scrape_configs:
+  # Prometheus scraping itself — standard self-monitoring target.
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # FastAPI service (api/) — exposes /metrics via prometheus-client
+  # (instrumentator middleware). Emits request latency/count plus the
+  # platform's own gauges: dq_score, agent_latency, mcp_calls, llm_tokens
+  # where the API is the point of aggregation.
+  - job_name: api
+    metrics_path: /metrics
+    scrape_interval: 15s
+    static_configs:
+      - targets: ["api:8000"]
+        labels:
+          component: api
+
+  # Custom MCP server (mcp/server) — exposes /metrics for mcp_calls count,
+  # per-tool latency, and tool error rate. Built Sprint 13.
+  - job_name: mcp-server
+    metrics_path: /metrics
+    scrape_interval: 15s
+    static_configs:
+      - targets: ["mcp-server:8100"]
+        labels:
+          component: mcp
+
+  # Pipeline exporter — a lightweight prometheus-client exporter run
+  # alongside lakehouse/ Bronze->Silver->Gold jobs (locally: a sidecar
+  # process; in Databricks: pushed via Pushgateway since jobs are batch,
+  # not long-running — see monitoring/opentelemetry/README.md). Emits
+  # pipeline_duration, rows_processed.
+  - job_name: pipeline-exporter
+    metrics_path: /metrics
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["pipeline-exporter:8200"]
+        labels:
+          component: pipeline
+
+  # ML training/serving metrics (ml/) — ml_latency, prediction volume,
+  # model-registry promotion events. Built Sprint 10-11.
+  - job_name: ml-service
+    metrics_path: /metrics
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["ml-service:8300"]
+        labels:
+          component: ml
+
+  # Pushgateway — for batch jobs (Databricks notebooks, GX Checkpoints,
+  # MDM runs) that don't run long enough to be scraped directly. Not part
+  # of the base docker-compose.yml yet; added when Sprint 16 wires up
+  # FinOps cost-per-job tracking. Left here, disabled by comment, as the
+  # documented next step rather than silently omitted.
+  # - job_name: pushgateway
+  #   honor_labels: true
+  #   static_configs:
+  #     - targets: ["pushgateway:9091"]

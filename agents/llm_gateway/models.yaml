@@ -1,0 +1,123 @@
+# LLM model registry — agents/llm_gateway/router.py reads this file to decide which provider/model
+# answers a given task_type. See ADR-012 for why this exists instead of hard-coding Azure OpenAI
+# everywhere, and agents/llm_gateway/README.md for the cost/latency/quality rationale per row.
+#
+# cost_per_1m_tokens is blended input+output, USD, approximate as of Aug/2026 — for relative
+# comparison between rows, not a billing source of truth (see README's honesty note).
+# latency_tier: fast | medium | slow — relative, not an SLA.
+
+models:
+  - id: azure-gpt-4o-mini
+    provider: azure_openai
+    model: gpt-4o-mini
+    cost_per_1m_tokens: 0.30
+    latency_tier: fast
+    best_fit_task_types:
+      - intent_classification
+      - dq_category_classification
+      - short_summarization
+    notes: >
+      Cheapest/fastest model in the registry. Default for high-volume, low-reasoning tasks like
+      the Customer Intelligence Agent's detect_intent node and the Data Quality Agent's root-cause
+      category tagging — see README "LLM cost-optimization levers" for the fine-tuned-local-model
+      alternative to even this call.
+
+  - id: azure-gpt-4o
+    provider: azure_openai
+    model: gpt-4o
+    cost_per_1m_tokens: 5.00
+    latency_tier: medium
+    best_fit_task_types:
+      - final_reasoning
+      - policy_qa
+      - recommendation_synthesis
+    notes: >
+      The platform's default "strong reasoning" model — ARCHITECTURE.md §3's original LangGraph +
+      Azure OpenAI choice. Used for the orchestrator's reason() node and the Recommendation
+      Agent's scoring rationale, where being wrong is costlier than being slow.
+
+  - id: openai-gpt-4o
+    provider: openai
+    model: gpt-4o
+    cost_per_1m_tokens: 5.00
+    latency_tier: medium
+    best_fit_task_types:
+      - final_reasoning
+      - evaluation_llm_judge
+    notes: >
+      Same model family as azure-gpt-4o, direct OpenAI endpoint. Used as the router's failover
+      path when the Azure OpenAI deployment is rate-limited or unavailable, and as an independent
+      grader in agents/*/evaluation/ (LLM-as-judge scoring should not use the same deployment
+      being graded, to avoid self-grading bias).
+
+  - id: gemini-2.5-flash
+    provider: gemini
+    model: gemini-2.5-flash
+    cost_per_1m_tokens: 0.25
+    latency_tier: fast
+    best_fit_task_types:
+      - intent_classification
+      - retrieval_reranking
+    notes: >
+      Evaluated as a cheaper/faster alternative to azure-gpt-4o-mini for the same task class —
+      the router's evaluation harness (README "Evaluating a new provider") is what decides whether
+      this or azure-gpt-4o-mini wins the default for a given task_type, not a hard-coded
+      preference.
+
+  - id: gemini-2.5-pro
+    provider: gemini
+    model: gemini-2.5-pro
+    cost_per_1m_tokens: 3.50
+    latency_tier: medium
+    best_fit_task_types:
+      - final_reasoning
+      - long_context_document_qa
+    notes: >
+      Considered for policy_qa given Gemini's long-context strength, relevant once RAG retrieval
+      windows grow beyond a few chunks (e.g. joining multiple policy documents in one query).
+
+  - id: deepseek-chat
+    provider: deepseek
+    model: deepseek-chat
+    cost_per_1m_tokens: 0.28
+    latency_tier: medium
+    best_fit_task_types:
+      - final_reasoning
+      - recommendation_synthesis
+    notes: >
+      OpenAI-compatible API (see router.py) — evaluated as the lowest-cost strong-reasoning option
+      in the registry. Trade-off: no Azure/Snowflake data-residency or enterprise-support story,
+      which matters more for a regulated-adjacent target employer than raw cost/token — kept as an
+      explicitly evaluated alternative, not the default, documented honestly rather than silently
+      excluded.
+
+  - id: bedrock-claude-3-5-sonnet
+    provider: bedrock
+    model: anthropic.claude-3-5-sonnet-20240620-v1:0
+    cost_per_1m_tokens: 6.00
+    latency_tier: medium
+    best_fit_task_types:
+      - final_reasoning
+      - policy_qa
+    notes: >
+      Added Sprint 17 (ROADMAP.md) per IMPROVEMENTS_AND_RESEARCH.md §5 — the project's cloud
+      strategy is Azure-primary (ADR-001), so this is a documented, evaluated alternative, never a
+      default (see `defaults` below — no task_type routes here). Selectable via
+      complete(prompt, task_type, model_id="bedrock-claude-3-5-sonnet") once AWS_ACCESS_KEY_ID /
+      AWS_SECRET_ACCESS_KEY / AWS_REGION (.env.example) are set for real — until then
+      router._complete_bedrock() returns "" per the same documented-stub pattern every other
+      not-yet-credentialed provider in this file follows.
+
+# Default task_type -> model_id mapping the router falls back to when the caller doesn't pin a
+# specific model_id. Evaluated and changed only via the harness described in the README, never by
+# hand-editing this section without a benchmark run backing the change.
+defaults:
+  intent_classification: azure-gpt-4o-mini
+  dq_category_classification: azure-gpt-4o-mini
+  short_summarization: azure-gpt-4o-mini
+  final_reasoning: azure-gpt-4o
+  policy_qa: azure-gpt-4o
+  recommendation_synthesis: azure-gpt-4o
+  evaluation_llm_judge: openai-gpt-4o
+  retrieval_reranking: gemini-2.5-flash
+  long_context_document_qa: gemini-2.5-pro

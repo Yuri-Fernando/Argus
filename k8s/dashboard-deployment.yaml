@@ -1,0 +1,52 @@
+# Deployment for the Streamlit dashboard — `dashboard/app.py` does not exist in this repo yet
+# (a sibling workstream, explicitly out of Sprint 17's scope — see k8s/Dockerfile.dashboard).
+# Written ahead of that code landing so `kubectl apply -f k8s/dashboard-*.yaml` needs zero edits
+# once it does. Image is built from k8s/Dockerfile.dashboard.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eci-dashboard
+  labels:
+    app: eci-dashboard
+    component: dashboard
+    part-of: argus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eci-dashboard
+  template:
+    metadata:
+      labels:
+        app: eci-dashboard
+        component: dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: eci-dashboard:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8501
+              name: http
+          env:
+            - name: API_BASE_URL
+              value: "http://eci-api:8010"
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: 8501
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

@@ -1,0 +1,52 @@
+# Deployment for api/main.py — the platform's REST/JSON surface (ARCHITECTURE.md, api/README.md).
+# Built Sprint 17 (ROADMAP.md) to close the Kubernetes gap surfaced in
+# IMPROVEMENTS_AND_RESEARCH.md §5. Image is built from k8s/Dockerfile.api — see k8s/README.md for
+# the exact `docker build`/`kubectl apply --dry-run=client` commands used to validate this file.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eci-api
+  labels:
+    app: eci-api
+    component: api
+    part-of: argus
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eci-api
+  template:
+    metadata:
+      labels:
+        app: eci-api
+        component: api
+    spec:
+      containers:
+        - name: api
+          image: eci-api:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8010
+              name: http
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8010
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8010
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

@@ -1,0 +1,47 @@
+# Deployment for mcp/server/server.py — the platform's custom MCP tool surface (ROADMAP.md
+# Sprint 13, mcp/README.md). Built Sprint 17. Image is built from k8s/Dockerfile.mcp.
+#
+# KNOWN LIMITATION (documented, not hidden — see k8s/README.md "MCP transport caveat"): the
+# current server.py's main() calls mcp.run() using the FastMCP SDK's default stdio transport,
+# which has no meaning without an attached interactive client. This Deployment still runs the
+# real process unmodified; no readiness/liveness HTTP probe is attached because there is no HTTP
+# port to probe until the server is switched to SSE/HTTP transport (a follow-up, not silently
+# faked here).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eci-mcp
+  labels:
+    app: eci-mcp
+    component: mcp-server
+    part-of: argus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eci-mcp
+  template:
+    metadata:
+      labels:
+        app: eci-mcp
+        component: mcp-server
+    spec:
+      containers:
+        - name: mcp-server
+          image: eci-mcp:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8765
+              name: mcp
+          env:
+            - name: MCP_SERVER_PORT
+              value: "8765"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

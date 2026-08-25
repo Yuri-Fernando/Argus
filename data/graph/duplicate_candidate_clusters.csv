@@ -1,0 +1,866 @@
+size,customer_ids,shared_identifier_types,shared_identifiers
+4,CRM00000799;CRM00006449;CRM00007936;CRM00010221,Address;Email;Phone,"Address:trecho olívia mendes, 581|porto alegre|rs;Email:kcampos@example.net;Phone:08464145017"
+4,CRM00001326;CRM00006187;CRM00007656;CRM00008163,Email,Email:vcavalcante@example.org
+4,CRM00001871;CRM00005443;CRM00008332;CRM00009575,Email,Email:xmendes@example.com
+4,CRM00001994;CRM00005831;CRM00006296;CRM00010012,Address;Email;Phone,"Address:trecho luiz gustavo camargo, 553|curitiba|pr;Email:dborges@example.net;Phone:5507103079125"
+4,CRM00002578;CRM00005895;CRM00006121;CRM00006490,Email,Email:lfernandes@example.com
+3,CRM00000021;CRM00001753;CRM00005544,Email,Email:bmartins@example.net
+3,CRM00000049;CRM00004213;CRM00010058,Address;Email;Phone,"Address:praia de martins, 96|caxias do sul|rs;Email:kcassiano@example.org;Phone:09002706537"
+3,CRM00000078;CRM00002155;CRM00007460,Email,Email:dfreitas@example.net
+3,CRM00000213;CRM00005360;CRM00010379,Address;Email;Phone,"Address:recanto gael henrique machado, 23|porto alegre|rs;Email:lcunha@example.com;Phone:06140633569"
+3,CRM00000272;CRM00007317;CRM00010460,Address;Email;Phone,"Address:setor manuela dias, 7|londrina|pr;Email:salessophia@example.net;Phone:556187060566"
+3,CRM00000326;CRM00002818;CRM00010101,Address;Email;Phone,Address:via aparecida|santos|sp;Email:luan26@example.net;Phone:05003121637
+3,CRM00000586;CRM00004972;CRM00010222,Address;Email;Phone,"Address:morro castro, 29|são paulo|sp;Email:rferreira@example.org;Phone:3185238600"
+3,CRM00000713;CRM00009671;CRM00010446,Address;Email;Phone,"Address:campo asafe araújo, 59|londrina|pr;Email:lalmeida@example.net;Phone:558162542041"
+3,CRM00000780;CRM00003088;CRM00007194,Email,Email:lda-paz@example.org
+3,CRM00000789;CRM00005917;CRM00010166,Address;Email;Phone,"Address:vila luiza santos, 433|campinas|sp;Email:xgoncalves@example.org;Phone:5506138588640"
+3,CRM00000792;CRM00005803;CRM00010131,Address;Email;Phone,"Address:avenida de castro, 53|curitiba|pr;Email:xda-mata@example.net;Phone:558499434084"
+3,CRM00000850;CRM00002142;CRM00010417,Address;Email;Phone,Address:área de aragão|salvador|ba;Email:santosmaria-flor@example.net;Phone:4114266244
+3,CRM00000949;CRM00001782;CRM00010094,Address;Email;Phone,"Address:vale de pinto, 41|maringá|pr;Email:sgoncalves@example.com;Phone:5508401655623"
+3,CRM00001432;CRM00007443;CRM00010100,Address;Email;Phone,"Address:colônia júlia moraes, 54|caxias do sul|rs;Email:eda-cunha@example.net;Phone:02147763103"
+3,CRM00001480;CRM00003976;CRM00007457,Email,Email:wfernandes@example.net
+3,CRM00001492;CRM00005758;CRM00010150,Address;Email;Phone,"Address:residencial rhavi cardoso, 691|petrópolis|rj;Email:bcardoso@example.com;Phone:5130682727"
+3,CRM00001534;CRM00007105;CRM00010192,Address;Email;Phone,"Address:avenida de rocha, 91|santos|rs;Email:uporto@example.org;Phone:5502188943830"
+3,CRM00001637;CRM00009621;CRM00010000,Address;Email;Phone,"Address:praça de barbosa, 37|santos|sp;Email:moraesbella@example.com;Phone:5508478710604"
+3,CRM00001978;CRM00008924;CRM00009641,Email,Email:pnogueira@example.org
+3,CRM00002207;CRM00003043;CRM00010060,Address;Email;Phone,"Address:vila de nogueira, 45|são paulo|sp;Email:ysales@example.org;Phone:01104661010"
+3,CRM00002391;CRM00002562;CRM00002673,Email,Email:rrezende@example.net
+3,CRM00002406;CRM00005013;CRM00007305,Email,Email:pazevedo@example.com
+3,CRM00002615;CRM00005091;CRM00010394,Address;Email;Phone,Address:área ana julia siqueira|uberlândia|mg;Email:tbarbosa@example.com;Phone:5503194138225
+3,CRM00002624;CRM00003119;CRM00003484,Email,Email:wsantos@example.org
+3,CRM00002636;CRM00006392;CRM00009655,Email,Email:klopes@example.org
+3,CRM00002736;CRM00003655;CRM00010065,Address;Email;Phone,"Address:vale de correia, 84|curitiba|pr;Email:xcirino@example.net;Phone:02152761065"
+3,CRM00003172;CRM00007471;CRM00010431,Address;Email;Phone,"Address:sítio de farias, 164|caxias do sul|rs;Email:uramos@example.org;Phone:03007301411"
+3,CRM00003211;CRM00008862;CRM00010328,Address;Email;Phone,"Address:fazenda yuri souza, 30|uberlândia|mg;Email:ssantos@example.net;Phone:5505152553838"
+3,CRM00003341;CRM00005285;CRM00005593,Email,Email:hmoura@example.net
+3,CRM00003555;CRM00005880;CRM00010472,Address;Email;Phone,"Address:rua calebe araújo, 42|belo horizonte|mg;Email:beniciofernandes@example.com;Phone:3154276676"
+3,CRM00003595;CRM00008082;CRM00010185,Address;Email;Phone,"Address:estrada isis oliveira, 55|juiz de fora|mg;Email:emanuelpacheco@example.net;Phone:8431116891"
+3,CRM00003596;CRM00005885;CRM00009268,Email,Email:tsantos@example.com
+3,CRM00004016;CRM00005012;CRM00010369,Address;Email;Phone,Address:aeroporto olivia ribeiro|feira de santana|ba;Email:wteixeira@example.com;Phone:08152957115
+3,CRM00004336;CRM00008056;CRM00010013,Address;Email;Phone,"Address:setor rezende, 23|porto alegre|rs;Email:xandrade@example.org;Phone:05002347632"
+3,CRM00004437;CRM00008358;CRM00010103,Address;Email;Phone,"Address:sítio marcelo rios, 77|maringá|pr;Email:emoura@example.net;Phone:5508464095914"
+3,CRM00004904;CRM00005528;CRM00007421,Email,Email:rsiqueira@example.com
+3,CRM00004998;CRM00005008;CRM00006931,Email,Email:hsiqueira@example.org
+3,CRM00005506;CRM00007261;CRM00009458,Email,Email:uvieira@example.org
+3,CRM00005670;CRM00006492;CRM00010289,Address;Email;Phone,"Address:núcleo da cruz, 783|feira de santana|ba;Email:fariaslorenzo@example.com;Phone:5508414100844"
+3,CRM00005693;CRM00007280;CRM00010277,Address;Email;Phone,"Address:quadra rios, 576|belo horizonte|mg;Email:falmeida@example.net;Phone:6169496961"
+3,CRM00005735;CRM00006688;CRM00010498,Address;Email;Phone,"Address:lago de da rosa, 96|feira de santana|ba;Email:xvasconcelos@example.org;Phone:4198250733"
+3,CRM00005756;CRM00006727;CRM00010350,Address;Email;Phone,"Address:largo pimenta, 472|petrópolis|rj;Email:fnascimento@example.net;Phone:7189394412"
+3,CRM00005759;CRM00007092;CRM00008948,Email,Email:tcardoso@example.net
+3,CRM00005979;CRM00008390;CRM00010362,Address;Email;Phone,"Address:estrada gabriela nascimento, 93|caxias do sul|rs;Email:tnogueira@example.org;Phone:5501171410459"
+3,CRM00006074;CRM00009581;CRM00010151,Address;Email;Phone,Address:viaduto marcelo vargas|uberlândia|mg;Email:nrodrigues@example.com;Phone:02106640606
+3,CRM00006318;CRM00006934;CRM00010098,Address;Email;Phone,"Address:travessa emilly da rocha, 96|rio de janeiro|rj;Email:nsilva@example.org;Phone:2158073275"
+3,CRM00006344;CRM00006659;CRM00006938,Email,Email:paraujo@example.org
+3,CRM00006407;CRM00009876;CRM00010110,Address;Email;Phone,"Address:vila costa, 33|juiz de fora|mg;Email:calebaragao@example.net;Phone:553162213571"
+3,CRM00006518;CRM00008741;CRM00009587,Email,Email:kmendonca@example.org
+3,CRM00006532;CRM00008430;CRM00008596,Email,Email:wviana@example.net
+3,CRM00006941;CRM00009585;CRM00010156,Address;Email;Phone,"Address:setor sá, 47|londrina|pr;Email:bgoncalves@example.com;Phone:5122292202"
+3,CRM00007331;CRM00007690;CRM00010005,Address;Email;Phone,Address:estação olívia rezende|são paulo|sp;Email:xguerra@example.org;Phone:3110355147
+3,CRM00007549;CRM00009817;CRM00010293,Address;Email;Phone,Address:favela bernardo camargo|feira de santana|ba;Email:wvasconcelos@example.org;Phone:03008909294
+3,CRM00008129;CRM00009649;CRM00010467,Address;Email;Phone,"Address:passarela erick duarte, 3|salvador|ba;Email:ymonteiro@example.net;Phone:05186858357"
+3,CRM00008400;CRM00009117;CRM00010348,Address;Email;Phone,"Address:distrito de cavalcanti, 853|são paulo|sp;Email:uborges@example.net;Phone:558147363643"
+3,CRM00009156;CRM00009947;CRM00010443,Address;Email;Phone,"Address:viaduto marques, 43|curitiba|pr;Email:daniela21@example.com;Phone:04119154391"
+2,CRM00000005;CRM00002920,Email,Email:viniciusmoura@example.net
+2,CRM00000007;CRM00004521,Email,Email:stellamachado@example.org
+2,CRM00000008;CRM00005995,Email,Email:mcassiano@example.com
+2,CRM00000017;CRM00010248,Address;Email;Phone,"Address:parque larissa nascimento, 893|petrópolis|rj;Email:hadassasales@example.org;Phone:551116658760"
+2,CRM00000018;CRM00008296,Email,Email:qfernandes@example.net
+2,CRM00000022;CRM00004275,Email,Email:jmendonca@example.org
+2,CRM00000026;CRM00010104,Address;Email;Phone,"Address:largo de pereira, 20|petrópolis|rj;Email:vitorcasa-grande@example.org;Phone:5508124994717"
+2,CRM00000031;CRM00004013,Email,Email:odias@example.net
+2,CRM00000034;CRM00010261,Address;Email;Phone,"Address:viela silveira, 68|curitiba|pr;Email:joao14@example.com;Phone:8423285884"
+2,CRM00000046;CRM00004543,Email,Email:yan90@example.com
+2,CRM00000050;CRM00010263,Address;Email;Phone,Address:avenida isabela montenegro|ilhéus|ba;Email:theodoroaragao@example.net;Phone:08158181412
+2,CRM00000058;CRM00000598,Email,Email:hrodrigues@example.com
+2,CRM00000071;CRM00007900,Email,Email:gcardoso@example.com
+2,CRM00000074;CRM00010399,Address;Email;Phone,"Address:lagoa santos, 17|são paulo|sp;Email:rda-rosa@example.org;Phone:8492687056"
+2,CRM00000085;CRM00004052,Email,Email:nsantos@example.com
+2,CRM00000090;CRM00010266,Address;Email;Phone,"Address:pátio lívia mendonça, 11|salvador|ba;Email:mariahporto@example.net;Phone:5505182742257"
+2,CRM00000133;CRM00009771,Email,Email:mribeiro@example.net
+2,CRM00000140;CRM00010129,Address;Email;Phone,"Address:setor ana carolina porto, 64|maringá|pr;Email:sacaleb@example.net;Phone:551158144914"
+2,CRM00000146;CRM00002805,Email,Email:apereira@example.net
+2,CRM00000157;CRM00010272,Address;Email;Phone,"Address:rua de nascimento, 57|rio de janeiro|rj;Email:manuella29@example.org;Phone:05003143866"
+2,CRM00000169;CRM00000186,Email,Email:nmoura@example.net
+2,CRM00000184;CRM00000809,Email,Email:andrepinto@example.com
+2,CRM00000189;CRM00010056,Address;Email;Phone,Address:chácara macedo|pelotas|rs;Email:heloisacirino@example.net;Phone:556145046173
+2,CRM00000208;CRM00002984,Email,Email:hduarte@example.net
+2,CRM00000210;CRM00010168,Address;Email;Phone,"Address:jardim bruna pimenta, 20|petrópolis|rj;Email:pintoeloa@example.net;Phone:2137340312"
+2,CRM00000215;CRM00008821,Email,Email:enricopinto@example.com
+2,CRM00000235;CRM00010189,Address;Email;Phone,"Address:rodovia de marques, 920|rio de janeiro|rj;Email:silvagabriel@example.net;Phone:08141987635"
+2,CRM00000245;CRM00008164,Email,Email:dfernandes@example.org
+2,CRM00000246;CRM00005924,Email,Email:kaiquearagao@example.org
+2,CRM00000251;CRM00002173,Email,Email:ycavalcanti@example.org
+2,CRM00000262;CRM00010378,Address;Email;Phone,"Address:recanto benício souza, 68|santos|sp;Email:jpastor@example.net;Phone:6149767762"
+2,CRM00000264;CRM00010084,Address;Email;Phone,"Address:ladeira felipe cavalcante, 5|salvador|ba;Email:marcela56@example.com;Phone:05002287772"
+2,CRM00000291;CRM00010426,Address;Email;Phone,"Address:lagoa melina caldeira, 592|campinas|sp;Email:da-conceicaopaulo@example.org;Phone:1152065063"
+2,CRM00000302;CRM00010287,Address;Email;Phone,"Address:ladeira pedro lucas silveira, 27|uberlândia|mg;Email:maysavieira@example.org;Phone:03187271783"
+2,CRM00000305;CRM00010309,Address;Email;Phone,"Address:passarela diego moura, 44|santos|sp;Email:mayada-rocha@example.net;Phone:4105233027"
+2,CRM00000315;CRM00010044,Address;Email;Phone,"Address:lago da rosa, 54|salvador|ba;Email:pereiramanuela@example.org;Phone:5132152850"
+2,CRM00000316;CRM00010315,Address;Email;Phone,"Address:chácara moura, 226|caxias do sul|rs;Email:olivia07@example.net;Phone:08405097545"
+2,CRM00000320;CRM00009971,Email,Email:hjesus@example.com
+2,CRM00000321;CRM00004579,Email,Email:mda-mota@example.org
+2,CRM00000323;CRM00010405,Address;Email;Phone,"Address:sítio isaac cavalcante, 90|são paulo|sp;Email:cavalcanteluna@example.net;Phone:5186694320"
+2,CRM00000324;CRM00010132,Address;Email;Phone,"Address:morro câmara, 52|são paulo|sp;Email:vitor-hugovieira@example.org;Phone:555138105955"
+2,CRM00000333;CRM00006431,Email,Email:francisco86@example.org
+2,CRM00000338;CRM00010114,Address;Email;Phone,"Address:colônia enzo gabriel cirino, 7|londrina|pr;Email:sousasamuel@example.net;Phone:8402146296"
+2,CRM00000363;CRM00010458,Address;Email;Phone,"Address:conjunto de rodrigues, 34|salvador|ba;Email:joao-pedro36@example.net;Phone:552143075366"
+2,CRM00000371;CRM00010438,Address;Email;Phone,"Address:rodovia clarice fogaça, 282|maringá|pr;Email:lorenzolopes@example.net;Phone:5507119013020"
+2,CRM00000373;CRM00008789,Email,Email:pda-luz@example.org
+2,CRM00000374;CRM00010470,Address;Email;Phone,"Address:praia campos, 455|ilhéus|ba;Email:claralopes@example.com;Phone:03130003896"
+2,CRM00000379;CRM00002836,Email,Email:nandrade@example.com
+2,CRM00000381;CRM00010204,Address;Email;Phone,"Address:alameda de castro, 50|pelotas|rs;Email:gcamargo@example.org;Phone:554135956164"
+2,CRM00000387;CRM00010499,Address;Email;Phone,"Address:núcleo costela, 79|niterói|rj;Email:yan77@example.org;Phone:5504144913421"
+2,CRM00000391;CRM00005787,Email,Email:mmendonca@example.com
+2,CRM00000396;CRM00009778,Email,Email:umoreira@example.net
+2,CRM00000398;CRM00002937,Email,Email:esthermoreira@example.net
+2,CRM00000402;CRM00010274,Address;Email;Phone,"Address:setor de caldeira, 6|curitiba|pr;Email:bella15@example.com;Phone:2109404760"
+2,CRM00000403;CRM00008275,Email,Email:leaoisaque@example.org
+2,CRM00000413;CRM00007509,Email,Email:xmarques@example.org
+2,CRM00000419;CRM00004650,Email,Email:dsa@example.com
+2,CRM00000420;CRM00006153,Email,Email:ualmeida@example.net
+2,CRM00000422;CRM00010256,Address;Email;Phone,Address:via diogo marques|são paulo|sp;Email:fonsecaisabelly@example.net;Phone:3176112491
+2,CRM00000434;CRM00010134,Address;Email;Phone,"Address:praia kevin rezende, 31|santos|sp;Email:stephany74@example.net;Phone:07111918182"
+2,CRM00000437;CRM00002349,Email,Email:hpastor@example.org
+2,CRM00000439;CRM00005500,Email,Email:acastro@example.org
+2,CRM00000441;CRM00010106,Address;Email;Phone,"Address:parque pires, 4|santos|sp;Email:enzosouza@example.org;Phone:7149133424"
+2,CRM00000458;CRM00006076,Email,Email:qcamargo@example.net
+2,CRM00000481;CRM00007489,Email,Email:xgomes@example.org
+2,CRM00000494;CRM00003103,Email,Email:marcela16@example.com
+2,CRM00000495;CRM00008272,Email,Email:fteixeira@example.com
+2,CRM00000504;CRM00008175,Email,Email:eabreu@example.org
+2,CRM00000526;CRM00008554,Email,Email:earagao@example.com
+2,CRM00000562;CRM00000571,Email,Email:egomes@example.org
+2,CRM00000577;CRM00003363,Email,Email:dnovais@example.net
+2,CRM00000580;CRM00003057,Email,Email:ssilveira@example.net
+2,CRM00000584;CRM00010149,Address;Email;Phone,"Address:estação de macedo, 3|uberlândia|mg;Email:mendoncamaria-fernanda@example.net;Phone:1132643095"
+2,CRM00000585;CRM00007737,Email,Email:hsilveira@example.org
+2,CRM00000589;CRM00005957,Email,Email:nfernandes@example.net
+2,CRM00000604;CRM00010135,Address;Email;Phone,"Address:favela camargo, 335|niterói|rj;Email:vitornascimento@example.com;Phone:6183906246"
+2,CRM00000606;CRM00010360,Address;Email;Phone,"Address:praia da mata, 28|belo horizonte|mg;Email:vianalara@example.com;Phone:5508477182498"
+2,CRM00000612;CRM00003719,Email,Email:hpastor@example.com
+2,CRM00000614;CRM00010034,Address;Email;Phone,"Address:esplanada de mendonça, 40|rio de janeiro|rj;Email:vfernandes@example.org;Phone:5508111232748"
+2,CRM00000616;CRM00010312,Address;Phone,"Address:vila davi lucca melo, 893|rio de janeiro|rj;Phone:07184816524"
+2,CRM00000621;CRM00005798,Email,Email:acirino@example.com
+2,CRM00000631;CRM00009105,Email,Email:tda-mota@example.org
+2,CRM00000636;CRM00000989,Email,Email:jose33@example.net
+2,CRM00000647;CRM00008674,Email,Email:irios@example.net
+2,CRM00000663;CRM00005954,Email,Email:sda-mata@example.net
+2,CRM00000665;CRM00010205,Address;Email;Phone,"Address:sítio de nunes, 79|pelotas|rs;Email:noah05@example.net;Phone:06102551282"
+2,CRM00000675;CRM00003070,Email,Email:qduarte@example.com
+2,CRM00000680;CRM00010422,Address;Email;Phone,"Address:vila de pacheco, 73|feira de santana|ba;Email:iferreira@example.org;Phone:5501192059229"
+2,CRM00000693;CRM00010173,Address;Email;Phone,"Address:morro de ramos, 60|porto alegre|rs;Email:maria-juliada-luz@example.net;Phone:555185630275"
+2,CRM00000695;CRM00010464,Address;Email;Phone,"Address:estação cirino, 1|campinas|sp;Email:qda-mota@example.com;Phone:01186524062"
+2,CRM00000698;CRM00010343,Address;Email;Phone,"Address:favela de fogaça, 84|uberlândia|mg;Email:mariana59@example.org;Phone:04110508054"
+2,CRM00000705;CRM00010142,Address;Email;Phone,"Address:largo de souza, 880|juiz de fora|mg;Email:antonio09@example.net;Phone:05002177905"
+2,CRM00000709;CRM00004134,Email,Email:pvargas@example.com
+2,CRM00000711;CRM00004192,Email,Email:nunesluiz-felipe@example.org
+2,CRM00000720;CRM00010017,Address;Email;Phone,"Address:aeroporto montenegro, 844|uberlândia|mg;Email:caldeirahenry@example.com;Phone:6191268649"
+2,CRM00000721;CRM00010123,Address;Email;Phone,"Address:fazenda agatha nogueira, 78|porto alegre|rs;Email:nuneshenry@example.net;Phone:5505174992164"
+2,CRM00000723;CRM00003865,Email,Email:pmarques@example.net
+2,CRM00000724;CRM00010403,Address;Email;Phone,"Address:praia barros, 9|belo horizonte|mg;Email:nogueirabarbara@example.com;Phone:7118674630"
+2,CRM00000733;CRM00010255,Address;Email;Phone,"Address:condomínio santos, 50|uberlândia|mg;Email:larissa80@example.com;Phone:7140511021"
+2,CRM00000745;CRM00001239,Email,Email:dpereira@example.com
+2,CRM00000748;CRM00005245,Email,Email:costelaluiz-henrique@example.org
+2,CRM00000756;CRM00009242,Email,Email:ccampos@example.org
+2,CRM00000770;CRM00003687,Email,Email:smelo@example.org
+2,CRM00000777;CRM00002724,Address,Address:lago de ribeiro|são paulo|sp
+2,CRM00000783;CRM00004081,Email,Email:beniciopastor@example.net
+2,CRM00000785;CRM00010146,Address;Phone,"Address:viaduto de cavalcanti, 3|rio de janeiro|rj;Phone:09005610077"
+2,CRM00000786;CRM00010294,Address;Email;Phone,"Address:conjunto rael dias, 1|ilhéus|ba;Email:pietramendes@example.org;Phone:5508470342444"
+2,CRM00000797;CRM00010137,Address;Email;Phone,"Address:campo freitas, 20|feira de santana|ba;Email:juliacaldeira@example.com;Phone:558448607047"
+2,CRM00000808;CRM00002974,Email,Email:varaujo@example.net
+2,CRM00000816;CRM00007313,Email,Email:nsilva@example.com
+2,CRM00000822;CRM00002415,Email,Email:vda-costa@example.org
+2,CRM00000826;CRM00001726,Email,Email:tcostela@example.com
+2,CRM00000859;CRM00010217,Address;Email;Phone,"Address:aeroporto luan da mota, 85|ilhéus|ba;Email:isantos@example.com;Phone:556155369158"
+2,CRM00000873;CRM00010139,Address;Email;Phone,"Address:recanto ferreira, 108|salvador|ba;Email:larissa49@example.net;Phone:5507113249519"
+2,CRM00000881;CRM00010062,Address;Email;Phone,"Address:vale santos, 8|feira de santana|ba;Email:mathiasda-paz@example.com;Phone:5503109522426"
+2,CRM00000887;CRM00006556,Email,Email:emoreira@example.com
+2,CRM00000895;CRM00006944,Email,Email:vitor-gabrielmontenegro@example.org
+2,CRM00000897;CRM00010075,Address;Email;Phone,"Address:loteamento novais, 61|ilhéus|ba;Email:alanacavalcanti@example.net;Phone:5508190773729"
+2,CRM00000898;CRM00004092,Email,Email:augusto28@example.org
+2,CRM00000901;CRM00000962,Email,Email:gda-cunha@example.org
+2,CRM00000905;CRM00006206,Email,Email:souzacaue@example.net
+2,CRM00000913;CRM00007566,Email,Email:peixotoisabella@example.net
+2,CRM00000928;CRM00003850,Email,Email:yrios@example.net
+2,CRM00000929;CRM00010252,Address;Email;Phone,"Address:viela de cirino, 44|rio de janeiro|rj;Email:vcaldeira@example.com;Phone:08156650518"
+2,CRM00000931;CRM00008025,Email,Email:vlima@example.org
+2,CRM00000932;CRM00005031,Email,Email:vpeixoto@example.org
+2,CRM00000936;CRM00004307,Email,Email:zfreitas@example.com
+2,CRM00000964;CRM00010224,Address;Email;Phone,Address:quadra ferreira|são paulo|sp;Email:amandacampos@example.net;Phone:08459508374
+2,CRM00001006;CRM00009137,Email,Email:esantos@example.com
+2,CRM00001009;CRM00008861,Email,Email:barbaracassiano@example.com
+2,CRM00001014;CRM00010361,Address;Email;Phone,"Address:trevo vitor gabriel vieira, 8|santos|sp;Email:calebe67@example.org;Phone:02187831031"
+2,CRM00001017;CRM00010473,Address;Email;Phone,"Address:praia mendonça, 67|caxias do sul|rs;Email:ovasconcelos@example.net;Phone:08008948481"
+2,CRM00001020;CRM00002815,Email,Email:kcunha@example.com
+2,CRM00001024;CRM00010032,Address;Email;Phone,"Address:conjunto barbosa, 382|ilhéus|ba;Email:teixeirajade@example.com;Phone:558133104481"
+2,CRM00001038;CRM00010341,Address;Email;Phone,"Address:rua maria fernanda andrade, 6|santos|sp;Email:caldeiramarcos-vinicius@example.com;Phone:09008304576"
+2,CRM00001052;CRM00008702,Email,Email:zabreu@example.net
+2,CRM00001056;CRM00004480,Email,Email:garagao@example.com
+2,CRM00001058;CRM00004288,Email,Email:wvieira@example.com
+2,CRM00001068;CRM00004214,Email,Email:esouza@example.net
+2,CRM00001071;CRM00005650,Email,Email:vviana@example.com
+2,CRM00001078;CRM00010164,Address;Email;Phone,"Address:conjunto igor vargas, 3|pelotas|rs;Email:costelaana-julia@example.net;Phone:553148571339"
+2,CRM00001091;CRM00010055,Address;Email;Phone,"Address:favela de novaes, 72|maringá|pr;Email:kfernandes@example.net;Phone:5501101617344"
+2,CRM00001097;CRM00008077,Email,Email:da-cruzmariah@example.net
+2,CRM00001106;CRM00010159,Address;Email;Phone,"Address:núcleo de costa, 8|salvador|ba;Email:kamillyda-conceicao@example.net;Phone:05004959403"
+2,CRM00001109;CRM00003895,Email,Email:emanuelly81@example.org
+2,CRM00001110;CRM00005176,Email,Email:znogueira@example.com
+2,CRM00001111;CRM00007451,Email,Email:zda-mota@example.net
+2,CRM00001113;CRM00005927,Email,Email:usampaio@example.com
+2,CRM00001136;CRM00010393,Address;Email;Phone,"Address:trecho ferreira, 18|juiz de fora|mg;Email:fcavalcanti@example.com;Phone:06168777593"
+2,CRM00001137;CRM00005092,Email,Email:fviana@example.org
+2,CRM00001148;CRM00010036,Address;Email;Phone,"Address:loteamento alice sales, 5|maringá|pr;Email:isaac06@example.com;Phone:5506170783847"
+2,CRM00001154;CRM00010479,Address;Email;Phone,"Address:morro otto freitas, 98|londrina|pr;Email:arthur48@example.net;Phone:01191508924"
+2,CRM00001165;CRM00001263,Email,Email:zrodrigues@example.com
+2,CRM00001211;CRM00007234,Email,Email:danteborges@example.net
+2,CRM00001213;CRM00003526,Email,Email:domrocha@example.com
+2,CRM00001216;CRM00002071,Email,Email:gomessophia@example.net
+2,CRM00001227;CRM00010300,Address;Email;Phone,"Address:ladeira dom sá, 1|são paulo|sp;Email:mendoncahelena@example.com;Phone:5507149394166"
+2,CRM00001228;CRM00010238,Address;Email;Phone,"Address:praça sousa, 95|uberlândia|mg;Email:lizda-rocha@example.org;Phone:2179397895"
+2,CRM00001230;CRM00007762,Email,Email:jcampos@example.com
+2,CRM00001232;CRM00001831,Email,Email:yda-mata@example.org
+2,CRM00001240;CRM00010471,Address;Email;Phone,"Address:viela stella da paz, 96|curitiba|pr;Email:davi-luiz78@example.org;Phone:06160199916"
+2,CRM00001257;CRM00010455,Address;Email;Phone,"Address:rodovia teixeira, 12|ilhéus|ba;Email:vitor-gabrielmelo@example.com;Phone:08001237793"
+2,CRM00001259;CRM00010007,Address;Email;Phone,"Address:recanto de camargo, 61|pelotas|rs;Email:ribeiromaria-alice@example.com;Phone:05169000191"
+2,CRM00001275;CRM00010155,Address;Email;Phone,"Address:praça barbosa, 27|campinas|sp;Email:balbuquerque@example.com;Phone:09006106963"
+2,CRM00001284;CRM00010391,Address;Email;Phone,"Address:estrada de ribeiro, 18|maringá|pr;Email:dante85@example.org;Phone:5503163346118"
+2,CRM00001306;CRM00003644,Email,Email:psouza@example.net
+2,CRM00001323;CRM00006498,Email,Email:tcarvalho@example.com
+2,CRM00001341;CRM00004615,Email,Email:vcardoso@example.com
+2,CRM00001349;CRM00010085,Address;Email;Phone,Address:parque abreu|ilhéus|ba;Email:qvasconcelos@example.org;Phone:2112598362
+2,CRM00001360;CRM00010033,Address;Email;Phone,"Address:área de nunes, 27|niterói|rj;Email:novaesjosue@example.org;Phone:5504114286690"
+2,CRM00001363;CRM00010067,Address;Email;Phone,"Address:chácara de marques, 3|caxias do sul|rs;Email:da-cunhaalexandre@example.com;Phone:08112806199"
+2,CRM00001374;CRM00010081,Address;Email;Phone,"Address:rodovia cecilia rezende, 27|salvador|ba;Email:kalmeida@example.net;Phone:05191981747"
+2,CRM00001380;CRM00010351,Address;Email;Phone,"Address:rodovia de da rosa, 8|são paulo|sp;Email:emanuel56@example.com;Phone:557117753987"
+2,CRM00001382;CRM00010285,Address;Email;Phone,"Address:estrada de nunes, 9|niterói|rj;Email:cirinomaria-sophia@example.net;Phone:07137982149"
+2,CRM00001383;CRM00005538,Email,Email:melissa36@example.net
+2,CRM00001393;CRM00003473,Email,Email:luarasales@example.org
+2,CRM00001404;CRM00002993,Email,Email:jvieira@example.org
+2,CRM00001408;CRM00003920,Email,Email:nrodrigues@example.net
+2,CRM00001424;CRM00010487,Address;Email;Phone,"Address:residencial de sousa, 83|porto alegre|rs;Email:nicolasda-luz@example.net;Phone:554118082938"
+2,CRM00001448;CRM00004841,Email,Email:kda-mota@example.org
+2,CRM00001452;CRM00010404,Address;Email;Phone,"Address:jardim de vargas, 86|salvador|ba;Email:yrios@example.com;Phone:1170826786"
+2,CRM00001454;CRM00009035,Email,Email:arezende@example.org
+2,CRM00001457;CRM00002738,Email,Email:borgesluiz-gustavo@example.net
+2,CRM00001458;CRM00010260,Address;Email;Phone,"Address:distrito araújo, 622|salvador|ba;Email:diasjosue@example.com;Phone:03161662965"
+2,CRM00001462;CRM00004455,Email,Email:ana-vitoria32@example.org
+2,CRM00001470;CRM00003140,Email,Email:cpereira@example.org
+2,CRM00001473;CRM00009204,Email,Email:ucamara@example.org
+2,CRM00001478;CRM00002768,Email,Email:mrodrigues@example.org
+2,CRM00001489;CRM00007326,Email,Email:xaraujo@example.org
+2,CRM00001491;CRM00010323,Address;Email;Phone,"Address:morro borges, 1|ilhéus|ba;Email:nathan84@example.org;Phone:05002771573"
+2,CRM00001509;CRM00004318,Email,Email:rda-cunha@example.com
+2,CRM00001510;CRM00010176,Address;Email;Phone,Address:parque brenda rezende|juiz de fora|mg;Email:joao-miguelbarbosa@example.com;Phone:5501198604278
+2,CRM00001516;CRM00009341,Email,Email:landrade@example.org
+2,CRM00001533;CRM00010197,Address;Email;Phone,Address:rodovia sophie duarte|rio de janeiro|rj;Email:bcavalcante@example.com;Phone:5508447873541
+2,CRM00001556;CRM00003665,Email,Email:yda-conceicao@example.org
+2,CRM00001569;CRM00005868,Email,Email:obarros@example.com
+2,CRM00001586;CRM00010270,Address;Email;Phone,"Address:travessa de da cruz, 56|belo horizonte|mg;Email:mariah94@example.org;Phone:5103089229"
+2,CRM00001590;CRM00010070,Address;Email;Phone,"Address:distrito de pastor, 51|santos|sp;Email:sabrina85@example.com;Phone:5502183463891"
+2,CRM00001595;CRM00004520,Email,Email:rda-cruz@example.net
+2,CRM00001617;CRM00002513,Email,Email:maria-ceciliaribeiro@example.org
+2,CRM00001629;CRM00002200,Email,Email:wcunha@example.com
+2,CRM00001631;CRM00004782,Email,Email:lborges@example.org
+2,CRM00001644;CRM00009346,Email,Email:grocha@example.org
+2,CRM00001653;CRM00006910,Email,Email:da-rochaelisa@example.net
+2,CRM00001654;CRM00003396,Email,Email:ada-costa@example.net
+2,CRM00001661;CRM00006267,Email,Email:zvargas@example.com
+2,CRM00001671;CRM00007696,Email,Email:lpimenta@example.net
+2,CRM00001674;CRM00004762,Email,Email:pietra60@example.org
+2,CRM00001685;CRM00008078,Email,Email:dbarbosa@example.org
+2,CRM00001690;CRM00009493,Email,Email:joao-pedrorodrigues@example.com
+2,CRM00001710;CRM00010463,Address;Email;Phone,Address:alameda de nogueira|ilhéus|ba;Email:ravi-lucca07@example.org;Phone:8121821606
+2,CRM00001714;CRM00010250,Address;Email;Phone,"Address:vereda sofia da costa, 410|juiz de fora|mg;Email:mariane92@example.org;Phone:04140518703"
+2,CRM00001723;CRM00010210,Address;Email;Phone,Address:condomínio calebe oliveira|santos|sp;Email:rochanicole@example.com;Phone:553182865490
+2,CRM00001774;CRM00002996,Email,Email:smoreira@example.net
+2,CRM00001784;CRM00002523,Email,Email:da-matalucca@example.org
+2,CRM00001790;CRM00002090,Email,Email:aporto@example.org
+2,CRM00001795;CRM00010180,Address;Email;Phone,"Address:alameda de garcia, 749|petrópolis|rj;Email:luaranascimento@example.org;Phone:4152235079"
+2,CRM00001808;CRM00010099,Address;Email;Phone,Address:campo pires|curitiba|pr;Email:santosmateus@example.com;Phone:5502119609102
+2,CRM00001824;CRM00010395,Address;Email;Phone,"Address:aeroporto barros, 22|caxias do sul|rs;Email:livia75@example.com;Phone:2151288956"
+2,CRM00001832;CRM00002116,Email,Email:bmontenegro@example.net
+2,CRM00001838;CRM00005879,Email,Email:jferreira@example.com
+2,CRM00001841;CRM00006497,Email,Email:jdias@example.org
+2,CRM00001844;CRM00002698,Email,Email:erios@example.org
+2,CRM00001856;CRM00002725,Email,Email:ana-luiza69@example.com
+2,CRM00001864;CRM00010282,Address;Email;Phone,"Address:vale de martins, 581|londrina|pr;Email:abarros@example.net;Phone:5507167717752"
+2,CRM00001874;CRM00009787,Email,Email:qmacedo@example.net
+2,CRM00001892;CRM00008914,Email,Email:cbarros@example.net
+2,CRM00001895;CRM00010262,Address;Email;Phone,Address:praça de pimenta|curitiba|pr;Email:ana-beatriz97@example.org;Phone:5506179310826
+2,CRM00001914;CRM00006220,Email,Email:rcampos@example.net
+2,CRM00001918;CRM00004475,Email,Email:agathasiqueira@example.com
+2,CRM00001919;CRM00010090,Address;Email;Phone,"Address:viela de da costa, 6|feira de santana|ba;Email:da-rosamathias@example.net;Phone:04171494872"
+2,CRM00001927;CRM00010178,Address;Email;Phone,"Address:esplanada gomes, 64|curitiba|pr;Email:da-motapietro@example.org;Phone:551174001980"
+2,CRM00001935;CRM00004940,Email,Email:yferreira@example.net
+2,CRM00001943;CRM00001988,Email,Email:tvargas@example.net
+2,CRM00001947;CRM00002365,Email,Email:znovais@example.org
+2,CRM00001948;CRM00010198,Address;Email;Phone,"Address:lagoa da conceição, 514|rio de janeiro|rj;Email:goncalvesnicole@example.org;Phone:08411462785"
+2,CRM00001955;CRM00004466,Email,Email:kporto@example.com
+2,CRM00001960;CRM00005041,Email,Email:bnunes@example.org
+2,CRM00001962;CRM00010440,Address;Email;Phone,"Address:rodovia de aparecida, 58|uberlândia|mg;Email:galves@example.com;Phone:554134453975"
+2,CRM00002005;CRM00008136,Email,Email:svargas@example.com
+2,CRM00002039;CRM00002961,Email,Email:olima@example.net
+2,CRM00002050;CRM00010303,Address;Email;Phone,"Address:jardim montenegro, 44|pelotas|rs;Email:da-conceicaoasafe@example.org;Phone:7110391114"
+2,CRM00002059;CRM00007853,Email,Email:hbarros@example.net
+2,CRM00002072;CRM00004804,Email,Email:da-conceicaomaria-eduarda@example.net
+2,CRM00002075;CRM00005021,Email,Email:rcostela@example.org
+2,CRM00002077;CRM00010160,Address;Email;Phone,"Address:pátio pereira, 35|uberlândia|mg;Email:nmonteiro@example.net;Phone:554116027863"
+2,CRM00002087;CRM00008360,Email,Email:fogacaisabela@example.net
+2,CRM00002104;CRM00004899,Email,Email:wvieira@example.net
+2,CRM00002106;CRM00005173,Email,Email:ksampaio@example.org
+2,CRM00002120;CRM00010412,Address;Email;Phone,"Address:esplanada antonella castro, 86|petrópolis|rj;Email:piresvitor-hugo@example.com;Phone:08119649230"
+2,CRM00002127;CRM00004438,Email,Email:drios@example.net
+2,CRM00002138;CRM00007238,Email,Email:bjesus@example.org
+2,CRM00002166;CRM00010307,Address;Email;Phone,"Address:colônia laura silveira, 10|londrina|pr;Email:monteirodanilo@example.org;Phone:4139427134"
+2,CRM00002167;CRM00010214,Address;Email;Phone,"Address:morro maria liz pinto, 89|feira de santana|ba;Email:isaac43@example.net;Phone:558456466397"
+2,CRM00002194;CRM00010191,Address;Email;Phone,"Address:área moraes, 9|rio de janeiro|rj;Email:sousalucca@example.org;Phone:5508177146502"
+2,CRM00002197;CRM00008706,Email,Email:lviana@example.net
+2,CRM00002222;CRM00010039,Address;Email;Phone,"Address:praia gustavo henrique nascimento, 468|rio de janeiro|rj;Email:montenegrojose@example.com;Phone:552151319482"
+2,CRM00002223;CRM00010001,Address;Email;Phone,Address:distrito de silveira|caxias do sul|mg;Email:brenda71@example.com;Phone:04127479319
+2,CRM00002224;CRM00008268,Email,Email:lda-cruz@example.net
+2,CRM00002238;CRM00010246,Address;Email;Phone,"Address:fazenda matheus nogueira, 13|salvador|ba;Email:lunanovaes@example.org;Phone:01170564971"
+2,CRM00002249;CRM00008917,Email,Email:rcavalcanti@example.net
+2,CRM00002251;CRM00010447,Address;Email;Phone,"Address:rua cecília correia, 161|pelotas|rs;Email:hfogaca@example.com;Phone:551180404416"
+2,CRM00002262;CRM00006326,Email,Email:pedroviana@example.net
+2,CRM00002279;CRM00004022,Email,Email:giovannaalbuquerque@example.org
+2,CRM00002288;CRM00006957,Email,Email:lucas-gabrielborges@example.org
+2,CRM00002300;CRM00010091,Address;Email;Phone,"Address:quadra diego pinto, 4|rio de janeiro|rj;Email:bda-cruz@example.com;Phone:3179492315"
+2,CRM00002310;CRM00006400,Email,Email:novaesmaria-luiza@example.net
+2,CRM00002315;CRM00010302,Address;Email;Phone,"Address:fazenda de cassiano, 4|petrópolis|rj;Email:beniciopinto@example.net;Phone:552181924241"
+2,CRM00002328;CRM00010322,Address;Email;Phone,"Address:colônia kevin fogaça, 8|ilhéus|ba;Email:rafaelda-rocha@example.org;Phone:5501164101442"
+2,CRM00002330;CRM00007115,Email,Email:tribeiro@example.net
+2,CRM00002347;CRM00010265,Address;Email;Phone,"Address:vale de almeida, 66|ilhéus|ba;Email:gcavalcanti@example.org;Phone:553168073281"
+2,CRM00002370;CRM00010497,Address;Email;Phone,"Address:alameda stella monteiro, 61|niterói|rj;Email:casa-grandepaulo@example.org;Phone:07110564006"
+2,CRM00002378;CRM00005518,Email,Email:zfarias@example.org
+2,CRM00002431;CRM00010041,Address;Email;Phone,"Address:lagoa carvalho, 5|curitiba|pr;Email:rochamaria-flor@example.com;Phone:02155065302"
+2,CRM00002435;CRM00010018,Address;Email;Phone,"Address:via de campos, 570|rio de janeiro|rj;Email:domleao@example.net;Phone:3115736640"
+2,CRM00002440;CRM00010483,Address;Email;Phone,Address:chácara de moreira|feira de santana|ba;Email:macedozoe@example.com;Phone:07122804369
+2,CRM00002455;CRM00003868,Email,Email:icarvalho@example.com
+2,CRM00002457;CRM00010011,Address;Email;Phone,"Address:aeroporto castro, 60|petrópolis|rj;Email:joao-pedro16@example.org;Phone:03187864801"
+2,CRM00002462;CRM00002611,Email,Email:nalmeida@example.net
+2,CRM00002474;CRM00010087,Address;Email;Phone,"Address:vale de nogueira, 2|caxias do sul|rs;Email:diego64@example.net;Phone:5508164005844"
+2,CRM00002480;CRM00004986,Email,Email:pedro-miguel94@example.com
+2,CRM00002489;CRM00009605,Email,Email:oviana@example.org
+2,CRM00002494;CRM00010268,Address;Email;Phone,"Address:parque léo viana, 18|curitiba|pr;Email:jbarros@example.net;Phone:554135596572"
+2,CRM00002517;CRM00009039,Email,Email:cribeiro@example.org
+2,CRM00002529;CRM00007503,Email,Email:cguerra@example.org
+2,CRM00002566;CRM00006033,Email,Email:pmacedo@example.org
+2,CRM00002572;CRM00006637,Email,Email:dda-cunha@example.net
+2,CRM00002573;CRM00010387,Address;Email;Phone,Address:recanto de nunes|uberlândia|mg;Email:mouralucca@example.net;Phone:05005485211
+2,CRM00002577;CRM00006418,Email,Email:riosluisa@example.com
+2,CRM00002584;CRM00003300,Email,Email:zdas-neves@example.net
+2,CRM00002596;CRM00010380,Address;Email;Phone,"Address:trevo santos, 6|ilhéus|ba;Email:nina00@example.org;Phone:5501132870789"
+2,CRM00002598;CRM00007383,Email,Email:ccasa-grande@example.net
+2,CRM00002612;CRM00008718,Email,Email:vianaana-carolina@example.com
+2,CRM00002618;CRM00003725,Email,Email:tpinto@example.net
+2,CRM00002622;CRM00010410,Address;Phone,"Address:fazenda de fernandes, 1|petrópolis|rj;Phone:08444899615"
+2,CRM00002632;CRM00004384,Email,Email:pnovaes@example.net
+2,CRM00002651;CRM00009932,Email,Email:laragao@example.com
+2,CRM00002658;CRM00006654,Email,Email:rleao@example.net
+2,CRM00002666;CRM00006504,Email,Email:hgarcia@example.org
+2,CRM00002681;CRM00006705,Email,Email:cmendes@example.org
+2,CRM00002686;CRM00010083,Address;Email;Phone,"Address:passarela de rocha, 22|pelotas|rs;Email:moraesjose-miguel@example.net;Phone:551130092733"
+2,CRM00002718;CRM00010383,Address;Email;Phone,"Address:vale garcia, 988|feira de santana|ba;Email:heloisada-cunha@example.com;Phone:552116230030"
+2,CRM00002758;CRM00006319,Email,Email:tsilva@example.com
+2,CRM00002767;CRM00010304,Address;Email;Phone,Address:lagoa de nogueira|feira de santana|ba;Email:gabriel38@example.org;Phone:5504126293658
+2,CRM00002775;CRM00010313,Address;Email;Phone,"Address:largo novais, 58|salvador|ba;Email:lrodrigues@example.com;Phone:06106362298"
+2,CRM00002796;CRM00008549,Email,Email:mleao@example.com
+2,CRM00002798;CRM00010251,Address;Email;Phone,"Address:estrada nicole porto, 29|pelotas|rs;Email:mmoraes@example.com;Phone:5501110772502"
+2,CRM00002802;CRM00010037,Address;Email;Phone,Address:loteamento cecília cirino|ilhéus|ba;Email:oliverfreitas@example.com;Phone:3136625396
+2,CRM00002827;CRM00006485,Email,Email:vbarros@example.com
+2,CRM00002846;CRM00010022,Address;Email;Phone,"Address:distrito daniela fonseca, 66|salvador|ba;Email:vieiragabrielly@example.org;Phone:07147383669"
+2,CRM00002853;CRM00006540,Email,Email:hda-cruz@example.org
+2,CRM00002855;CRM00007797,Email,Email:rdias@example.com
+2,CRM00002867;CRM00003671,Email,Email:hcirino@example.org
+2,CRM00002887;CRM00010344,Address;Email;Phone,"Address:aeroporto de sampaio, 352|caxias do sul|rs;Email:ester06@example.com;Phone:05133495692"
+2,CRM00002903;CRM00006032,Email,Email:wrocha@example.net
+2,CRM00002905;CRM00010215,Address;Email;Phone,"Address:avenida de albuquerque, 515|petrópolis|rj;Email:ymoura@example.org;Phone:08425734998"
+2,CRM00002907;CRM00005492,Email,Email:cjesus@example.com
+2,CRM00002909;CRM00006158,Email,Email:mmelo@example.com
+2,CRM00002923;CRM00010074,Address;Email;Phone,"Address:fazenda barros, 3|caxias do sul|rs;Email:joana92@example.net;Phone:03007837012"
+2,CRM00002938;CRM00010480,Address;Email;Phone,"Address:parque cauê peixoto, 68|santos|sp;Email:ssouza@example.net;Phone:554135468175"
+2,CRM00002944;CRM00010376,Address;Email;Phone,"Address:loteamento eloah ferreira, 75|porto alegre|rs;Email:maria-julia66@example.net;Phone:05190534975"
+2,CRM00002950;CRM00010169,Address;Email;Phone,"Address:rodovia de gonçalves, 33|caxias do sul|rs;Email:maria03@example.com;Phone:8199319264"
+2,CRM00002953;CRM00010077,Address;Email;Phone,"Address:jardim yan carvalho, 93|uberlândia|mg;Email:pimentayasmin@example.org;Phone:05007395273"
+2,CRM00002956;CRM00005920,Email,Email:ccampos@example.com
+2,CRM00002957;CRM00010108,Address;Email;Phone,Address:colônia de borges|feira de santana|ba;Email:valentina08@example.org;Phone:2179163392
+2,CRM00003003;CRM00010452,Address;Email;Phone,Address:feira vieira|salvador|ba;Email:riossamuel@example.com;Phone:551188724002
+2,CRM00003005;CRM00008613,Email,Email:wrocha@example.com
+2,CRM00003026;CRM00010002,Address;Email;Phone,"Address:ladeira de castro, 528|pelotas|rs;Email:costagael-henrique@example.com;Phone:08009621392"
+2,CRM00003031;CRM00008509,Email,Email:nbrito@example.org
+2,CRM00003039;CRM00005473,Email,Email:diogo65@example.com
+2,CRM00003040;CRM00007462,Email,Email:umonteiro@example.org
+2,CRM00003042;CRM00003117,Email,Email:da-pazluara@example.net
+2,CRM00003059;CRM00005617,Email,Email:ana-juliacassiano@example.com
+2,CRM00003060;CRM00010144,Address;Email;Phone,Address:lago correia|juiz de fora|mg;Email:sophia38@example.net;Phone:07121495795
+2,CRM00003071;CRM00006939,Email,Email:nnovaes@example.org
+2,CRM00003084;CRM00010206,Address;Email;Phone,"Address:trecho elisa casa grande, 5|maringá|pr;Email:guilherme01@example.net;Phone:555184252640"
+2,CRM00003096;CRM00010043,Address;Email;Phone,"Address:feira yan melo, 37|maringá|pr;Email:benjamin52@example.net;Phone:07189308210"
+2,CRM00003116;CRM00010339,Address;Email;Phone,"Address:passarela sara cavalcante, 797|são paulo|sp;Email:piresnoah@example.com;Phone:03166522897"
+2,CRM00003129;CRM00010069,Address;Email;Phone,Address:avenida isaque pires|são paulo|sp;Email:kgarcia@example.com;Phone:08000911963
+2,CRM00003138;CRM00006203,Email,Email:britoluiz-gustavo@example.com
+2,CRM00003141;CRM00010014,Address;Email;Phone,"Address:trecho fonseca, 4|salvador|ba;Email:caldeiraemanuel@example.net;Phone:5504160030859"
+2,CRM00003145;CRM00010334,Address;Email;Phone,"Address:estrada de melo, 60|rio de janeiro|rj;Email:andre54@example.com;Phone:4174453138"
+2,CRM00003180;CRM00005838,Email,Email:xcorreia@example.com
+2,CRM00003184;CRM00008909,Email,Email:hsales@example.org
+2,CRM00003194;CRM00006327,Email,Email:allanaaragao@example.org
+2,CRM00003213;CRM00008429,Email,Email:enovaes@example.org
+2,CRM00003217;CRM00005726,Email,Email:ravi78@example.net
+2,CRM00003228;CRM00009646,Email,Email:camargoana@example.net
+2,CRM00003236;CRM00008297,Email,Email:pietra16@example.org
+2,CRM00003241;CRM00010223,Address;Email;Phone,"Address:parque joão gabriel sousa, 59|curitiba|pr;Email:benjamin31@example.net;Phone:5504159532508"
+2,CRM00003248;CRM00003676,Email,Email:ksales@example.com
+2,CRM00003249;CRM00006270,Email,Email:heitorpacheco@example.com
+2,CRM00003252;CRM00010433,Address;Email;Phone,"Address:viela farias, 5|santos|sp;Email:henry-gabrielsilva@example.net;Phone:558125603518"
+2,CRM00003261;CRM00010209,Address;Email;Phone,Address:praça agatha cardoso|petrópolis|rj;Email:andradeisabella@example.org;Phone:2164792317
+2,CRM00003264;CRM00007148,Email,Email:vsa@example.com
+2,CRM00003265;CRM00010490,Address;Email;Phone,"Address:ladeira novais, 21|porto alegre|rs;Email:da-rosajoao-pedro@example.net;Phone:5508485168621"
+2,CRM00003277;CRM00009283,Email,Email:yjesus@example.com
+2,CRM00003288;CRM00009153,Email,Email:zvargas@example.org
+2,CRM00003299;CRM00010457,Address;Email;Phone,"Address:via caldeira, 80|campinas|sp;Email:vieiraeduarda@example.net;Phone:06152072486"
+2,CRM00003308;CRM00010244,Address;Email;Phone,"Address:rua dante da rosa, 69|maringá|pr;Email:melissa04@example.org;Phone:556100062182"
+2,CRM00003314;CRM00006433,Email,Email:ada-rocha@example.org
+2,CRM00003320;CRM00010388,Address;Email;Phone,"Address:condomínio de sá, 44|maringá|pr;Email:juan41@example.com;Phone:08179258530"
+2,CRM00003321;CRM00009514,Email,Email:hpereira@example.net
+2,CRM00003327;CRM00007294,Email,Email:fariasmathias@example.com
+2,CRM00003332;CRM00010236,Address;Email;Phone,Address:travessa novais|petrópolis|rj;Email:enzo-gabrielsa@example.net;Phone:01150411582
+2,CRM00003367;CRM00009819,Email,Email:clopes@example.org
+2,CRM00003387;CRM00010118,Address;Email;Phone,"Address:recanto de costela, 12|rio de janeiro|rj;Email:eduardocosta@example.net;Phone:5177434146"
+2,CRM00003399;CRM00010257,Address;Email;Phone,"Address:praia da conceição, 51|uberlândia|mg;Email:fmacedo@example.org;Phone:2182420512"
+2,CRM00003419;CRM00010489,Address;Email;Phone,"Address:campo cirino, 28|santos|sp;Email:natalia46@example.net;Phone:5501193636620"
+2,CRM00003421;CRM00007426,Email,Email:silveiranoah@example.org
+2,CRM00003425;CRM00005967,Email,Email:ncarvalho@example.com
+2,CRM00003428;CRM00008198,Email,Email:oalmeida@example.net
+2,CRM00003432;CRM00006325,Email,Email:zda-paz@example.com
+2,CRM00003448;CRM00010183,Address;Email;Phone,"Address:ladeira nathan pinto, 3|juiz de fora|mg;Email:vasconcelosrael@example.org;Phone:05153831615"
+2,CRM00003460;CRM00010162,Address;Email;Phone,"Address:feira esther nogueira, 57|ilhéus|ba;Email:vasconcelossophia@example.net;Phone:1100299907"
+2,CRM00003472;CRM00008665,Email,Email:smachado@example.com
+2,CRM00003488;CRM00010225,Address;Email;Phone,"Address:vale rael abreu, 4|salvador|ba;Email:aragaoana-liz@example.net;Phone:8489063766"
+2,CRM00003495;CRM00005289,Email,Email:pmacedo@example.com
+2,CRM00003533;CRM00006420,Email,Email:wpereira@example.com
+2,CRM00003540;CRM00010372,Address;Email;Phone,"Address:estrada souza, 420|salvador|ba;Email:davi-luccacarvalho@example.net;Phone:08169661469"
+2,CRM00003542;CRM00008849,Email,Email:rnovaes@example.net
+2,CRM00003544;CRM00010112,Address;Email;Phone,"Address:residencial clarice da conceição, 59|curitiba|pr;Email:ribeirodom@example.net;Phone:551194349387"
+2,CRM00003558;CRM00010333,Address;Email;Phone,"Address:estação de jesus, 9|porto alegre|rs;Email:ferreiraisaque@example.com;Phone:1109265064"
+2,CRM00003568;CRM00010374,Address;Email;Phone,Address:estação guerra|belo horizonte|ba;Email:arthur-gabrielabreu@example.org;Phone:05113462538
+2,CRM00003571;CRM00006885,Email,Email:usales@example.net
+2,CRM00003573;CRM00010141,Address;Email;Phone,"Address:setor peixoto, 16|belo horizonte|mg;Email:msiqueira@example.net;Phone:553165384777"
+2,CRM00003580;CRM00010119,Address;Email;Phone,"Address:lagoa caldeira, 59|rio de janeiro|rj;Email:wbarros@example.net;Phone:553143366712"
+2,CRM00003587;CRM00010068,Address;Email;Phone,"Address:colônia pinto, 6|juiz de fora|mg;Email:theoribeiro@example.org;Phone:05004600785"
+2,CRM00003599;CRM00007071,Email,Email:obarbosa@example.net
+2,CRM00003618;CRM00005637,Email,Email:zcavalcanti@example.net
+2,CRM00003652;CRM00010454,Address;Email;Phone,"Address:via de camargo, 386|porto alegre|rs;Email:fernandofernandes@example.org;Phone:8184982149"
+2,CRM00003659;CRM00010296,Address;Email;Phone,"Address:estrada luiz otávio da rocha, 58|campinas|sp;Email:emartins@example.net;Phone:08167505675"
+2,CRM00003664;CRM00006947,Email,Email:ralbuquerque@example.net
+2,CRM00003667;CRM00010355,Address;Phone,"Address:vila benício pires, 778|caxias do sul|rs;Phone:5167237811"
+2,CRM00003679;CRM00010356,Address;Email;Phone,Address:condomínio lara câmara|feira de santana|ba;Email:da-rochamaya@example.com;Phone:05173744275
+2,CRM00003688;CRM00010451,Address;Email;Phone,"Address:pátio ravi garcia, 834|petrópolis|rj;Email:ian88@example.com;Phone:553136362137"
+2,CRM00003701;CRM00010475,Address;Email;Phone,"Address:passarela enzo guerra, 41|belo horizonte|mg;Email:melissaguerra@example.net;Phone:08008202542"
+2,CRM00003713;CRM00008076,Email,Email:anaalmeida@example.org
+2,CRM00003714;CRM00004791,Email,Email:thales44@example.net
+2,CRM00003744;CRM00010117,Address;Email;Phone,"Address:setor marcos vinicius sá, 71|juiz de fora|mg;Email:gabrielly83@example.com;Phone:558478971277"
+2,CRM00003795;CRM00009779,Email,Email:yfreitas@example.org
+2,CRM00003798;CRM00010358,Address;Email;Phone,Address:recanto clara rezende|londrina|pr;Email:agatha57@example.org;Phone:8426186796
+2,CRM00003810;CRM00010427,Address;Email;Phone,"Address:vila mariah fernandes, 11|campinas|sp;Email:fariasnatalia@example.org;Phone:03008707919"
+2,CRM00003822;CRM00010345,Address;Email;Phone,"Address:trecho de albuquerque, 15|londrina|pr;Email:pintoclara@example.org;Phone:558485024715"
+2,CRM00003826;CRM00010050,Address;Email;Phone,"Address:colônia pastor, 647|petrópolis|rj;Email:luan15@example.com;Phone:5504156987352"
+2,CRM00003827;CRM00009529,Email,Email:opastor@example.org
+2,CRM00003849;CRM00007784,Email,Email:vitoria27@example.org
+2,CRM00003871;CRM00009218,Email,Email:pedro-henriquemelo@example.com
+2,CRM00003883;CRM00010190,Address;Email;Phone,"Address:largo de brito, 24|porto alegre|rs;Email:calebe18@example.net;Phone:2105388297"
+2,CRM00003911;CRM00010476,Address;Email;Phone,Address:vila de aragão|pelotas|rs;Email:julia41@example.net;Phone:6108156439
+2,CRM00003921;CRM00010105,Address;Email;Phone,"Address:vereda maria fernanda da rosa, 36|pelotas|rs;Email:mirellarodrigues@example.com;Phone:5504138364251"
+2,CRM00003942;CRM00005854,Email,Email:llopes@example.com
+2,CRM00003945;CRM00007599,Email,Email:ibrito@example.com
+2,CRM00003978;CRM00010024,Address;Email;Phone,Address:favela de martins|petrópolis|rj;Email:costelaantonio@example.net;Phone:08112474127
+2,CRM00003995;CRM00007345,Email,Email:julia62@example.net
+2,CRM00004003;CRM00008489,Email,Email:ivieira@example.com
+2,CRM00004015;CRM00004584,Email,Email:uteixeira@example.org
+2,CRM00004036;CRM00004285,Email,Email:fjesus@example.com
+2,CRM00004039;CRM00009354,Email,Email:xpereira@example.net
+2,CRM00004059;CRM00010219,Address;Email;Phone,"Address:quadra pimenta, 95|porto alegre|rs;Email:wpeixoto@example.com;Phone:06165759649"
+2,CRM00004060;CRM00009223,Email,Email:spereira@example.org
+2,CRM00004068;CRM00010240,Address;Phone,"Address:travessa de correia, 67|maringá|pr;Phone:02118937759"
+2,CRM00004078;CRM00010078,Address;Email;Phone,"Address:rua de alves, 548|curitiba|pr;Email:enzo-gabriel80@example.net;Phone:02148741865"
+2,CRM00004080;CRM00010264,Address;Email;Phone,"Address:residencial de cardoso, 26|londrina|pr;Email:hda-mota@example.org;Phone:8177268293"
+2,CRM00004098;CRM00010331,Address;Email;Phone,"Address:quadra de moraes, 69|belo horizonte|mg;Email:mgomes@example.net;Phone:5504112581605"
+2,CRM00004104;CRM00010421,Address;Email;Phone,"Address:residencial de sousa, 732|niterói|rj;Email:luisagoncalves@example.org;Phone:05006558174"
+2,CRM00004119;CRM00010061,Address;Email;Phone,"Address:colônia ana laura cardoso, 22|juiz de fora|mg;Email:nda-cruz@example.net;Phone:3126082300"
+2,CRM00004120;CRM00010484,Address;Email;Phone,Address:vereda benjamin pastor|juiz de fora|mg;Email:nogueiraagatha@example.org;Phone:558422615769
+2,CRM00004157;CRM00010434,Address;Email;Phone,Address:ladeira da costa|salvador|ba;Email:leonardogomes@example.org;Phone:1164433671
+2,CRM00004176;CRM00010375,Address;Email;Phone,"Address:ladeira cirino, 12|ilhéus|ba;Email:pintomaria-luiza@example.com;Phone:06191857448"
+2,CRM00004178;CRM00010354,Address;Email;Phone,"Address:condomínio de caldeira, 61|niterói|rj;Email:pereiraana-carolina@example.com;Phone:3145198442"
+2,CRM00004188;CRM00006963,Email,Email:gfreitas@example.org
+2,CRM00004197;CRM00006351,Email,Email:bcastro@example.com
+2,CRM00004208;CRM00010010,Address;Email;Phone,"Address:quadra antônio costela, 26|ilhéus|ba;Email:bpacheco@example.com;Phone:06158471336"
+2,CRM00004212;CRM00010269,Address;Email;Phone,"Address:feira de guerra, 92|campinas|sp;Email:ycunha@example.org;Phone:3139210199"
+2,CRM00004218;CRM00010441,Address;Email;Phone,"Address:vereda novaes, 3|ilhéus|ba;Email:casa-grandeasafe@example.com;Phone:5508119809937"
+2,CRM00004238;CRM00010241,Address;Email;Phone,"Address:quadra pedro teixeira, 28|salvador|ba;Email:fcasa-grande@example.com;Phone:558184350912"
+2,CRM00004245;CRM00004393,Email,Email:leticia76@example.com
+2,CRM00004246;CRM00006968,Email,Email:ssilva@example.org
+2,CRM00004254;CRM00007970,Email,Email:zgarcia@example.com
+2,CRM00004269;CRM00010021,Address;Email;Phone,"Address:rodovia kamilly das neves, 90|belo horizonte|mg;Email:rebecapereira@example.com;Phone:05002723996"
+2,CRM00004271;CRM00010290,Address;Email;Phone,"Address:largo pimenta, 79|pelotas|rs;Email:gda-costa@example.com;Phone:01169784836"
+2,CRM00004280;CRM00010161,Address;Email;Phone,"Address:estrada andrade, 34|ilhéus|ba;Email:nathan78@example.org;Phone:551102145186"
+2,CRM00004317;CRM00010187,Address;Email;Phone,"Address:largo benjamin dias, 92|porto alegre|rs;Email:camilaramos@example.net;Phone:553115524069"
+2,CRM00004355;CRM00010292,Address;Email;Phone,Address:sítio pedro lucas nunes|ilhéus|ba;Email:enrico25@example.org;Phone:08428335784
+2,CRM00004388;CRM00006221,Email,Email:glopes@example.net
+2,CRM00004400;CRM00010311,Address;Email;Phone,"Address:colônia gonçalves, 5|feira de santana|ba;Email:kaique45@example.org;Phone:5501144419086"
+2,CRM00004409;CRM00009171,Email,Email:oda-paz@example.org
+2,CRM00004415;CRM00007187,Email,Email:ecavalcanti@example.org
+2,CRM00004441;CRM00010042,Address;Email;Phone,Address:morro dom moraes|juiz de fora|mg;Email:sophie38@example.org;Phone:5503178492143
+2,CRM00004453;CRM00008321,Email,Email:tmontenegro@example.org
+2,CRM00004458;CRM00009839,Email,Email:jda-cunha@example.net
+2,CRM00004478;CRM00010486,Address;Email;Phone,Address:aeroporto renan rocha|uberlândia|mg;Email:antony21@example.com;Phone:04186109300
+2,CRM00004483;CRM00008747,Email,Email:ccunha@example.net
+2,CRM00004496;CRM00010337,Address;Email;Phone,"Address:setor de ribeiro, 1|petrópolis|rj;Email:mouraanthony@example.net;Phone:552196495463"
+2,CRM00004525;CRM00008325,Email,Email:jsouza@example.com
+2,CRM00004540;CRM00010477,Address;Email;Phone,"Address:esplanada alves, 72|londrina|pr;Email:riosdaniel@example.org;Phone:557187940184"
+2,CRM00004562;CRM00010030,Address;Email;Phone,"Address:área de da mata, 10|juiz de fora|mg;Email:da-cruzlara@example.com;Phone:557160293955"
+2,CRM00004572;CRM00010195,Address;Email;Phone,"Address:favela albuquerque, 50|pelotas|rs;Email:benjamim46@example.net;Phone:02143573566"
+2,CRM00004598;CRM00010295,Address;Email;Phone,"Address:chácara maya vieira, 54|petrópolis|rj;Email:gustavo-henrique27@example.org;Phone:3125346733"
+2,CRM00004604;CRM00009963,Email,Email:olivermachado@example.org
+2,CRM00004610;CRM00006575,Email,Email:hvasconcelos@example.net
+2,CRM00004612;CRM00008875,Email,Email:icavalcanti@example.com
+2,CRM00004642;CRM00006217,Email,Email:ugoncalves@example.org
+2,CRM00004658;CRM00005483,Email,Email:oliveiramaria@example.com
+2,CRM00004660;CRM00010243,Address;Email;Phone,Address:conjunto thales rocha|juiz de fora|mg;Email:carlos-eduardomoreira@example.net;Phone:5149850093
+2,CRM00004677;CRM00010381,Address;Email;Phone,"Address:condomínio costa, 43|caxias do sul|rs;Email:frios@example.net;Phone:02192231391"
+2,CRM00004702;CRM00005508,Email,Email:csa@example.com
+2,CRM00004717;CRM00010158,Address;Phone,"Address:conjunto maria clara da costa, 21|feira de santana|ba;Phone:5502145250705"
+2,CRM00004733;CRM00010298,Address;Email;Phone,"Address:travessa de macedo, 8|belo horizonte|mg;Email:eloahcasa-grande@example.org;Phone:555104078432"
+2,CRM00004751;CRM00004831,Email,Email:ycirino@example.net
+2,CRM00004769;CRM00010228,Address;Email;Phone,"Address:alameda barros, 798|salvador|ba;Email:silveirabreno@example.net;Phone:3106986402"
+2,CRM00004775;CRM00010465,Address;Email;Phone,"Address:via de vieira, 21|juiz de fora|mg;Email:zoenunes@example.com;Phone:01117185464"
+2,CRM00004803;CRM00005662,Email,Email:gmachado@example.org
+2,CRM00004817;CRM00010347,Address;Email;Phone,"Address:largo de caldeira, 3|pelotas|rs;Email:azevedomaria-fernanda@example.com;Phone:08452546754"
+2,CRM00004820;CRM00010442,Address;Email;Phone,Address:largo de freitas|caxias do sul|rs;Email:maria-helena32@example.net;Phone:8115683810
+2,CRM00004826;CRM00010424,Address;Email;Phone,"Address:recanto de rodrigues, 12|belo horizonte|mg;Email:maria60@example.com;Phone:554153895650"
+2,CRM00004827;CRM00009661,Email,Email:yda-cunha@example.net
+2,CRM00004833;CRM00010153,Address;Email;Phone,Address:quadra de casa grande|maringá|pr;Email:mariaguerra@example.net;Phone:552117623408
+2,CRM00004839;CRM00010389,Address;Email;Phone,"Address:núcleo isabella da luz, 28|uberlândia|mg;Email:maria-liz26@example.org;Phone:5504132823111"
+2,CRM00004861;CRM00005732,Email,Email:oalmeida@example.com
+2,CRM00004880;CRM00010015,Address;Email;Phone,"Address:chácara thomas fernandes, 30|maringá|pr;Email:valentinacostela@example.net;Phone:02198385234"
+2,CRM00004924;CRM00010423,Address;Email;Phone,"Address:setor de sá, 331|feira de santana|ba;Email:henry-gabriel64@example.net;Phone:557195439216"
+2,CRM00004945;CRM00005027,Email,Email:wpimenta@example.org
+2,CRM00004949;CRM00009277,Email,Email:fonsecadavi-miguel@example.org
+2,CRM00004952;CRM00010317,Address;Email;Phone,Address:condomínio oliver pires|rio de janeiro|rj;Email:rmachado@example.net;Phone:4193791503
+2,CRM00004974;CRM00008818,Email,Email:danielagomes@example.com
+2,CRM00004975;CRM00010353,Address;Email;Phone,"Address:avenida macedo, 13|maringá|pr;Email:ravi08@example.com;Phone:5503134611969"
+2,CRM00004976;CRM00010352,Address;Email;Phone,"Address:setor maria liz santos, 39|curitiba|pr;Email:guerrazoe@example.com;Phone:08102712852"
+2,CRM00004985;CRM00010494,Address;Email;Phone,"Address:lago de das neves, 629|campinas|sp;Email:ygomes@example.org;Phone:558469441391"
+2,CRM00005011;CRM00010006,Address;Email;Phone,"Address:área de alves, 7|santos|sp;Email:bryansales@example.org;Phone:05008583799"
+2,CRM00005020;CRM00009134,Email,Email:allana79@example.com
+2,CRM00005033;CRM00008505,Email,Email:vcastro@example.com
+2,CRM00005039;CRM00010496,Address;Email;Phone,"Address:trecho de porto, 26|rio de janeiro|rj;Email:marquesisabelly@example.com;Phone:05196065048"
+2,CRM00005042;CRM00009484,Email,Email:fvargas@example.org
+2,CRM00005057;CRM00008802,Email,Email:rmoreira@example.net
+2,CRM00005059;CRM00009472,Email,Email:rmoreira@example.com
+2,CRM00005068;CRM00008413,Email,Email:mmontenegro@example.org
+2,CRM00005076;CRM00005223,Email,Email:ucosta@example.net
+2,CRM00005086;CRM00010411,Address;Email;Phone,"Address:trevo vieira, 502|maringá|pr;Email:raquelnogueira@example.net;Phone:8187388888"
+2,CRM00005087;CRM00010181,Address;Email;Phone,"Address:favela de almeida, 11|pelotas|rs;Email:dantevargas@example.net;Phone:553174956608"
+2,CRM00005102;CRM00005916,Email,Email:ifarias@example.org
+2,CRM00005105;CRM00010154,Address;Email;Phone,"Address:quadra isadora costa, 85|curitiba|pr;Email:salescatarina@example.com;Phone:5508132594259"
+2,CRM00005110;CRM00007889,Email,Email:qmoura@example.com
+2,CRM00005118;CRM00010291,Address;Email;Phone,"Address:lago pacheco, 38|santos|sp;Email:otaviosampaio@example.com;Phone:5505189256481"
+2,CRM00005168;CRM00010239,Address;Email;Phone,"Address:trevo de guerra, 15|maringá|pr;Email:ravy64@example.com;Phone:5503108651679"
+2,CRM00005178;CRM00007465,Email,Email:scunha@example.net
+2,CRM00005194;CRM00010326,Address;Email;Phone,"Address:morro leonardo costela, 1|ilhéus|ba;Email:anthony-gabrielcamargo@example.org;Phone:07197449371"
+2,CRM00005199;CRM00010392,Address;Email;Phone,"Address:praça de da mata, 35|belo horizonte|mg;Email:pdias@example.net;Phone:5504142377785"
+2,CRM00005222;CRM00010478,Address;Email;Phone,"Address:área dias, 940|são paulo|sp;Email:apastor@example.org;Phone:07111520758"
+2,CRM00005247;CRM00007081,Email,Email:rezendeluiz-fernando@example.org
+2,CRM00005258;CRM00009632,Email,Email:ana-julianascimento@example.com
+2,CRM00005279;CRM00010216,Address;Email;Phone,"Address:viaduto de martins, 67|campinas|sp;Email:oliveirajoana@example.org;Phone:5506128815834"
+2,CRM00005295;CRM00007363,Email,Email:murilovargas@example.org
+2,CRM00005324;CRM00010237,Address;Email;Phone,"Address:pátio dante brito, 17|pelotas|rs;Email:pachecocarlos-eduardo@example.org;Phone:08401150491"
+2,CRM00005331;CRM00010089,Address;Email;Phone,Address:conjunto de guerra|petrópolis|rj;Email:santosleticia@example.org;Phone:556181467661
+2,CRM00005356;CRM00008731,Email,Email:fda-paz@example.net
+2,CRM00005357;CRM00007657,Email,Email:erocha@example.org
+2,CRM00005395;CRM00010363,Address;Email;Phone,"Address:viaduto maria eduarda farias, 59|uberlândia|mg;Email:anada-mota@example.net;Phone:5501111282828"
+2,CRM00005400;CRM00010420,Address;Email;Phone,"Address:condomínio de rezende, 53|juiz de fora|mg;Email:ana-ceciliada-cunha@example.com;Phone:557168332988"
+2,CRM00005417;CRM00006201,Email,Email:zrocha@example.net
+2,CRM00005418;CRM00010450,Address;Email;Phone,Address:rodovia de martins|porto alegre|rs;Email:imontenegro@example.net;Phone:06144738313
+2,CRM00005419;CRM00010016,Address;Email;Phone,"Address:condomínio caroline câmara, 55|caxias do sul|rs;Email:ocastro@example.org;Phone:555104522145"
+2,CRM00005424;CRM00010320,Address;Email;Phone,"Address:via lorena da rocha, 363|curitiba|pr;Email:qda-cunha@example.net;Phone:5507117857811"
+2,CRM00005431;CRM00007666,Email,Email:zsa@example.org
+2,CRM00005446;CRM00010211,Address;Email;Phone,"Address:praia de da rocha, 5|niterói|rj;Email:maria-clara73@example.com;Phone:5508168115733"
+2,CRM00005453;CRM00010202,Address;Email;Phone,"Address:vila maria helena mendonça, 44|salvador|ba;Email:rodrigueshellena@example.com;Phone:7189128981"
+2,CRM00005455;CRM00009857,Email,Email:qmartins@example.org
+2,CRM00005476;CRM00010035,Address;Email;Phone,"Address:praia teixeira, 1|juiz de fora|mg;Email:enzo-gabriel62@example.com;Phone:02173545440"
+2,CRM00005495;CRM00010008,Address;Email;Phone,"Address:núcleo correia, 90|campinas|sp;Email:joao-vitorbarros@example.net;Phone:7199372981"
+2,CRM00005517;CRM00010425,Address;Email;Phone,"Address:área maitê cavalcante, 766|campinas|sp;Email:eloa89@example.com;Phone:558112389436"
+2,CRM00005525;CRM00005557,Email,Email:fcampos@example.org
+2,CRM00005526;CRM00006143,Email,Email:theooliveira@example.net
+2,CRM00005529;CRM00006620,Email,Email:jpires@example.com
+2,CRM00005546;CRM00008418,Email,Email:steixeira@example.net
+2,CRM00005554;CRM00010208,Address;Email;Phone,"Address:estação aparecida, 70|salvador|ba;Email:osouza@example.net;Phone:5504165682741"
+2,CRM00005561;CRM00010365,Address;Email;Phone,"Address:residencial moura, 9|santos|sp;Email:rafaela78@example.org;Phone:558476252711"
+2,CRM00005566;CRM00010136,Address;Email;Phone,"Address:rodovia benício duarte, 4|porto alegre|rs;Email:ravyaparecida@example.org;Phone:4121253930"
+2,CRM00005576;CRM00010130,Address;Email;Phone,"Address:favela de ramos, 8|petrópolis|rj;Email:mirellagarcia@example.org;Phone:552129507836"
+2,CRM00005578;CRM00010310,Address;Email;Phone,Address:trecho sousa|uberlândia|sp;Email:stellaferreira@example.org;Phone:07139269285
+2,CRM00005601;CRM00010386,Address;Email;Phone,"Address:loteamento valentim borges, 170|pelotas|rs;Email:monteirodavi-miguel@example.com;Phone:04130904611"
+2,CRM00005602;CRM00006250,Email,Email:jfreitas@example.com
+2,CRM00005604;CRM00005903,Email,Email:raparecida@example.com
+2,CRM00005608;CRM00007152,Email,Email:xmendonca@example.org
+2,CRM00005610;CRM00008138,Email,Email:vnovais@example.org
+2,CRM00005615;CRM00007043,Email,Email:isouza@example.com
+2,CRM00005630;CRM00008001,Email,Email:martinscaleb@example.org
+2,CRM00005645;CRM00010456,Address;Email;Phone,"Address:colônia de rocha, 476|juiz de fora|mg;Email:bruna84@example.org;Phone:2138185448"
+2,CRM00005673;CRM00007714,Email,Email:umarques@example.com
+2,CRM00005676;CRM00010122,Address;Email;Phone,"Address:conjunto cavalcanti, 7|feira de santana|ba;Email:isadoravieira@example.net;Phone:6108825951"
+2,CRM00005686;CRM00010485,Address;Email;Phone,Address:rodovia de cavalcante|curitiba|pr;Email:juliabarbosa@example.com;Phone:555155728117
+2,CRM00005694;CRM00007151,Email,Email:ycamargo@example.org
+2,CRM00005706;CRM00008687,Email,Email:mmarques@example.com
+2,CRM00005727;CRM00008658,Email,Email:beniciogoncalves@example.com
+2,CRM00005764;CRM00009404,Email,Email:ngomes@example.net
+2,CRM00005771;CRM00010338,Address;Email;Phone,"Address:praça ana laura das neves, 70|pelotas|rs;Email:miguel95@example.com;Phone:4130944511"
+2,CRM00005773;CRM00006604,Email,Email:qcaldeira@example.com
+2,CRM00005792;CRM00010281,Address;Email;Phone,"Address:rua pires, 550|ilhéus|ba;Email:sofia90@example.org;Phone:2148406641"
+2,CRM00005806;CRM00010213,Address;Email;Phone,"Address:viela cavalcante, 6|belo horizonte|mg;Email:efonseca@example.org;Phone:5100563070"
+2,CRM00005823;CRM00010071,Address;Email;Phone,"Address:estrada yago azevedo, 11|petrópolis|rj;Email:pintoalicia@example.org;Phone:03004860875"
+2,CRM00005827;CRM00010319,Address;Email;Phone,"Address:largo porto, 765|curitiba|pr;Email:yagosa@example.net;Phone:5504100699108"
+2,CRM00005834;CRM00009069,Email,Email:vitor-gabriel89@example.com
+2,CRM00005873;CRM00010066,Address;Email;Phone,"Address:trevo porto, 631|feira de santana|ba;Email:alice21@example.com;Phone:553113914961"
+2,CRM00005899;CRM00010232,Address;Email;Phone,"Address:área de garcia, 51|niterói|rj;Email:breno70@example.org;Phone:02101114228"
+2,CRM00005906;CRM00010415,Address;Email;Phone,"Address:recanto luiz gustavo vargas, 11|campinas|sp;Email:arthur88@example.com;Phone:5136455978"
+2,CRM00005909;CRM00010145,Address;Email;Phone,Address:núcleo vasconcelos|juiz de fora|mg;Email:jcassiano@example.com;Phone:558126387626
+2,CRM00005984;CRM00009723,Email,Email:vitor75@example.org
+2,CRM00005985;CRM00007907,Email,Email:abreuagatha@example.com
+2,CRM00006016;CRM00010235,Address;Email;Phone,"Address:vale de peixoto, 798|maringá|pr;Email:isaacmendes@example.com;Phone:08470531048"
+2,CRM00006054;CRM00010413,Address;Email;Phone,"Address:campo de costa, 11|caxias do sul|rs;Email:cunhaana-livia@example.org;Phone:558423012127"
+2,CRM00006084;CRM00010203,Address;Email;Phone,"Address:praça de da costa, 50|curitiba|pr;Email:pedro-henriquebarbosa@example.org;Phone:5501116149271"
+2,CRM00006091;CRM00010167,Address;Email;Phone,"Address:núcleo de araújo, 29|londrina|pr;Email:lopesotto@example.org;Phone:558108518756"
+2,CRM00006104;CRM00007214,Email,Email:jcastro@example.net
+2,CRM00006169;CRM00008551,Email,Email:tcampos@example.com
+2,CRM00006176;CRM00010435,Address;Email;Phone,"Address:largo de cirino, 75|maringá|pr;Email:mariafonseca@example.com;Phone:557178240226"
+2,CRM00006188;CRM00010359,Address;Email;Phone,"Address:sítio de rocha, 75|pelotas|rs;Email:livia43@example.net;Phone:554178421976"
+2,CRM00006194;CRM00010406,Address;Email;Phone,"Address:quadra da cunha, 43|salvador|ba;Email:cassianoayla@example.com;Phone:03134290800"
+2,CRM00006248;CRM00010092,Address;Email;Phone,"Address:distrito da luz, 13|niterói|rj;Email:da-rochaanthony@example.com;Phone:06146313579"
+2,CRM00006251;CRM00010314,Address;Email;Phone,"Address:lago de pinto, 215|ilhéus|ba;Email:fmacedo@example.net;Phone:07168237394"
+2,CRM00006276;CRM00010327,Address;Email;Phone,"Address:conjunto gabriel lima, 86|uberlândia|mg;Email:maria-cecilia09@example.com;Phone:09008749894"
+2,CRM00006313;CRM00010080,Address;Email;Phone,"Address:recanto mirella garcia, 97|feira de santana|ba;Email:gmoraes@example.net;Phone:7104725209"
+2,CRM00006314;CRM00010051,Address;Email;Phone,"Address:estação cunha, 70|londrina|pr;Email:diego75@example.net;Phone:558114563944"
+2,CRM00006346;CRM00010082,Address;Email;Phone,"Address:pátio novaes, 76|campinas|sp;Email:kevinmonteiro@example.org;Phone:3126863471"
+2,CRM00006381;CRM00008641,Email,Email:jdas-neves@example.com
+2,CRM00006390;CRM00010436,Address;Email;Phone,"Address:campo de lopes, 68|maringá|pr;Email:rmoura@example.com;Phone:08007466211"
+2,CRM00006406;CRM00010125,Address;Email;Phone,"Address:parque pastor, 4|londrina|pr;Email:azevedoluiz-otavio@example.net;Phone:5508414288022"
+2,CRM00006408;CRM00010124,Address;Email;Phone,"Address:conjunto ísis fonseca, 4|salvador|ba;Email:duarteemilly@example.com;Phone:8423658044"
+2,CRM00006411;CRM00010445,Address;Email;Phone,"Address:residencial cassiano, 892|ilhéus|ba;Email:leoda-luz@example.org;Phone:5501159700330"
+2,CRM00006428;CRM00010371,Address;Email;Phone,"Address:morro farias, 803|campinas|sp;Email:qfreitas@example.com;Phone:5508146371640"
+2,CRM00006429;CRM00010165,Address;Email;Phone,Address:ladeira zoe aparecida|salvador|ba;Email:alana08@example.net;Phone:1136410037
+2,CRM00006450;CRM00010028,Address;Email;Phone,"Address:travessa nunes, 59|porto alegre|rs;Email:bsouza@example.org;Phone:558499223872"
+2,CRM00006482;CRM00010233,Address;Email;Phone,"Address:viaduto pedro lucas silveira, 3|pelotas|rs;Email:noah85@example.com;Phone:555113571811"
+2,CRM00006527;CRM00007546,Email,Email:qcavalcanti@example.net
+2,CRM00006530;CRM00010284,Address;Email;Phone,"Address:rodovia laura da luz, 31|pelotas|rs;Email:isabela32@example.com;Phone:01198216759"
+2,CRM00006531;CRM00010299,Address;Email;Phone,"Address:recanto de costela, 15|campinas|sp;Email:gustavo-henriqueramos@example.org;Phone:555178327410"
+2,CRM00006536;CRM00010175,Address;Email;Phone,"Address:conjunto de das neves, 74|salvador|ba;Email:novaeseloa@example.org;Phone:8485948967"
+2,CRM00006543;CRM00010430,Address;Email;Phone,"Address:ladeira gabrielly rezende, 37|porto alegre|rs;Email:barrosapollo@example.org;Phone:5504160451790"
+2,CRM00006545;CRM00010390,Address;Email;Phone,"Address:estação moura, 4|salvador|ba;Email:halbuquerque@example.com;Phone:6122226682"
+2,CRM00006553;CRM00009340,Email,Email:roliveira@example.com
+2,CRM00006562;CRM00010283,Address;Email;Phone,Address:favela de marques|niterói|rj;Email:alexandre39@example.com;Phone:05158791269
+2,CRM00006565;CRM00010330,Address;Email;Phone,"Address:largo aragão, 809|ilhéus|ba;Email:enzo-gabrielsa@example.com;Phone:7191208037"
+2,CRM00006572;CRM00010093,Address;Email;Phone,"Address:trecho miguel machado, 26|caxias do sul|rs;Email:olivialopes@example.com;Phone:7147778695"
+2,CRM00006574;CRM00008382,Email,Email:iaraujo@example.com
+2,CRM00006588;CRM00007176,Email,Email:mnascimento@example.com
+2,CRM00006606;CRM00010398,Address;Email;Phone,Address:recanto leandro aparecida|são paulo|sp;Email:rezendemaria-luisa@example.com;Phone:08007244045
+2,CRM00006625;CRM00010126,Address;Email;Phone,"Address:avenida de camargo, 66|curitiba|pr;Email:cauemontenegro@example.com;Phone:05184827494"
+2,CRM00006626;CRM00010449,Address;Email;Phone,Address:lagoa alana casa grande|londrina|pr;Email:casa-grandebrayan@example.net;Phone:06121476216
+2,CRM00006635;CRM00010271,Address;Email;Phone,"Address:pátio de da paz, 43|juiz de fora|mg;Email:ottosilveira@example.net;Phone:555143114984"
+2,CRM00006638;CRM00010019,Address;Email;Phone,"Address:vale de vieira, 68|feira de santana|ba;Email:opinto@example.net;Phone:552118044454"
+2,CRM00006660;CRM00007829,Email,Email:joao-guilherme57@example.net
+2,CRM00006696;CRM00006766,Email,Email:upimenta@example.com
+2,CRM00006699;CRM00010402,Address;Email;Phone,"Address:alameda rodrigues, 66|feira de santana|ba;Email:danilo35@example.com;Phone:8115216420"
+2,CRM00006709;CRM00009823,Email,Email:ojesus@example.org
+2,CRM00006749;CRM00008011,Email,Email:palbuquerque@example.org
+2,CRM00006750;CRM00010113,Address;Email;Phone,"Address:via bella nunes, 71|petrópolis|rj;Email:gael24@example.org;Phone:09007404187"
+2,CRM00006754;CRM00010318,Address;Email;Phone,"Address:aeroporto de nogueira, 5|porto alegre|rs;Email:andradevinicius@example.com;Phone:1198984701"
+2,CRM00006760;CRM00006852,Email,Email:beniciosa@example.org
+2,CRM00006767;CRM00010184,Address;Email;Phone,"Address:esplanada oliver azevedo, 4|porto alegre|rs;Email:hellenateixeira@example.com;Phone:5503111468453"
+2,CRM00006806;CRM00008065,Email,Email:guerraemanuel@example.net
+2,CRM00006817;CRM00010143,Address;Email;Phone,"Address:loteamento mendes, 8|petrópolis|rj;Email:frodrigues@example.com;Phone:553157049712"
+2,CRM00006839;CRM00010116,Address;Email;Phone,"Address:vale de rios, 919|caxias do sul|rs;Email:muriloda-cruz@example.org;Phone:2127474619"
+2,CRM00006844;CRM00010163,Address;Email;Phone,Address:travessa joão vitor lima|niterói|rj;Email:luigida-cruz@example.net;Phone:5101930620
+2,CRM00006849;CRM00008075,Email,Email:stellaabreu@example.org
+2,CRM00006856;CRM00010096,Address;Email;Phone,"Address:viela sousa, 43|belo horizonte|mg;Email:sousaoliver@example.net;Phone:555128289585"
+2,CRM00006871;CRM00007206,Email,Email:matheusdas-neves@example.org
+2,CRM00006906;CRM00010414,Address;Email;Phone,"Address:sítio hadassa nunes, 314|maringá|pr;Email:peixotoisaque@example.net;Phone:03170897657"
+2,CRM00006953;CRM00009090,Email,Email:caleb20@example.com
+2,CRM00006955;CRM00010226,Address;Phone,"Address:morro de correia, 68|belo horizonte|mg;Phone:558192422050"
+2,CRM00006960;CRM00010469,Address;Email;Phone,"Address:ladeira de das neves, 1|rio de janeiro|rj;Email:elisa53@example.org;Phone:558492631236"
+2,CRM00006977;CRM00009385,Email,Email:vda-paz@example.com
+2,CRM00006980;CRM00010045,Address;Email;Phone,"Address:campo de peixoto, 562|salvador|ba;Email:azevedodavi-lucca@example.com;Phone:05112715849"
+2,CRM00006985;CRM00010020,Address;Email;Phone,"Address:praça daniel pastor, 10|feira de santana|ba;Email:beniciodias@example.net;Phone:551104082822"
+2,CRM00006987;CRM00010396,Address;Email;Phone,"Address:fazenda rezende, 3|juiz de fora|mg;Email:britolorenzo@example.com;Phone:558443428932"
+2,CRM00006999;CRM00010407,Address;Email;Phone,"Address:lago julia teixeira, 85|juiz de fora|mg;Email:maria-julia04@example.org;Phone:5503143550392"
+2,CRM00007001;CRM00009803,Email,Email:ppimenta@example.net
+2,CRM00007015;CRM00010128,Address;Email;Phone,"Address:morro das neves, 32|rio de janeiro|rj;Email:pietro19@example.net;Phone:5504111243224"
+2,CRM00007034;CRM00010230,Address;Email;Phone,"Address:rua moraes, 84|caxias do sul|rs;Email:das-nevesluigi@example.org;Phone:5119955197"
+2,CRM00007062;CRM00010152,Address;Email;Phone,"Address:rua theo cunha, 573|são paulo|sp;Email:icorreia@example.net;Phone:8475124940"
+2,CRM00007070;CRM00010308,Address;Email;Phone,Address:ladeira novaes|pelotas|rs;Email:siqueirajoao-miguel@example.net;Phone:06151516935
+2,CRM00007074;CRM00009161,Address,Address:alameda de pastor|salvador|ba
+2,CRM00007079;CRM00007926,Email,Email:arthur-miguelaparecida@example.com
+2,CRM00007082;CRM00010079,Address;Email;Phone,"Address:rua zoe fernandes, 467|santos|sp;Email:ana-laurasampaio@example.com;Phone:5502171007545"
+2,CRM00007102;CRM00010026,Address;Email;Phone,"Address:recanto de guerra, 3|campinas|sp;Email:ggarcia@example.org;Phone:5123414811"
+2,CRM00007113;CRM00010301,Address;Email;Phone,"Address:parque davi luiz martins, 71|pelotas|rs;Email:jose69@example.net;Phone:03006634989"
+2,CRM00007117;CRM00009935,Email,Email:razevedo@example.com
+2,CRM00007134;CRM00010200,Address;Email;Phone,"Address:campo luan pires, 730|niterói|rj;Email:ida-costa@example.com;Phone:01153161935"
+2,CRM00007160;CRM00007745,Email,Email:luigilopes@example.org
+2,CRM00007162;CRM00009181,Email,Email:naraujo@example.com
+2,CRM00007165;CRM00010029,Address;Email;Phone,"Address:chácara de costela, 1|curitiba|pr;Email:britocarolina@example.net;Phone:554151584689"
+2,CRM00007182;CRM00010364,Address;Email;Phone,"Address:colônia de cardoso, 15|curitiba|pr;Email:zoe33@example.org;Phone:551127746362"
+2,CRM00007190;CRM00010201,Address;Email;Phone,"Address:condomínio de nunes, 7|santos|sp;Email:mariah64@example.com;Phone:5508418357950"
+2,CRM00007212;CRM00010174,Address;Email;Phone,"Address:setor cavalcanti, 8|campinas|sp;Email:alvesantonella@example.com;Phone:5507125692986"
+2,CRM00007223;CRM00010349,Address;Email;Phone,"Address:sítio da conceição, 77|ilhéus|ba;Email:igorrocha@example.net;Phone:02130302084"
+2,CRM00007228;CRM00010357,Address;Email;Phone,"Address:parque de fernandes, 182|salvador|ba;Email:vitor-hugo33@example.net;Phone:5506161289953"
+2,CRM00007243;CRM00010231,Address;Email;Phone,Address:setor de duarte|curitiba|pr;Email:estherrocha@example.org;Phone:02108284518
+2,CRM00007249;CRM00010194,Address;Email;Phone,"Address:parque de brito, 746|londrina|pr;Email:maria51@example.com;Phone:558427180174"
+2,CRM00007254;CRM00010370,Address;Email;Phone,Address:alameda nascimento|porto alegre|rs;Email:nicolasnogueira@example.net;Phone:02110910609
+2,CRM00007260;CRM00008150,Email,Email:aduarte@example.com
+2,CRM00007273;CRM00010306,Address;Email;Phone,"Address:viela catarina leão, 57|campinas|sp;Email:rodrigosantos@example.org;Phone:08426904580"
+2,CRM00007303;CRM00010212,Address;Email;Phone,"Address:residencial rebeca aparecida, 51|feira de santana|ba;Email:clara38@example.com;Phone:09006228663"
+2,CRM00007310;CRM00010086,Address;Email;Phone,"Address:condomínio siqueira, 45|salvador|ba;Email:ofogaca@example.net;Phone:01173036794"
+2,CRM00007369;CRM00010336,Address;Email;Phone,"Address:lago de machado, 94|campinas|sp;Email:daniela13@example.org;Phone:5507139518201"
+2,CRM00007371;CRM00010193,Address;Email;Phone,"Address:loteamento pinto, 48|maringá|pr;Email:lvasconcelos@example.org;Phone:555182554003"
+2,CRM00007372;CRM00009591,Email,Email:inovaes@example.org
+2,CRM00007377;CRM00009436,Email,Email:emelo@example.org
+2,CRM00007425;CRM00007911,Email,Email:caragao@example.org
+2,CRM00007444;CRM00010072,Address;Email;Phone,"Address:distrito de caldeira, 12|uberlândia|mg;Email:ravi-luccanunes@example.com;Phone:5151359192"
+2,CRM00007463;CRM00010052,Address;Email;Phone,"Address:residencial sofia machado, 599|curitiba|pr;Email:da-rochalucca@example.net;Phone:5508436286911"
+2,CRM00007507;CRM00010253,Address;Email;Phone,"Address:morro de rocha, 30|porto alegre|rs;Email:benicio84@example.com;Phone:558193767386"
+2,CRM00007516;CRM00010053,Address;Email;Phone,"Address:estação pastor, 94|juiz de fora|mg;Email:montenegromaite@example.com;Phone:551140840050"
+2,CRM00007532;CRM00007742,Email,Email:vmonteiro@example.net
+2,CRM00007533;CRM00007908,Email,Email:olima@example.org
+2,CRM00007536;CRM00007932,Email,Email:bcavalcante@example.net
+2,CRM00007544;CRM00007813,Email,Email:fonsecacarolina@example.org
+2,CRM00007602;CRM00010276,Address;Email;Phone,"Address:ladeira bruna dias, 581|maringá|pr;Email:da-rochafrancisco@example.org;Phone:01174672030"
+2,CRM00007638;CRM00010305,Address;Email;Phone,"Address:vale dante mendonça, 7|niterói|rj;Email:davi-lucasleao@example.org;Phone:5503149877859"
+2,CRM00007639;CRM00010461,Address;Email;Phone,"Address:parque de costa, 6|maringá|pr;Email:pedro-henrique48@example.net;Phone:06174092566"
+2,CRM00007665;CRM00010367,Address;Email;Phone,"Address:ladeira olivia andrade, 47|rio de janeiro|rj;Email:joao-lucas13@example.com;Phone:5508425219419"
+2,CRM00007673;CRM00010040,Address;Email;Phone,"Address:favela jade siqueira, 210|uberlândia|mg;Email:ycaldeira@example.org;Phone:08195158610"
+2,CRM00007679;CRM00008785,Email,Email:npereira@example.com
+2,CRM00007711;CRM00008043,Email,Email:bcastro@example.net
+2,CRM00007712;CRM00010047,Address;Email;Phone,"Address:ladeira guerra, 8|curitiba|pr;Email:juliana35@example.org;Phone:553140839698"
+2,CRM00007732;CRM00010234,Address;Email;Phone,"Address:favela thomas da mota, 90|feira de santana|ba;Email:alvessophie@example.org;Phone:6111809875"
+2,CRM00007823;CRM00010109,Address;Email;Phone,"Address:travessa da costa, 728|niterói|rj;Email:beniciopacheco@example.com;Phone:5503158740748"
+2,CRM00007835;CRM00010199,Address;Email;Phone,"Address:sítio marcos vinicius correia, 653|são paulo|sp;Email:icirino@example.com;Phone:03152601006"
+2,CRM00007851;CRM00010023,Address;Email;Phone,"Address:recanto marcos vinicius da paz, 16|salvador|ba;Email:cunhaluiz-otavio@example.com;Phone:551111093622"
+2,CRM00007854;CRM00010459,Address;Email;Phone,"Address:quadra de cavalcanti, 1|curitiba|pr;Email:kborges@example.net;Phone:08132087670"
+2,CRM00007920;CRM00010111,Address;Email;Phone,"Address:conjunto de cirino, 56|porto alegre|rs;Email:pietra60@example.net;Phone:08003695168"
+2,CRM00007930;CRM00008715,Email,Email:glima@example.net
+2,CRM00007982;CRM00010384,Address;Email;Phone,Address:avenida de moura|feira de santana|ba;Email:alanapacheco@example.com;Phone:552191526034
+2,CRM00008012;CRM00010278,Address;Email;Phone,"Address:colônia guilherme costa, 75|feira de santana|ba;Email:theo25@example.com;Phone:552146161032"
+2,CRM00008024;CRM00009709,Email,Email:ojesus@example.com
+2,CRM00008035;CRM00008365,Email,Email:scavalcante@example.org
+2,CRM00008051;CRM00010495,Address;Email;Phone,"Address:praia de martins, 60|uberlândia|mg;Email:julia14@example.com;Phone:7118660884"
+2,CRM00008059;CRM00010397,Address;Email;Phone,"Address:viaduto maria flor marques, 950|ilhéus|ba;Email:isispimenta@example.com;Phone:558481797935"
+2,CRM00008070;CRM00010258,Address;Email;Phone,"Address:chácara siqueira, 7|são paulo|sp;Email:goncalvesliam@example.org;Phone:5505135105341"
+2,CRM00008072;CRM00010046,Address;Email;Phone,"Address:parque mendes, 35|petrópolis|rj;Email:qnascimento@example.net;Phone:4117715552"
+2,CRM00008080;CRM00010057,Address;Phone,"Address:aeroporto lorena pimenta, 6|pelotas|rs;Phone:03000965686"
+2,CRM00008081;CRM00010127,Address;Email;Phone,"Address:praia luana castro, 3|salvador|ba;Email:aparecidamanuela@example.net;Phone:08001562237"
+2,CRM00008086;CRM00008963,Email,Email:ggarcia@example.com
+2,CRM00008088;CRM00010207,Address;Email;Phone,"Address:setor sousa, 3|caxias do sul|rs;Email:catarinafreitas@example.com;Phone:5502123401408"
+2,CRM00008090;CRM00010242,Address;Email;Phone,Address:área camargo|caxias do sul|rs;Email:enzo-gabriel94@example.org;Phone:5139426588
+2,CRM00008114;CRM00009376,Email,Email:jcavalcante@example.com
+2,CRM00008116;CRM00009330,Email,Email:icasa-grande@example.com
+2,CRM00008121;CRM00010227,Address;Email;Phone,"Address:avenida henry gabriel sampaio, 669|belo horizonte|mg;Email:juliana84@example.net;Phone:5508467907833"
+2,CRM00008134;CRM00010247,Address;Email;Phone,"Address:residencial arthur cavalcanti, 43|curitiba|pr;Email:ogoncalves@example.com;Phone:5146002338"
+2,CRM00008154;CRM00010048,Address;Email;Phone,Address:ladeira de rodrigues|salvador|ba;Email:ycardoso@example.org;Phone:6152327567
+2,CRM00008170;CRM00010288,Address;Email;Phone,"Address:setor barros, 1|ilhéus|ba;Email:henry26@example.com;Phone:07129816876"
+2,CRM00008225;CRM00010409,Address;Email;Phone,"Address:trevo de da rocha, 91|juiz de fora|mg;Email:joao-gabriel81@example.com;Phone:2171561634"
+2,CRM00008237;CRM00010267,Address;Email;Phone,Address:conjunto cardoso|uberlândia|mg;Email:acassiano@example.com;Phone:03004212693
+2,CRM00008246;CRM00010063,Address;Email;Phone,"Address:avenida machado, 21|pelotas|rs;Email:uvieira@example.net;Phone:08000841989"
+2,CRM00008269;CRM00010179,Address;Email;Phone,Address:morro davi pastor|maringá|pr;Email:hsales@example.net;Phone:5508492760839
+2,CRM00008273;CRM00009186,Email,Email:qda-rocha@example.com
+2,CRM00008274;CRM00010148,Address;Email;Phone,Address:recanto pimenta|curitiba|pr;Email:maria-fernanda70@example.org;Phone:08001575941
+2,CRM00008284;CRM00010408,Address;Email;Phone,"Address:quadra maria luísa casa grande, 2|petrópolis|rj;Email:mayada-luz@example.com;Phone:554188860135"
+2,CRM00008309;CRM00010329,Address;Email;Phone,"Address:favela luiz felipe silva, 63|campinas|sp;Email:santosheloisa@example.net;Phone:5508191455579"
+2,CRM00008316;CRM00010054,Address;Email;Phone,"Address:trecho da paz, 8|caxias do sul|rs;Email:marianemoreira@example.org;Phone:5501155152317"
+2,CRM00008322;CRM00010488,Address;Email;Phone,"Address:ladeira de cassiano, 62|santos|sp;Email:levifonseca@example.org;Phone:05000500458"
+2,CRM00008366;CRM00010059,Address;Email;Phone,"Address:aeroporto moura, 78|porto alegre|rs;Email:rodrigo87@example.net;Phone:8430092796"
+2,CRM00008447;CRM00010474,Address;Email;Phone,"Address:passarela cecilia pastor, 51|santos|sp;Email:fandrade@example.net;Phone:551128725535"
+2,CRM00008459;CRM00010003,Address;Email;Phone,"Address:condomínio caleb sousa, 9|maringá|pr;Email:enzo-gabrielbarros@example.com;Phone:555161802807"
+2,CRM00008460;CRM00010468,Address;Email;Phone,"Address:distrito de azevedo, 56|caxias do sul|rs;Email:henriquecostela@example.net;Phone:5507136427160"
+2,CRM00008464;CRM00010049,Address;Email;Phone,"Address:condomínio sofia siqueira, 7|caxias do sul|rs;Email:almeidaenzo@example.org;Phone:06150643331"
+2,CRM00008488;CRM00010249,Address;Email;Phone,"Address:rodovia davi miguel pastor, 578|uberlândia|mg;Email:camaraisaac@example.org;Phone:4139844646"
+2,CRM00008523;CRM00010279,Address;Email;Phone,"Address:trevo de brito, 72|pelotas|rs;Email:pedro-miguel65@example.net;Phone:5508495871824"
+2,CRM00008534;CRM00010492,Address;Email;Phone,"Address:travessa dom da luz, 36|belo horizonte|mg;Email:macedoana-luiza@example.net;Phone:01161665577"
+2,CRM00008550;CRM00010186,Address;Email;Phone,"Address:praia cassiano, 60|santos|sp;Email:nicolesiqueira@example.net;Phone:6107336457"
+2,CRM00008561;CRM00009399,Email,Email:aramos@example.com
+2,CRM00008569;CRM00010400,Address;Email;Phone,Address:largo maysa da cruz|ilhéus|ba;Email:wda-conceicao@example.com;Phone:08154463115
+2,CRM00008571;CRM00010439,Address;Email;Phone,Address:residencial de pinto|uberlândia|mg;Email:viniciusmachado@example.com;Phone:556185889526
+2,CRM00008572;CRM00010316,Address;Email;Phone,Address:pátio elisa carvalho|ilhéus|ba;Email:xpacheco@example.org;Phone:552174295519
+2,CRM00008598;CRM00009382,Email,Email:hdias@example.com
+2,CRM00008620;CRM00010133,Address;Email;Phone,"Address:parque luiz gustavo campos, 938|porto alegre|rs;Email:vianavinicius@example.com;Phone:5504154111735"
+2,CRM00008632;CRM00010466,Address;Email;Phone,"Address:travessa gabriela siqueira, 2|pelotas|rs;Email:cda-paz@example.net;Phone:558443900900"
+2,CRM00008634;CRM00010432,Address;Email;Phone,"Address:aeroporto sá, 743|santos|sp;Email:bmonteiro@example.com;Phone:5508144869593"
+2,CRM00008647;CRM00010482,Address;Email;Phone,"Address:praça luan garcia, 747|campinas|sp;Email:vsousa@example.org;Phone:553120818410"
+2,CRM00008661;CRM00010115,Address;Email;Phone,"Address:colônia correia, 38|belo horizonte|mg;Email:ecarvalho@example.org;Phone:1185803481"
+2,CRM00008690;CRM00010324,Address;Email;Phone,"Address:vila de silva, 802|porto alegre|rs;Email:casa-granderebeca@example.org;Phone:5507128118435"
+2,CRM00008700;CRM00010444,Address;Email;Phone,"Address:recanto gael mendes, 393|são paulo|sp;Email:xcunha@example.net;Phone:08103802361"
+2,CRM00008720;CRM00010342,Address;Email;Phone,"Address:passarela ana carolina da rosa, 987|feira de santana|ba;Email:thiago24@example.com;Phone:8415981201"
+2,CRM00008725;CRM00010025,Address;Email;Phone,"Address:lagoa de pastor, 84|caxias do sul|rs;Email:fonsecaluiz-henrique@example.com;Phone:552152713910"
+2,CRM00008755;CRM00009355,Email,Email:lmontenegro@example.net
+2,CRM00008761;CRM00010280,Address;Email;Phone,"Address:colônia camargo, 8|petrópolis|rj;Email:bcosta@example.com;Phone:08175142926"
+2,CRM00008791;CRM00010182,Address;Phone,Address:travessa de das neves|campinas|sp;Phone:558480236160
+2,CRM00008801;CRM00010385,Address;Email;Phone,"Address:vereda luan cassiano, 6|petrópolis|rj;Email:lucasmarques@example.net;Phone:1143613003"
+2,CRM00008820;CRM00010218,Address;Phone,Address:lago gomes|uberlândia|mg;Phone:08002391735
+2,CRM00008843;CRM00010259,Address;Email;Phone,"Address:chácara nicole das neves, 4|salvador|ba;Email:rodrigueslorena@example.net;Phone:552104380820"
+2,CRM00008844;CRM00009789,Email,Email:ycostela@example.com
+2,CRM00008865;CRM00010346,Address;Email;Phone,"Address:fazenda casa grande, 3|uberlândia|mg;Email:monteirocaleb@example.org;Phone:8478568358"
+2,CRM00008940;CRM00010254,Address;Email;Phone,"Address:feira viana, 94|rio de janeiro|rj;Email:guilhermeferreira@example.net;Phone:5504119216241"
+2,CRM00008984;CRM00010140,Address;Email;Phone,"Address:viela de silva, 48|uberlândia|mg;Email:esterpacheco@example.org;Phone:555178645863"
+2,CRM00008989;CRM00010031,Address;Email;Phone,Address:favela fogaça|londrina|pr;Email:miguelvieira@example.net;Phone:5505147388548
+2,CRM00009019;CRM00010429,Address;Email;Phone,"Address:lago fernanda albuquerque, 11|ilhéus|ba;Email:moreiracecilia@example.org;Phone:558135379718"
+2,CRM00009037;CRM00009716,Email,Email:bcardoso@example.net
+2,CRM00009049;CRM00010416,Address;Email;Phone,"Address:feira garcia, 70|porto alegre|rs;Email:julia55@example.org;Phone:07144252704"
+2,CRM00009068;CRM00009889,Email,Email:wmontenegro@example.com
+2,CRM00009087;CRM00010102,Address;Email;Phone,"Address:residencial de souza, 27|londrina|pr;Email:ucampos@example.org;Phone:08133876671"
+2,CRM00009096;CRM00010229,Address;Email;Phone,Address:favela maria helena novais|uberlândia|mg;Email:anna-liz16@example.com;Phone:8496226547
+2,CRM00009107;CRM00010453,Address;Email;Phone,"Address:loteamento de montenegro, 4|são paulo|sp;Email:gnovaes@example.org;Phone:09000847436"
+2,CRM00009122;CRM00010419,Address;Email;Phone,"Address:trevo de sousa, 66|são paulo|sp;Email:levi43@example.org;Phone:551188014674"
+2,CRM00009151;CRM00009431,Email,Email:ecamara@example.net
+2,CRM00009157;CRM00010220,Address;Email;Phone,"Address:vila alves, 8|santos|sp;Email:guerraoliver@example.net;Phone:8198004649"
+2,CRM00009176;CRM00010491,Address;Email;Phone,"Address:trevo azevedo, 68|pelotas|rs;Email:caue75@example.com;Phone:7193783629"
+2,CRM00009206;CRM00010076,Address;Email;Phone,"Address:condomínio de sampaio, 44|caxias do sul|rs;Email:oliviamendes@example.net;Phone:555146982104"
+2,CRM00009211;CRM00010095,Address;Email;Phone,"Address:pátio porto, 30|pelotas|rs;Email:igomes@example.com;Phone:5505183439790"
+2,CRM00009216;CRM00010286,Address;Email;Phone,"Address:esplanada enzo nascimento, 911|londrina|pr;Email:mouraravy@example.com;Phone:5504147147639"
+2,CRM00009232;CRM00010196,Address;Email;Phone,"Address:estação daniela silveira, 2|juiz de fora|mg;Email:sousaluara@example.org;Phone:556189737363"
+2,CRM00009265;CRM00010038,Address;Email;Phone,"Address:núcleo vitor gabriel souza, 21|niterói|rj;Email:ayllaaraujo@example.com;Phone:04146722811"
+2,CRM00009305;CRM00010107,Address;Email;Phone,"Address:vila isadora abreu, 10|porto alegre|rs;Email:da-matamiguel@example.org;Phone:555126538658"
+2,CRM00009378;CRM00010377,Address;Email;Phone,Address:parque pacheco|feira de santana|ba;Email:alexia43@example.org;Phone:05005414140
+2,CRM00009402;CRM00010157,Address;Email;Phone,"Address:campo garcia, 14|caxias do sul|rs;Email:amanda20@example.net;Phone:7189359003"
+2,CRM00009408;CRM00010428,Address;Email;Phone,"Address:favela de das neves, 7|juiz de fora|mg;Email:pietra48@example.net;Phone:03168353562"
+2,CRM00009439;CRM00010332,Address;Email;Phone,"Address:passarela da conceição, 50|pelotas|rs;Email:vitor86@example.org;Phone:5505110380326"
+2,CRM00009442;CRM00010073,Address;Email;Phone,"Address:rodovia de câmara, 432|porto alegre|rs;Email:freitasvicente@example.org;Phone:554192809621"
+2,CRM00009447;CRM00010418,Address;Email;Phone,"Address:esplanada câmara, 760|feira de santana|ba;Email:pcarvalho@example.org;Phone:09003500078"
+2,CRM00009450;CRM00010275,Address;Email;Phone,"Address:trecho antonella nunes, 5|santos|sp;Email:gcavalcante@example.com;Phone:06160354390"
+2,CRM00009523;CRM00010177,Address;Email;Phone,"Address:alameda souza, 226|londrina|pr;Email:andre01@example.org;Phone:555123262071"
+2,CRM00009537;CRM00009553,Email,Email:lda-conceicao@example.org
+2,CRM00009555;CRM00010120,Address;Email;Phone,"Address:vereda marina nogueira, 79|campinas|sp;Email:aragaoluana@example.net;Phone:03000794360"
+2,CRM00009574;CRM00010171,Address;Email;Phone,"Address:viaduto luigi pinto, 43|feira de santana|ba;Email:rsouza@example.org;Phone:554183428801"
+2,CRM00009580;CRM00010321,Address;Email;Phone,"Address:trecho guilherme aparecida, 9|rio de janeiro|rj;Email:davi-miguelfreitas@example.org;Phone:6173007911"
+2,CRM00009584;CRM00010335,Address;Email;Phone,"Address:esplanada azevedo, 99|campinas|sp;Email:kevinmendes@example.com;Phone:3133851080"
+2,CRM00009608;CRM00010097,Address;Email;Phone,Address:praça costa|porto alegre|rs;Email:da-costabenicio@example.com;Phone:02173008116
+2,CRM00009629;CRM00010325,Address;Email;Phone,"Address:lagoa joão lucas teixeira, 27|caxias do sul|rs;Email:catarinamartins@example.org;Phone:5506131953175"
+2,CRM00009660;CRM00010088,Address;Email;Phone,"Address:área de da cruz, 44|salvador|ba;Email:theodoromoura@example.com;Phone:5128935552"
+2,CRM00009666;CRM00010297,Address;Email;Phone,"Address:trecho vinícius moreira, 84|pelotas|rs;Email:mendesmaria-laura@example.org;Phone:2149805007"
+2,CRM00009675;CRM00010147,Address;Email;Phone,"Address:núcleo de câmara, 92|londrina|pr;Email:vitor-hugo05@example.org;Phone:558445134271"
+2,CRM00009685;CRM00010009,Address;Email;Phone,"Address:área lorenzo da cunha, 9|petrópolis|rj;Email:maria-liz77@example.com;Phone:5508124119209"
+2,CRM00009726;CRM00010382,Address;Email;Phone,"Address:rodovia sousa, 61|pelotas|rs;Email:bentonascimento@example.net;Phone:01129987961"
+2,CRM00009752;CRM00010027,Address;Email;Phone,"Address:viaduto de santos, 366|niterói|rj;Email:tda-conceicao@example.org;Phone:5502177014875"
+2,CRM00009757;CRM00010121,Address;Email;Phone,Address:recanto andrade|uberlândia|mg;Email:pedro-henriquesa@example.net;Phone:02195961516
+2,CRM00009768;CRM00010170,Address;Email;Phone,"Address:chácara de fogaça, 54|pelotas|rs;Email:aliceandrade@example.com;Phone:552147170879"
+2,CRM00009785;CRM00010273,Address;Email;Phone,"Address:trevo de peixoto, 65|salvador|ba;Email:carvalhoryan@example.org;Phone:07139262749"
+2,CRM00009805;CRM00010245,Address;Email;Phone,Address:esplanada de gomes|niterói|rj;Email:gustavo79@example.net;Phone:4110666025
+2,CRM00009845;CRM00010462,Address;Email;Phone,"Address:residencial de barros, 76|santos|sp;Email:antonyviana@example.net;Phone:555174142212"
+2,CRM00009874;CRM00010437,Address;Email;Phone,"Address:residencial marques, 59|curitiba|pr;Email:elisaribeiro@example.org;Phone:7121461865"
+2,CRM00009912;CRM00010448,Address;Email;Phone,"Address:aeroporto cauã dias, 897|caxias do sul|rs;Email:zgomes@example.com;Phone:5505179727385"
+2,CRM00009931;CRM00010481,Address;Email;Phone,"Address:feira heloisa machado, 3|uberlândia|mg;Email:machadocaue@example.com;Phone:06113490375"
+2,CRM00009936;CRM00010340,Address;Email;Phone,"Address:lago heloísa casa grande, 71|salvador|ba;Email:qrios@example.org;Phone:5174948029"
+2,CRM00009968;CRM00010138,Address;Email;Phone,"Address:jardim théo sousa, 20|são paulo|sp;Email:almeidabella@example.com;Phone:5501153026712"
+2,CRM00009970;CRM00010401,Address;Email;Phone,"Address:estrada rodrigo cunha, 16|são paulo|sp;Email:marcela23@example.net;Phone:07144317564"
+2,CRM00009988;CRM00010064,Address;Email;Phone,"Address:residencial de das neves, 17|belo horizonte|mg;Email:da-motaana-beatriz@example.org;Phone:06103226570"
+2,CRM00009992;CRM00010188,Address;Email;Phone,"Address:jardim nunes, 21|uberlândia|mg;Email:ecirino@example.net;Phone:01135690364"
+2,CRM00009994;CRM00010172,Address;Email;Phone,"Address:rua moraes, 19|feira de santana|ba;Email:vasconcelosantonio@example.org;Phone:08004566145"

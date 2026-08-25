@@ -1,0 +1,91 @@
+name: ML
+
+# Smoke-tests the churn training pipeline (ARCHITECTURE.md §10, built
+# Sprint 10) on a small synthetic sample and asserts the champion model's
+# metrics don't regress below a documented floor. This is NOT a full
+# retraining run — it exists to catch "the pipeline no longer runs" and
+# "someone dropped the ROC-AUC through a bad refactor" regressions cheaply
+# on every PR, not to reproduce production training performance.
+#
+# Metric floor (documented here so a change to the floor is a visible,
+# reviewable diff, not a silent CI tweak):
+#   - ROC-AUC  >= 0.70
+#   - F1       >= 0.55
+# These floors are deliberately below the values reported in
+# ml/churn/README.md for the full-volume `cloud` profile — the CI sample
+# (data/synthetic `local` profile, a few thousand rows) has less signal
+# than the full dataset by design, and the point of this gate is
+# regression detection, not champion-model certification.
+
+on:
+  pull_request:
+    paths:
+      - "ml/**"
+      - ".github/workflows/ml.yml"
+
+concurrency:
+  group: ml-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MIN_ROC_AUC: "0.70"
+  MIN_F1: "0.55"
+
+jobs:
+  train-smoke-test:
+    name: Churn training smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: platform
+          POSTGRES_PASSWORD: platform
+          POSTGRES_DB: customer_intelligence
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U platform"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: pyproject.toml
+
+      - name: make install
+        run: make install
+
+      - name: Generate small synthetic sample (local profile)
+        run: python data/synthetic/generate_all.py --profile local --only crm,marketing,support,web,finance
+
+      - name: Start local MLflow tracking server
+        run: |
+          mlflow server \
+            --backend-store-uri postgresql://platform:platform@localhost:5432/customer_intelligence \
+            --default-artifact-root ./mlruns \
+            --host 0.0.0.0 --port 5000 &
+          sleep 5
+
+      - name: Train churn model (CI sample) and log to MLflow
+        env:
+          MLFLOW_TRACKING_URI: http://localhost:5000
+        run: |
+          python ml/churn/train.py --profile local --experiment ci-smoke-test
+
+      - name: Assert champion metrics don't regress below floor
+        env:
+          MLFLOW_TRACKING_URI: http://localhost:5000
+        run: |
+          python ml/churn/evaluate_gate.py \
+            --experiment ci-smoke-test \
+            --min-roc-auc "$MIN_ROC_AUC" \
+            --min-f1 "$MIN_F1"

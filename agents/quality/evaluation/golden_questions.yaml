@@ -1,0 +1,59 @@
+# Golden question set for the Data Quality Agent.
+#
+# Built in ROADMAP.md Sprint 14. Each case's expected answer shape mirrors
+# ARCHITECTURE.md §15's example output ("Quality decreased: 97.8% -> 92.4%. Main cause: CRM
+# email completeness. Affected rows: 12,341. Recommended action: Review CRM extraction job."),
+# which agents/quality/data_quality_agent.py:QualityDiagnosis.as_text() renders.
+#
+# Schema per case:
+#   id                      — short stable identifier
+#   question                — natural-language input to the agent
+#   dataset                 — dataset the question is about
+#   expected_tools_called   — MCP tool names (mcp/tools/quality.py) the agent should invoke
+#   expected_diagnosis_shape — the four sections a correct diagnosis must contain
+#   expected_answer_contains — keywords a correct answer should include (LLM-as-judge grading)
+
+cases:
+  - id: crm-email-completeness-drop
+    question: "Why did CRM data quality drop this morning?"
+    dataset: "silver.crm_customers"
+    expected_tools_called: [get_data_quality, get_pipeline_status]
+    expected_diagnosis_shape: [previous_score, current_score, main_cause, affected_rows, recommended_action]
+    expected_answer_contains: ["completeness", "CRM", "affected rows"]
+    notes: "The canonical example from ARCHITECTURE.md §15 — 97.8% -> 92.4%, CRM email completeness."
+
+  - id: order-referential-integrity-break
+    question: "Are there any orders pointing at customers that don't exist?"
+    dataset: "silver.order"
+    expected_tools_called: [get_data_quality]
+    expected_diagnosis_shape: [main_cause, affected_rows, recommended_action]
+    expected_answer_contains: ["referential_integrity"]
+
+  - id: web-events-freshness-lag
+    question: "Is the web events pipeline running on schedule?"
+    dataset: "silver.web_event"
+    expected_tools_called: [get_pipeline_status, get_data_quality]
+    expected_diagnosis_shape: [main_cause, recommended_action]
+    expected_answer_contains: ["freshness", "pipeline"]
+
+  - id: single-customer-quality-check
+    question: "What's the data quality profile for customer MC-000456?"
+    dataset: "gold.dim_customer"
+    expected_tools_called: [get_customer_quality]
+    expected_diagnosis_shape: [dq_score, field_flags]
+    expected_answer_contains: ["MC-000456"]
+
+  - id: schema-drift-detection
+    question: "Did the support tickets schema change recently?"
+    dataset: "silver.support"
+    expected_tools_called: [get_data_quality]
+    expected_diagnosis_shape: [main_cause, recommended_action]
+    expected_answer_contains: ["schema"]
+
+  - id: no-known-baseline
+    question: "How is data quality for a dataset we've never scored before?"
+    dataset: "silver.finance_reconciliation"
+    expected_tools_called: [get_data_quality]
+    expected_diagnosis_shape: [current_score]
+    expected_answer_contains: ["unknown"]
+    notes: "Must not fabricate a previous_score when none is known — see diagnose_quality_drop()'s docstring."
