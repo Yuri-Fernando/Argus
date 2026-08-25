@@ -9,7 +9,7 @@ metadata:
   labels:
     app: eci-api
     component: api
-    part-of: enterprise-customer-intelligence-platform
+    part-of: argus
 spec:
   replicas: 2
   selector:

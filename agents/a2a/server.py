@@ -47,7 +47,7 @@ from agents.recommendation.recommendation_agent import generate_recommendation
 logger = logging.getLogger("agents.a2a.server")
 
 app = FastAPI(
-    title="Enterprise Customer Intelligence Platform — A2A Agent Server",
+    title="Argus — A2A Agent Server",
     description=(
         "Agent2Agent (A2A) protocol layer wrapping the four existing agents/ LangGraph/plain-"
         "Python agents. See agents/a2a/agent_card.py and docs/decisions/ADR-014 for design notes."

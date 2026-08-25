@@ -133,6 +133,6 @@ process this sprint containerizes, not a module this sprint's task brief asked t
 
 ```bash
 kubectl apply -f k8s/
-kubectl get pods -l part-of=enterprise-customer-intelligence-platform
+kubectl get pods -l part-of=argus
 kubectl port-forward svc/eci-api 8010:8010   # then curl localhost:8010/health
 ```

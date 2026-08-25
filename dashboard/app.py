@@ -52,7 +52,7 @@ DQ_REPORT_PATH = REPO_ROOT / "data_quality" / "reports" / "dq_report.json"
 RAG_RESULTS_PATH = REPO_ROOT / "rag" / "evaluation" / "precision_at_k_results.json"
 
 st.set_page_config(
-    page_title="Enterprise Customer Intelligence Platform",
+    page_title="Argus",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -845,7 +845,7 @@ PAGES = {
 
 
 def main():
-    st.sidebar.title("Enterprise Customer Intelligence Platform")
+    st.sidebar.title("Argus")
     st.sidebar.caption(
         "Every number on every page is read live from real files/modules on disk — "
         "see `dashboard/README.md`."

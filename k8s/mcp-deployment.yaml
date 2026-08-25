@@ -14,7 +14,7 @@ metadata:
   labels:
     app: eci-mcp
     component: mcp-server
-    part-of: enterprise-customer-intelligence-platform
+    part-of: argus
 spec:
   replicas: 1
   selector:

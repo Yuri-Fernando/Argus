@@ -19,7 +19,7 @@ PySpark, GX Core, MDM entity resolution, dbt models against a local warehouse, a
 ### Bringing it up
 
 ```bash
-git clone <repo-url> && cd enterprise-customer-intelligence-platform
+git clone <repo-url> && cd argus
 cp .env.example .env
 make up      # docker compose up -d — starts MinIO, Postgres, MLflow, Prometheus, Grafana
 make seed    # downloads Olist + generates all synthetic datasets (DATA_MODEL.md §1)

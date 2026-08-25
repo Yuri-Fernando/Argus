@@ -59,7 +59,7 @@ mcp = FastMCP(
     name="enterprise-customer-intelligence",
     instructions=(
         "Tools for querying customer 360, data quality, churn/ML and sales metrics for the "
-        "Enterprise Customer Intelligence Platform. All tools are read-only except "
+        "Argus, the enterprise customer data platform. All tools are read-only except "
         "recommend_action, which never executes anything directly — it always enqueues a "
         "recommendation for human approval (see ADR-006)."
     ),

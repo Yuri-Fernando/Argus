@@ -1,6 +1,6 @@
 # Architecture
 
-This document is the single source of truth for the platform's architecture. It consolidates and supersedes the three design iterations captured in [`rascunho.md`](rascunho.md) (kept in the repo as historical record — see [CHANGELOG.md](CHANGELOG.md)).
+This document is the single source of truth for the platform's architecture. It consolidates and supersedes three earlier internal design iterations (see [CHANGELOG.md](CHANGELOG.md) for the version history).
 
 ## Table of contents
 
@@ -367,7 +367,7 @@ Documented, not duplicated — see [`cloud/architecture-comparison.md`](cloud/ar
 ## 20. Repository structure
 
 ```
-enterprise-customer-intelligence-platform/
+argus/
 ├── README.md (PT-BR) · README-en.md (EN) · ARCHITECTURE.md · ROADMAP.md · CHANGELOG.md
 ├── DATA_MODEL.md · LICENSE
 ├── architecture/            # diagrams (drawio/png), this file's source of truth for visuals
