@@ -172,6 +172,100 @@ class DoclingDocumentParser:
         return {str(path): self.parse(path) for path in source_paths}
 
 
+class VlmUnavailableError(RuntimeError):
+    """Raised when `DoclingVlmDocumentParser` can't run — the `genai-extra` VLM extras aren't
+    installed, or the VLM model itself couldn't be loaded (e.g. no internet on first run to
+    download it from Hugging Face, insufficient disk/RAM). Callers
+    (`agents/knowledge_ingestion/agent.py`) are expected to catch this and degrade that one
+    source's ingestion result, never the whole batch — same resilience contract as
+    `Crawl4AICrawler`'s `CrawlResult.success` flag."""
+
+
+class DoclingVlmDocumentParser:
+    """VLM sibling of `DoclingDocumentParser` (ADR-015) — parses a *scanned/photographed*
+    document image (e.g. `data/documents/fiscal/*.png`, see `data/synthetic/generators/
+    fiscal.py::render_scanned_documents`) via Docling's `VlmPipeline`. Default model:
+    IBM Granite-Docling-258M — open weights, runs fully locally once downloaded, **no paid API
+    key required**, unlike `agents/llm_gateway/router.py`'s provider adapters. This is the
+    concrete VLM use case `IMPROVEMENTS_AND_RESEARCH.md` §5.3 previously marked "not implemented,
+    no real use case with current text-only docs" — a scanned fiscal document is exactly that
+    use case.
+
+    Kept as a separate class from `DoclingDocumentParser`, not a `use_vlm` flag on it — single
+    responsibility (ARCHITECTURE.md §1): the two pipelines have genuinely different input shapes
+    (a native PDF/DOCX with a real text layer vs. a flat image with none) and different resource
+    profiles (this path downloads and runs a real, if small, transformer model on first use).
+    """
+
+    def __init__(self, *, max_chunk_chars: int = 1500) -> None:
+        self.max_chunk_chars = max_chunk_chars
+
+    def parse(self, source_path: str | Path) -> list[DocumentChunk]:
+        """Parse a scanned document image into chunks via Docling's VLM pipeline.
+
+        Unlike `DoclingDocumentParser.parse`, this returns a single chunk per image — the VLM
+        model reads the whole page as one pass and emits Markdown (`doc.export_to_markdown()`);
+        splitting that back into per-section chunks the way the text pipeline does would need the
+        VLM's DocTags output parsed for structure, a real extension if a future scanned document
+        is long enough to need it (today's fiscal documents are a single page each).
+
+        Args:
+            source_path: path to a local image (PNG/JPEG) — e.g. `data/documents/fiscal/*.png`.
+
+        Returns:
+            A single-item list of `DocumentChunk` — same contract shape as
+            `DoclingDocumentParser.parse` otherwise.
+
+        Raises:
+            VlmUnavailableError: see the class docstring — always this exception type, never a
+                raw `ImportError`/library exception, so callers have one thing to catch.
+        """
+        try:
+            from docling.datamodel.base_models import InputFormat
+            from docling.datamodel.pipeline_options import VlmPipelineOptions
+            from docling.document_converter import DocumentConverter, ImageFormatOption
+            from docling.pipeline.vlm_pipeline import VlmPipeline
+        except ImportError as exc:
+            raise VlmUnavailableError(
+                "Docling's VLM pipeline extras are not installed — run `pip install -e .[genai-extra]`."
+            ) from exc
+
+        source_path = Path(source_path)
+        try:
+            converter = DocumentConverter(
+                format_options={
+                    InputFormat.IMAGE: ImageFormatOption(
+                        pipeline_cls=VlmPipeline, pipeline_options=VlmPipelineOptions()
+                    )
+                }
+            )
+            result = converter.convert(str(source_path))
+            text = result.document.export_to_markdown().strip()
+        except Exception as exc:
+            # Broad on purpose: the failure modes here are diverse and all equally "the VLM model
+            # isn't usable right now" from a caller's perspective — no internet on first run to
+            # download ibm-granite/granite-docling-258M from Hugging Face, insufficient disk/RAM,
+            # a corrupted model cache, etc. A narrower except would need to enumerate every
+            # transformers/huggingface_hub exception type, which is not a contract worth coupling
+            # to here.
+            raise VlmUnavailableError(f"Docling VLM pipeline failed for {source_path}: {exc}") from exc
+
+        if not text:
+            raise VlmUnavailableError(f"Docling VLM pipeline produced no text for {source_path}")
+
+        stem = source_path.stem
+        return [
+            DocumentChunk(
+                chunk_id=f"{stem}-vlm-0",
+                text=text,
+                kind="paragraph",
+                source_path=str(source_path),
+                page_number=1,
+                metadata={"doc_type": stem, "parser": "docling_vlm"},
+            )
+        ]
+
+
 def _merge_to_chunk_size(chunks: list[DocumentChunk], max_chunk_chars: int) -> list[DocumentChunk]:
     """Split any chunk longer than `max_chunk_chars` into multiple sequential chunks.
 

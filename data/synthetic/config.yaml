@@ -46,3 +46,17 @@ web:
   event_types: [page_view, product_view, add_to_cart, checkout_start, purchase, search]
   devices: [desktop, mobile, tablet]
   sources: [organic, paid_search, social, email, direct, referral]
+
+# Fiscal/tributary extension (ADR-015) — synthetic Reforma Tributária invoice line items.
+# `count` is deliberately small relative to the other profiles (this is a bolt-on domain
+# extension, not a new core pipeline table) — see data/synthetic/generators/fiscal.py.
+fiscal:
+  count: 200
+  scanned_sample: 8   # how many rows also get rendered as a "scanned" PNG for the VLM demo
+
+# Deliberately injected fiscal data problems (data/synthetic/generators/fiscal.py's
+# FiscalDirtyRates) — fractions of the total fiscal document count, at most one per row.
+dirty_rates_fiscal:
+  invalid_ncm: 0.03
+  cst_cfop_mismatch: 0.02
+  rate_out_of_range: 0.01

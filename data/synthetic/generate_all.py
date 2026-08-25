@@ -16,7 +16,10 @@ Output layout:
     data/synthetic/support/support_tickets.csv
     data/synthetic/web/web_events.csv
     data/synthetic/finance/customer_payments.csv
+    data/synthetic/fiscal/fiscal_documents.csv
+    data/synthetic/fiscal/fiscal_documents_ground_truth.csv
     data/documents/*.md  (+ *.pdf if reportlab is installed, see render.py)
+    data/documents/fiscal/*.png  (scanned fiscal docs for the VLM demo, if Pillow is installed)
 """
 from __future__ import annotations
 
@@ -28,12 +31,12 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from generators import crm, documents, finance, marketing, support, web  # noqa: E402
+from generators import crm, documents, finance, fiscal, marketing, support, web  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = Path(__file__).parent / "config.yaml"
 
-ALL_SOURCES = ["crm", "marketing", "support", "web", "finance", "documents"]
+ALL_SOURCES = ["crm", "marketing", "support", "web", "finance", "fiscal", "documents"]
 
 
 def load_config() -> dict:
@@ -129,6 +132,24 @@ def main() -> None:
         fin_dir.mkdir(parents=True, exist_ok=True)
         finance_df.to_csv(fin_dir / "customer_payments.csv", index=False)
         print(f"   {len(finance_df)} payment records")
+
+    if "fiscal" in sources:
+        print("-> fiscal ...")
+        fiscal_cfg = config["fiscal"]
+        dirty = fiscal.FiscalDirtyRates(**config["dirty_rates_fiscal"])
+        fiscal_df, fiscal_ground_truth_df = fiscal.generate(customer_ids, fiscal_cfg["count"], seed, dirty)
+        fiscal_dir = out_dir / "fiscal"
+        fiscal_dir.mkdir(parents=True, exist_ok=True)
+        fiscal_df.to_csv(fiscal_dir / "fiscal_documents.csv", index=False)
+        fiscal_ground_truth_df.to_csv(fiscal_dir / "fiscal_documents_ground_truth.csv", index=False)
+        n_dirty = (fiscal_ground_truth_df["discrepancy_reason"] != "none").sum()
+        print(f"   {len(fiscal_df)} fiscal documents ({n_dirty} with an injected discrepancy)")
+
+        scanned = fiscal.render_scanned_documents(
+            fiscal_df, REPO_ROOT / "data" / "documents" / "fiscal", fiscal_cfg["scanned_sample"], seed
+        )
+        if scanned:
+            print(f"   {len(scanned)} scanned PNGs rendered to data/documents/fiscal/ (VLM demo input)")
 
     if "documents" in sources:
         print("-> documents ...")

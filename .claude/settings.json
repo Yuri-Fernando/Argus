@@ -22,7 +22,9 @@
       "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.features.build_features)",
       "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.churn.train)",
       "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.explainability.shap_analysis)",
-      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.segmentation.kmeans_segments)"
+      "Bash(\"/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe\" -m ml.segmentation.kmeans_segments)",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
+      "Bash(/c/Users/Yuri_/AppData/Local/Programs/Python/Python310/python.exe -c \"import docling; print\\('docling OK'\\)\")"
     ]
   }
 }

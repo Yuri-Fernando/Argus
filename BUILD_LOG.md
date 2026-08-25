@@ -622,3 +622,79 @@ mudou nesta sessão.
 2. Cheque `git log --oneline` para o commit baseline e quaisquer commits incrementais feitos depois.
 3. Retome exatamente do primeiro item "⏳ NA FILA" ou "🔄 EM ANDAMENTO" acima.
 4. Sempre disparar work-packages **um de cada vez** (não em paralelo) — ver "Incidente" acima.
+
+## 2026-08-24 (continuação) — extensão fiscal/tributária + pipeline VLM (ADR-015)
+
+Usuário perguntou como a taxonomia LLM/LCM/LAM/MoE/VLM/SLM/MLM/SAM (complemento do `add2.txt`)
+seria aplicada de verdade, e pediu pra eu criar um contexto/dataset fiscal-tributário pra
+enriquecer o projeto — fechando dois gaps que `IMPROVEMENTS_AND_RESEARCH.md` já documentava como
+deliberadamente deixados em aberto (nenhum uso de VLM, nenhum dado de domínio fiscal apesar do
+`tributario.txt` pedir isso). Entrei em plan mode, explorei os padrões existentes (geradores
+sintéticos, regras de DQ, agentes, MCP tools, ADRs) com um agente Explore, escrevi um plano
+detalhado e pedi aprovação antes de tocar em qualquer arquivo — aprovado com escopo: dataset
+pequeno e focado (5-10 documentos escaneados), 100% sintético, integrado nos 4 pontos pedidos
+(RAG, VLM, Data Quality, agente novo). Ver `docs/decisions/ADR-015-fiscal-tax-reform-extension.md`
+para o registro formal da decisão.
+
+**O que foi construído, testado de verdade contra dados reais gerados nesta sessão:**
+
+- **`data/synthetic/generators/fiscal.py`**: gerador sintético de itens de nota fiscal (Reforma
+  Tributária — IBS/CBS/Imposto Seletivo), mesmo padrão de `crm.py`/`finance.py`. Dois bugs reais
+  achados e corrigidos durante o teste ao vivo (não hipotéticos, achados rodando o código):
+  (1) NCM/CFOP/CST com zero à esquerda perdiam o zero no round-trip CSV (`pd.read_csv` inferindo
+  `int64`) — corrigido forçando `dtype=str` nessas 3 colunas em toda leitura; (2) linhas "limpas"
+  (sem sujeira injetada) podiam sair com uma combinação CST/CFOP logicamente incompatível por puro
+  acaso, já que CST e CFOP eram sorteados independentemente — corrigido condicionando a escolha do
+  CFOP ao CST na geração de linhas limpas. `render_scanned_documents()` usa Pillow (opcional, com
+  fallback gracioso igual `render.py`/reportlab) pra desenhar 8 documentos como imagem "escaneada"
+  (rotação leve + ruído) — resultado real: 200 documentos, 10 com discrepância injetada
+  (4 invalid_ncm, 4 cst_cfop_mismatch, 2 rate_out_of_range no seed original), 8 PNGs legíveis.
+- **`data_quality/expectations/fiscal_document.py`** + **`data_quality/validators/fiscal_report.py`**:
+  domínio fiscal auto-contido, fora de `lakehouse/run_pipeline.py::TABLE_ORDER` (família de tabela
+  diferente do e-commerce) — reusa o mesmo `DQEngine` e os mesmos 10 tipos de regra fechados
+  (a combinação CST/CFOP inválida virou uma coluna derivada `cst_cfop_valid` validada com
+  `range_check(allowed_values=[True])`, não um 11º tipo de regra). Rodado de verdade: score
+  99,64%, 10 linhas quarentenadas — bate exatamente com as 10 discrepâncias injetadas.
+- **`mcp/tools/fiscal.py`** (`get_fiscal_quality`, `get_fiscal_document`) registrado em
+  `mcp/server/server.py`, testado ao vivo contra os dados reais.
+- **`agents/fiscal/`**: `tax_discrepancy_classifier.py` (TF-IDF+LogReg local, mesma técnica e
+  mesma honestidade de escopo de `root_cause_classifier.py` — 80% acurácia held-out real,
+  F1 macro 0,822) + `root_cause_agent.py` (`diagnose_tax_discrepancy`, padrão do Data Quality
+  Agent). Bug real achado e corrigido durante o teste ao vivo: um documento genuinamente limpo
+  (`discrepancy_reason == "none"`) caía no fallback do `worst_rule` *global* do dataset e inventava
+  uma causa — corrigido distinguindo explicitamente `"none"` (limpo, confirmado) de `None`
+  (sem ground truth disponível). Testado contra 4 casos reais (2 sujos, 1 limpo, 1 inexistente) —
+  os 3 primeiros corretos, o quarto reporta "not found" sem inventar números.
+- **VLM real, resultado documentado sem retoque**: `rag/local_stack/document_parser.py::
+  DoclingVlmDocumentParser` (novo, classe irmã de `DoclingDocumentParser`) usa o `VlmPipeline` do
+  Docling. Testado ao vivo contra um PNG real gerado: o pipeline roda de ponta a ponta sem erro
+  (baixa e carrega o modelo `ibm-granite/granite-docling-258M` de verdade, sem exigir credencial
+  paga), mas produziu saída de baixa qualidade — um loop de repetição (`"Total de tributos:"`
+  repetido dezenas de vezes) em vez do conteúdo real da página. Achado honesto adicional: o
+  pipeline *padrão* do Docling pra imagem (RapidOCR, motor de OCR tradicional, não um VLM) leu o
+  mesmo documento quase perfeitamente. Documentado como está no ADR-015 e no README — um modelo
+  VLM pequeno de propósito geral perdendo pra OCR tradicional num documento de texto plano é um
+  achado de engenharia real, não um resultado inventado pra "provar" que VLM funciona.
+  `VlmUnavailableError` continua existindo pro caso de falha real (sem internet/modelo não
+  baixado) — distinto de "rodou, mas saiu ruim", que é o que de fato aconteceu aqui.
+- **Wiring**: `agents/knowledge_ingestion/agent.py::classify_source` roteia `.png`/`.jpg`/`.jpeg`
+  pro novo `SourceKind.SCANNED_IMAGE` → `DoclingVlmDocumentParser`, com `VlmUnavailableError`
+  isolado por fonte (não derruba o batch inteiro). 2 documentos de política novos
+  (`reforma_tributaria_ibs_cbs.md`, `imposto_seletivo_visao_geral.md`) entram na coleção
+  `policy_docs__rag` já existente via `data/synthetic/generators/documents.py` — reusa o
+  `task_type="policy_qa"` já mapeado, nenhum `task_type` novo.
+- **`tests/data/test_fiscal_dq.py`**: 2 testes novos, mesmo padrão de `test_dq_quarantine.py`.
+  Suite completa: **9 passed, 1 skipped** (antes desta extensão: 7 passed, 1 skipped) — sem
+  regressão. `agents/fiscal/test_tax_discrepancy_classifier.py` (co-localizado, 2 testes, ambos
+  passam quando rodado explicitamente) — achado honesto, não meu bug: `pyproject.toml`'s
+  `testpaths = ["tests"]` não descobre testes co-localizados fora de `tests/`, gap pré-existente
+  no próprio setup do projeto (nenhum outro teste co-localizado existia antes desta sessão
+  também) — documentado aqui em vez de silenciosamente corrigido fora do escopo combinado com o
+  usuário.
+
+**Docs atualizados**: `IMPROVEMENTS_AND_RESEARCH.md` §5.1/§5.3 (VLM e domínio fiscal viram
+✅ implementado, com o resultado real do VLM linkado), `docs/decisions/
+ADR-015-fiscal-tax-reform-extension.md` (novo), `pyproject.toml` (Pillow em `genai-extra`).
+
+Nenhuma pendência nova além das já listadas em "Pendências que só você pode resolver" — o domínio
+fiscal é 100% sintético e local, não precisou de nenhuma credencial externa nova.

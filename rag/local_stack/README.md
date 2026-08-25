@@ -6,6 +6,7 @@
 rag/local_stack/
 ├── crawler.py           # Crawl4AI wrapper — pulls live policy pages instead of only static synthetic PDFs
 ├── document_parser.py   # Docling wrapper — layout-aware parsing of complex documents (tables, PDFs, DOCX)
+│                         #   + DoclingVlmDocumentParser (ADR-015) — scanned/image documents via a VLM
 └── vector_store.py       # ChromaDB (primary) / FAISS (documented alternative) local vector store
 ```
 
@@ -31,6 +32,29 @@ One tool, one problem, per [ARCHITECTURE.md §1](../../ARCHITECTURE.md#1-design-
 | Chosen here because | This project's local vector store only ever needs to hold four-to-a-few-dozen policy documents' worth of chunks — ChromaDB's ceiling is irrelevant at this scale, and its metadata filtering is used directly by `retrieval/` to scope a query to one document type | Kept as the **documented scale-out path** — if a future extension needed to index millions of chunks locally (e.g. ingesting the full Olist review corpus for semantic search), FAISS is the noted next step, not a redesign |
 
 `vector_store.py` exposes one interface (`VectorStore.upsert(...)` / `VectorStore.query(...)`) implemented by both `ChromaVectorStore` (default) and `FaissVectorStore` (alternative, same contract) — callers in `retrieval/`-equivalent code don't need to know which backend is active.
+
+## VLM parsing — `DoclingVlmDocumentParser` (ADR-015)
+
+`document_parser.py` also exposes `DoclingVlmDocumentParser`, a separate class (not a flag on
+`DoclingDocumentParser` — genuinely different input shape and resource profile) for
+**scanned/photographed** documents — an image with no real text layer, as opposed to a native
+PDF/DOCX. Built specifically to close a gap `IMPROVEMENTS_AND_RESEARCH.md` §5.3 previously
+documented as "no real VLM use case in this platform": the synthetic scanned fiscal documents
+(`data/synthetic/generators/fiscal.py::render_scanned_documents`, see
+[ADR-015](../../docs/decisions/ADR-015-fiscal-tax-reform-extension.md)) are that use case. Uses
+Docling's `VlmPipeline` with the default IBM Granite-Docling-258M model — open weights, runs
+fully locally once downloaded (no paid API key, unlike `agents/llm_gateway/`'s provider
+adapters). Raises `VlmUnavailableError` (never a raw library exception) if the model can't be
+loaded — `agents/knowledge_ingestion/agent.py` catches it per-source, same resilience contract as
+`crawler.py`'s `CrawlResult.success` flag.
+
+**Honest real-test result** (ADR-015): the pipeline runs end-to-end for real — no paid credential,
+no crash — but produced a low-quality, repetition-loop output on the synthetic scanned fiscal
+document tested live during this extension's build. Docling's *default*, non-VLM image pipeline
+(RapidOCR) read the same document far more accurately. Kept as-is rather than swapped for OCR:
+this class exists specifically to demonstrate the VLM model category (`add2.txt`'s taxonomy
+complement), and the result — a small general-purpose VLM underperforming traditional OCR on a
+plain structured document — is a real, documented finding, not a flaw to hide.
 
 ## Relationship to the Knowledge Ingestion Agent
 

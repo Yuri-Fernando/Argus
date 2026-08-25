@@ -52,6 +52,12 @@ genai-extra = [
     "faiss-cpu>=1.8",
     "agno>=1.0",
     "google-genai>=0.1",
+    # Pillow: renders the synthetic "scanned" fiscal documents (ADR-015) that give the VLM
+    # parsing path (rag/local_stack/document_parser.py::DoclingVlmDocumentParser) something real
+    # to parse. Lives here, not in core `dependencies`, for the same reason as the rest of this
+    # group: `make seed`'s CSV/ground-truth generation must keep working without it — image
+    # rendering degrades gracefully (data/synthetic/generators/fiscal.py) if it's absent.
+    "pillow>=10.0",
 ]
 
 [tool.ruff]

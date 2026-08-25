@@ -19,6 +19,7 @@ data/raw/**
 data/synthetic/**/*.csv
 data/documents/*.md
 data/documents/*.pdf
+data/documents/fiscal/*.png
 !data/synthetic/generators/
 !data/synthetic/config.yaml
 !data/synthetic/generate_all.py

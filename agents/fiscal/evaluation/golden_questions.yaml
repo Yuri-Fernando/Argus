@@ -1,0 +1,45 @@
+# Golden question set for the Fiscal Root-Cause Agent (ADR-015).
+#
+# Same schema as agents/quality/evaluation/golden_questions.yaml — see that file's header for the
+# field-by-field explanation. `expected_diagnosis_shape` mirrors
+# agents/fiscal/root_cause_agent.py::TaxDiagnosis's fields.
+
+cases:
+  - id: cst-cfop-mismatch-discrepancy
+    question: "Why does the calculated tax on document NFE00000012 not match the reference figure?"
+    dataset: "fiscal_document"
+    expected_tools_called: [get_fiscal_document, get_fiscal_quality]
+    expected_diagnosis_shape: [calculated_tax_total, correct_tax_total, discrepancy_amount, main_cause, recommended_action]
+    expected_answer_contains: ["CST", "CFOP", "isent"]
+    notes: "A real dirty row from the seed=42 synthetic dataset — CST/CFOP mismatch category."
+
+  - id: invalid-ncm-discrepancy
+    question: "Is there a problem with the product classification on document NFE00000078?"
+    dataset: "fiscal_document"
+    expected_tools_called: [get_fiscal_document]
+    expected_diagnosis_shape: [main_cause, recommended_action]
+    expected_answer_contains: ["NCM", "catálogo"]
+    notes: "A real dirty row from the seed=42 synthetic dataset — invalid_ncm category."
+
+  - id: clean-document-no-discrepancy
+    question: "Does document NFE00000000 have any tax discrepancy?"
+    dataset: "fiscal_document"
+    expected_tools_called: [get_fiscal_document]
+    expected_diagnosis_shape: [main_cause]
+    expected_answer_contains: ["no discrepancy"]
+    notes: "Must not fabricate a discrepancy for a genuinely clean document — the exact bug a code-review pass caught during this session (see BUILD_LOG.md)."
+
+  - id: unknown-document
+    question: "What's the tax diagnosis for document NFE99999999?"
+    dataset: "fiscal_document"
+    expected_tools_called: [get_fiscal_document]
+    expected_diagnosis_shape: [main_cause]
+    expected_answer_contains: ["not found"]
+    notes: "Must not fabricate figures for a document that doesn't exist in the synthetic dataset."
+
+  - id: overall-fiscal-dq-score
+    question: "What's the current data quality score for the fiscal documents dataset?"
+    dataset: "fiscal_document"
+    expected_tools_called: [get_fiscal_quality]
+    expected_diagnosis_shape: [dq_score, worst_rule]
+    expected_answer_contains: ["fiscal"]

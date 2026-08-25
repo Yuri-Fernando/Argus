@@ -72,6 +72,73 @@ Customers classified as `VIP` by the ML segmentation model (see
 `ml/segmentation/`) automatically receive Gold-tier benefits regardless of
 order count, subject to quarterly review.
 """,
+    "reforma_tributaria_ibs_cbs": """# Reforma Tributária — IBS e CBS (Resumo Educacional Sintético)
+
+*Este documento é um resumo educacional de alto nível, escrito para o Enterprise Customer
+Intelligence Platform (projeto de portfólio) — não é um texto legal oficial, não substitui a
+Emenda Constitucional 132/2023, sua lei complementar, ou qualquer regulamentação vigente, e não
+deve ser usado como fonte de conformidade fiscal real. Ver `docs/decisions/
+ADR-015-fiscal-tax-reform-extension.md` para o escopo desta extensão.*
+
+## O que muda
+A Reforma Tributária substitui um conjunto de tributos sobre consumo (PIS, Cofins, IPI, ICMS,
+ISS) por um modelo de **IVA dual**: o **IBS** (Imposto sobre Bens e Serviços — competência
+estadual e municipal) e a **CBS** (Contribuição sobre Bens e Serviços — competência federal).
+
+## Princípios centrais
+- **Não cumulatividade plena**: o imposto pago em uma etapa da cadeia gera crédito integral na
+  etapa seguinte, reduzindo o efeito "imposto sobre imposto" do modelo anterior.
+- **Cobrança no destino**: o tributo passa a ser recolhido no local de consumo, não no local de
+  produção — mudança relevante para operações interestaduais.
+- **Transição gradual**: um período de convivência entre o sistema antigo e o novo (previsto para
+  se estender por vários anos) evita uma troca abrupta, com alíquotas de teste e ajustes
+  progressivos.
+
+## Situações tributárias (CST)
+Cada operação carrega um **Código de Situação Tributária (CST)** que indica como o IBS/CBS incide
+sobre ela — por exemplo, tributação integral, isenção, imunidade ou diferimento. O CST de uma
+operação precisa ser compatível com o CFOP (código que descreve a natureza da operação) — uma
+operação marcada como isenta não deveria, ao mesmo tempo, ser tratada como uma venda tributada
+integral no sistema, uma inconsistência que `data_quality/expectations/fiscal_document.py` valida
+neste projeto (coluna derivada `cst_cfop_valid`).
+
+## Por que isso importa para uma plataforma de dados
+Uma mudança tributária dessa magnitude é, na prática, um problema de dados: milhões de
+documentos fiscais precisam ser classificados corretamente (NCM, CFOP, CST), alíquotas corretas
+aplicadas por categoria de produto, e discrepâncias identificadas e corrigidas — exatamente a
+disciplina de Data Quality, rastreabilidade e agentes de diagnóstico que o resto desta plataforma
+já demonstra em outro domínio (customer intelligence). Ver `agents/fiscal/root_cause_agent.py`.
+""",
+    "imposto_seletivo_visao_geral": """# Imposto Seletivo (IS) — Visão Geral Sintética
+
+*Resumo educacional de alto nível, escrito para este projeto de portfólio — não é aconselhamento
+fiscal ou jurídico. Ver `docs/decisions/ADR-015-fiscal-tax-reform-extension.md`.*
+
+## O que é
+O **Imposto Seletivo** é um tributo federal adicional, previsto na Reforma Tributária, incidente
+sobre bens e serviços considerados prejudiciais à saúde ou ao meio ambiente — por isso também
+chamado informalmente de "imposto do pecado" (sin tax), um mecanismo já usado em outros países
+para desestimular o consumo de certas categorias através do preço.
+
+## Categorias tipicamente afetadas
+- Bebidas alcoólicas
+- Cigarros e produtos derivados do tabaco
+- Bebidas açucaradas
+- Veículos, embarcações e aeronaves de alto impacto ambiental (dependendo da regulamentação)
+
+Neste projeto, a coluna `product_category` de `data/synthetic/fiscal/fiscal_documents.csv` marca
+como elegíveis ao Imposto Seletivo apenas um subconjunto ilustrativo de categorias (bebida
+alcoólica, cigarros, refrigerante açucarado) — uma simplificação para fins de demonstração, não
+uma lista oficial e completa de incidência.
+
+## Como se soma ao IBS/CBS
+O Imposto Seletivo incide **além** do IBS e da CBS, não em substituição a eles — um produto
+elegível carrega três alíquotas simultâneas sobre o mesmo valor de base. É por isso que
+`data/synthetic/generators/fiscal.py::_correct_tax()` soma as três alíquotas (`ibs_rate +
+cbs_rate + imposto_seletivo_rate`) ao calcular o tributo total esperado de um item, exceto quando
+a operação tem CST de imunidade ou isenção, caso em que o tributo total correto é zero
+independentemente das alíquotas cadastradas.
+""",
     "privacy_policy": """# Privacy Policy (Synthetic)
 
 *Synthetic document — portfolio project only. Written to be consistent

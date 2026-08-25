@@ -36,6 +36,10 @@ from mcp.tools.customer import (
     get_customer_orders as _get_customer_orders,
     search_customers as _search_customers,
 )
+from mcp.tools.fiscal import (
+    get_fiscal_document as _get_fiscal_document,
+    get_fiscal_quality as _get_fiscal_quality,
+)
 from mcp.tools.ml import (
     get_customer_churn as _get_customer_churn,
     get_model_metrics as _get_model_metrics,
@@ -280,6 +284,38 @@ def query_snowflake(sql: str, params: dict | None = None, limit: int = 500) -> d
         A dict with `rows` (list of dicts), `row_count` and `truncated` (bool).
     """
     return _query_snowflake(sql, params=params, limit=limit)
+
+
+# ---------------------------------------------------------------------------
+# Fiscal / tributário tools (ADR-015) — mcp/tools/fiscal.py
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+def get_fiscal_quality() -> dict:
+    """Fetch the synthetic fiscal_document dataset's current data quality score.
+
+    Returns:
+        A dict with `dataset`, `dq_score`, `as_of` and `worst_rule` (the lowest-scoring
+        individual rule — real description text, e.g. "NCM code must be in the platform's
+        catalog"). See mcp/tools/fiscal.py for the exact schema.
+    """
+    return _get_fiscal_quality()
+
+
+@mcp.tool()
+def get_fiscal_document(fiscal_document_id: str) -> dict:
+    """Fetch one synthetic fiscal document plus its ground-truth tax discrepancy, if any.
+
+    Args:
+        fiscal_document_id: e.g. "NFE00000042".
+
+    Returns:
+        A dict with the document's NCM/CFOP/CST codes, `calculated_tax_total` (what the document
+        shows), `correct_tax_total` (the ground-truth reference figure), `discrepancy_amount` and
+        `discrepancy_reason`. See mcp/tools/fiscal.py for the exact schema.
+    """
+    return _get_fiscal_document(fiscal_document_id)
 
 
 def main() -> None:

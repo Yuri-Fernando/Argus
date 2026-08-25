@@ -25,15 +25,16 @@ from pathlib import Path
 from typing import Any
 
 from rag.local_stack.crawler import Crawl4AICrawler
-from rag.local_stack.document_parser import DoclingDocumentParser
+from rag.local_stack.document_parser import DoclingDocumentParser, DoclingVlmDocumentParser, VlmUnavailableError
 from rag.local_stack.vector_store import VectorRecord, VectorStore, get_default_vector_store
 
 
 class SourceKind(str, Enum):
-    """The three extraction paths this agent chooses between, one per knowledge source."""
+    """The four extraction paths this agent chooses between, one per knowledge source."""
 
     LIVE_URL = "live_url"  # -> Crawl4AI (crawler.py)
-    COMPLEX_DOCUMENT = "complex_document"  # -> Docling (document_parser.py)
+    COMPLEX_DOCUMENT = "complex_document"  # -> Docling text pipeline (document_parser.py)
+    SCANNED_IMAGE = "scanned_image"  # -> Docling VLM pipeline (document_parser.py, ADR-015)
     STATIC_FILE = "static_file"  # -> direct read, e.g. the existing synthetic Markdown policies
 
 
@@ -66,12 +67,15 @@ def classify_source(identifier: str) -> SourceKind:
     logic can be tested without invoking Agno's runtime.
 
     Args:
-        identifier: a URL (routes to Crawl4AI) or a local file path (routes to Docling for
-            PDF/DOCX, or a direct static read for .md/.txt).
+        identifier: a URL (routes to Crawl4AI), a local scanned-image path (routes to Docling's
+            VLM pipeline, ADR-015), a local complex-document path (routes to Docling's text
+            pipeline), or any other local file path (a direct static read for .md/.txt).
     """
     if identifier.startswith(("http://", "https://")):
         return SourceKind.LIVE_URL
     suffix = Path(identifier).suffix.lower()
+    if suffix in (".png", ".jpg", ".jpeg"):
+        return SourceKind.SCANNED_IMAGE
     if suffix in (".pdf", ".docx"):
         return SourceKind.COMPLEX_DOCUMENT
     return SourceKind.STATIC_FILE
@@ -92,10 +96,12 @@ class KnowledgeIngestionAgent:
         *,
         crawler: Crawl4AICrawler | None = None,
         document_parser: DoclingDocumentParser | None = None,
+        vlm_document_parser: DoclingVlmDocumentParser | None = None,
         vector_store: VectorStore | None = None,
     ) -> None:
         self._crawler = crawler or Crawl4AICrawler()
         self._document_parser = document_parser or DoclingDocumentParser()
+        self._vlm_document_parser = vlm_document_parser or DoclingVlmDocumentParser()
         self._vector_store = vector_store or get_default_vector_store()
         # TODO(Sprint 12 extension): wrap the three tool calls below (`_ingest_live_url`,
         # `_ingest_complex_document`, `_ingest_static_file`) as Agno `@tool`-decorated functions
@@ -129,6 +135,8 @@ class KnowledgeIngestionAgent:
                 results.append(await self._ingest_live_url(source))
             elif source.kind is SourceKind.COMPLEX_DOCUMENT:
                 results.append(self._ingest_complex_document(source))
+            elif source.kind is SourceKind.SCANNED_IMAGE:
+                results.append(self._ingest_scanned_image(source))
             else:
                 results.append(self._ingest_static_file(source))
         return results
@@ -158,6 +166,26 @@ class KnowledgeIngestionAgent:
             ]
         )
         return IngestionResult(source=source, tool_used="docling", chunks_written=len(chunks), success=True)
+
+    def _ingest_scanned_image(self, source: KnowledgeSource) -> IngestionResult:
+        """Route a scanned document image (e.g. `data/documents/fiscal/*.png`, ADR-015) through
+        Docling's VLM pipeline. `VlmUnavailableError` is caught here, not left to propagate — the
+        VLM model may not be downloaded/no internet on first run, and that must degrade this one
+        source's ingestion result, not the whole `ingest()` batch (same resilience contract as
+        `_ingest_live_url`'s `crawl_result.success` check above)."""
+        try:
+            chunks = self._vlm_document_parser.parse(source.identifier)
+        except VlmUnavailableError as exc:
+            return IngestionResult(
+                source=source, tool_used="docling_vlm", chunks_written=0, success=False, error=str(exc)
+            )
+        self._vector_store.upsert(
+            [
+                VectorRecord(id=chunk.chunk_id, text=chunk.text, embedding=[], metadata={**source.metadata, "kind": chunk.kind})
+                for chunk in chunks
+            ]
+        )
+        return IngestionResult(source=source, tool_used="docling_vlm", chunks_written=len(chunks), success=True)
 
     def _ingest_static_file(self, source: KnowledgeSource) -> IngestionResult:
         """Route a plain static file (e.g. the existing synthetic .md policy docs) via a direct read."""
