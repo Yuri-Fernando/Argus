@@ -8,6 +8,8 @@
 
 Plataforma full-stack de Dados & IA para Customer Intelligence corporativo, cobrindo de ponta a ponta as competências técnicas mais recorrentes em vagas de Engenharia de Dados, Governança/MDM, MLOps e Engenharia de IA (LLMs, agentes, RAG, MCP). O projeto é inspirado em requisitos reais de mercado, mas não representa nenhuma empresa específica — é uma plataforma simulada, construída como peça de portfólio.
 
+A partir da **v2 (arquitetura enterprise)**, o Argus também é usado como **referência de arquitetura de software e system design corporativo**: DDD com bounded contexts, microsserviços poliglotas (Java/Spring + Python/FastAPI), arquitetura orientada a eventos (Kafka + RabbitMQ), service mesh, ADRs/RFCs e documentação explícita de system design. *Customer Intelligence* passa a ser o **domínio de negócio** usado para demonstrar essa arquitetura. Ver **[Arquitetura Enterprise (v2)](#arquitetura-enterprise-v2)** e a tabela de status abaixo. Nada é anunciado como pronto antes de existir — cada capacidade tem status ✅ / 🚧 / 🗺️.
+
 🇺🇸 Read in English: [README-en.md](README-en.md)
 
 ---
@@ -187,6 +189,58 @@ O projeto cobre, na prática, os requisitos técnicos mais recorrentes em vagas 
 
 ---
 
+## Arquitetura Enterprise (v2)
+
+Camada adicionada como **evolução aditiva** — o pipeline de dados
+Azure/Databricks/Snowflake existente permanece intacto (ADR-016). O objetivo
+é demonstrar arquitetura de software distribuída usando o domínio de negócio
+já modelado.
+
+### Princípios
+
+| Princípio | Onde | ADR |
+|---|---|---|
+| **Domain-Driven Design** — bounded contexts, camadas domain/application/infrastructure/interfaces | `services/` | ADR-014, ADR-018 |
+| **Stack poliglota** — Java/Spring nos serviços de negócio, Python/FastAPI em Dados/ML/IA | `services/` | ADR-017 |
+| **Event-Driven Architecture** — Kafka (event streaming) + RabbitMQ (work queue), papéis distintos | `platform/messaging/` | ADR-019 |
+| **Database-per-service** + consistência eventual entre contexts | `services/` | ADR-020, ADR-022 |
+| **REST na borda · GraphQL no BFF · gRPC interno** | `docs/system-design/05` | ADR-021 |
+| **Cloud-native** — EKS + Istio (mTLS, retry, canary) + Argo CD (GitOps) | `terraform/modules/aws/`, `platform/service-mesh/` | ADR-023, ADR-024 |
+| **Data Mesh** — Data Products por domínio (owner, SLA, contrato, lineage) | RFC-001 | — |
+| **MLOps com gate** — robustez adversarial (ThemisAI) obrigatória antes de produção | `ml-platform/adversarial-evaluation/` | RFC-002 |
+
+### Status das capacidades
+
+| Capacidade | Status | Evidência |
+|---|---|---|
+| DDD / hexagonal (camadas) | ✅ Implementado | `services/inference-service/` (13 testes) |
+| Design Patterns (Strategy · Factory · Adapter · Ports&Adapters) | ✅ Implementado | `services/inference-service/src/.../infrastructure/` |
+| FastAPI (Python) | ✅ Implementado | `inference-service` roda com `uvicorn` |
+| Event-Driven Architecture | ✅ Implementado (in-memory) / 🚧 broker | `platform/messaging/` — `InMemoryBus` + demo + 5 testes; `KafkaBus`/`RabbitBus` prontos, sem broker no ambiente |
+| Schema Registry (JSON Schema por tópico) | ✅ Implementado | `platform/messaging/schemas/` + `ValidatingBus` |
+| BDD (Gherkin PT-BR) | ✅ Implementado | `tests/bdd/` — behave, 2 cenários |
+| System Design docs (requisitos, capacidade, escala, HA, consistência, cache, DR, trade-offs) | ✅ Implementado | `docs/system-design/00..14` |
+| ADRs de arquitetura enterprise | ✅ Implementado | `docs/decisions/ADR-016..024` (total: 24 ADRs) |
+| RFCs (Data Mesh, ML Platform) | ✅ Implementado | `docs/rfc/` |
+| C4 model (context / container / component) | ✅ Implementado | `docs/c4/` (Mermaid) |
+| Standards (código, API, observabilidade) | ✅ Implementado | `docs/standards/` |
+| Robustness gate de MLOps (integra ThemisAI) | ✅ Implementado | `ml-platform/adversarial-evaluation/` (5 testes) |
+| Terraform AWS (VPC · EKS · MSK · observability) | 🗺️ Referência | `terraform/modules/aws/` — `terraform fmt` passa; `apply` não executado |
+| Java / Spring Boot (`customer-service`) | 🗺️ Skeleton | `services/customer-service/` — `pom.xml` válido, DDD completo, `CustomerAggregateTest`; não compilado (sem JDK 17/Maven no ambiente) |
+| Service Mesh (Istio — mTLS, canary) | 🗺️ Referência | `platform/service-mesh/istio/` — manifests válidos, requer cluster |
+| Angular Microfrontends (`web-shell`) | 🗺️ Skeleton | `apps/web-shell/` — configs Module Federation válidas; `ng build` não roda no ambiente |
+| Kafka/RabbitMQ com broker real | 🗺️ Planejado | adapters prontos em `platform/messaging/bus.py` |
+| Argo CD / GitOps | 🗺️ Planejado | ADR-024 |
+
+### Evolução de versões
+
+`v1.x` Plataforma de Dados & IA (Lakehouse, MDM, ML, RAG, agentes, governança) →
+`v2.0` DDD + `inference-service` + messaging + system design + ADRs 16–24 →
+`v2.1` (planejado) Kafka/RabbitMQ com broker + `customer-service` compilando →
+`v2.2` (planejado) EKS + Istio + Argo CD.
+
+---
+
 ## Roadmap
 
 Construído em 16 sprints ao longo de 8 fases (Fundação → Engenharia de Dados → MDM → Warehouse/BI → ML → GenAI/RAG → Agentic/MCP → Hardening Enterprise), com épicos, stories e critérios de aceite. Detalhamento completo: **[ROADMAP.md](ROADMAP.md)**.
@@ -222,6 +276,7 @@ Os componentes de nuvem (Azure, Databricks, Snowflake, Power BI, Cortex) são op
 agents/            6 agentes (orquestrador, qualidade, recomendação, monitoramento,
                     ingestão de conhecimento, causa-raiz fiscal) + MCP/A2A + LLM Gateway
 api/                FastAPI + GraphQL
+apps/              [v2] Angular web-shell + microfrontends (skeleton)
 data/               Geradores sintéticos + documentos (RAG)
 data_quality/       Engine de regras + quarentena
 dashboard/          Dashboard Streamlit
@@ -233,12 +288,20 @@ lakehouse/          Pipeline Bronze → Silver
 mcp/                Servidor MCP + ferramentas
 mdm/                Entity Resolution + Golden Record
 ml/                 Features, churn, segmentação, reforço, explicabilidade
+ml-platform/       [v2] adversarial-evaluation — robustness gate de MLOps (ThemisAI)
 notebooks/          9 notebooks executáveis, um por camada
+platform/          [v2] messaging (Kafka/RabbitMQ + schemas) + service-mesh (Istio)
 powerbi/            Semantic model, DAX, dashboard
 rag/                RAG cloud (Cortex) + local-first (Crawl4AI/Docling/Chroma/FAISS)
+services/          [v2] Serviços de domínio DDD: inference-service (Python, ✅) +
+                    customer-service (Java/Spring, skeleton)
 snowflake/          DDL, semantic views, local runner (DuckDB)
-terraform/          IaC — Azure/Databricks/Snowflake, 3 ambientes
-tests/              Pirâmide de testes (unit/integration/data/ml/ai)
+terraform/          IaC — Azure/Databricks/Snowflake (v1) + AWS modules EKS/MSK (v2, referência)
+tests/              Pirâmide de testes (unit/integration/data/ml/ai) + bdd/ (behave)
+docs/system-design/ [v2] 15 docs de system design
+docs/c4/           [v2] C4 model (Mermaid)
+docs/rfc/          [v2] RFC-001 Data Mesh, RFC-002 ML Platform
+docs/standards/    [v2] padrões de código / API / observabilidade
 ```
 
 Árvore completa e anotada: [ARCHITECTURE.md §20](ARCHITECTURE.md#20-repository-structure).
@@ -253,8 +316,13 @@ tests/              Pirâmide de testes (unit/integration/data/ml/ai)
 | [ROADMAP.md](ROADMAP.md) | Sprints, épicos, stories, critérios de aceite |
 | [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
 | [DATA_MODEL.md](DATA_MODEL.md) | Datasets, schemas, modelo dimensional |
-| [docs/decisions/](docs/decisions/) | ADRs — 15 decisões de arquitetura documentadas |
+| [docs/decisions/](docs/decisions/) | ADRs — 24 decisões de arquitetura documentadas (16–24 = camada enterprise v2) |
+| [docs/system-design/](docs/system-design/) | System design: requisitos, capacidade, escala, HA, consistência, cache, segurança, observabilidade, DR, trade-offs |
+| [docs/c4/](docs/c4/) | C4 model — context / container / component (Mermaid) |
+| [docs/rfc/](docs/rfc/) | RFC-001 Data Mesh · RFC-002 ML Platform |
+| [docs/standards/](docs/standards/) | Padrões de código, API design e observabilidade |
 | [governance/](governance/) | Governança, LGPD, segurança de IA |
+| [services/inference-service/](services/inference-service/) | Serviço DDD de referência (Strategy/Factory/Adapter) |
 
 ---
 

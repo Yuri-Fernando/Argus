@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argus/events/model.drift.detected/v1",
+  "title": "model.drift.detected",
+  "description": "Emitido pelo monitor de drift quando a distribuição de entrada ou de score de um modelo em produção se afasta do baseline. Dispara re-treino e revisão pelo AI governance gate.",
+  "type": "object",
+  "required": ["event_id", "occurred_at", "model_id", "metric", "value", "threshold"],
+  "properties": {
+    "event_id": {"type": "string", "format": "uuid"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "model_id": {"type": "string"},
+    "metric": {"type": "string", "enum": ["psi", "ks", "score_mean_shift"]},
+    "value": {"type": "number"},
+    "threshold": {"type": "number"},
+    "window": {"type": "string"}
+  },
+  "additionalProperties": false
+}

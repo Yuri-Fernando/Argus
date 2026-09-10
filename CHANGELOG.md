@@ -7,6 +7,62 @@ In progress: 3 new notebooks (`07_rag_document_intelligence`, `08_agents_mcp_a2a
 
 ---
 
+## [2.3.0] — 2026-09-10 — Enterprise architecture layer (v2)
+
+Additive layer (ADR-016): the Azure/Databricks/Snowflake data pipeline is unchanged. Adds
+the software-architecture / system-design dimension, using Customer Intelligence as the
+business domain. Nothing is claimed as done before it exists — see the Capability Status
+table in the README (✅ / 🚧 / 🗺️).
+
+### Added
+- **`services/inference-service/`** (Python / FastAPI) — DDD/hexagonal service (domain /
+  application / infrastructure / interfaces) implementing **Strategy** (Linear / GBDT-xgboost /
+  LLM prediction strategies), **Factory** (`ModelFactory` resolving `ModelId` → strategy,
+  cached), **Adapter** (`OpenAIAdapter` / `BedrockAdapter` / `LocalHeuristicAdapter` behind
+  one `LLMProviderPort`) and **Ports & Adapters**. Emits `PredictionMade` domain event.
+  13 tests (`pytest`), FastAPI app runs with `uvicorn`. `xgboost` optional (degrades to
+  linear strategy).
+- **`platform/messaging/`** — `MessageBus` abstraction: `InMemoryBus` (sync, dev/test),
+  `KafkaBus` (`kafka-python`), `RabbitBus` (`pika`). `SchemaRegistry` + `ValidatingBus`
+  validate every publish against per-topic JSON Schemas (`schemas/customer.updated`,
+  `model.prediction.created`, `model.drift.detected`). Runnable `demo.py` (customer.updated
+  fan-out → prediction → dashboard). 5 tests.
+- **`ml-platform/adversarial-evaluation/`** — production **robustness gate** for MLOps
+  (RFC-002). `evaluate_gate(report, thresholds)` decides model promotion from a ThemisAI
+  `run_security_assessment` report; depends only on a structural protocol
+  (`SecurityReportLike`), not on the Themis package. 5 tests.
+- **`tests/bdd/`** — BDD with **behave** (Gherkin PT-BR): churn scoring → retention event.
+  2 scenarios, 8 steps, green.
+- **`docs/system-design/`** — 15 docs: `00-overview` … `14-trade-offs` (requirements,
+  capacity estimation, HLD, data model, API design, EDA, scalability, HA, consistency,
+  caching, security, observability, DR, trade-offs).
+- **`docs/decisions/ADR-016..ADR-024`** — enterprise architecture layer; polyglot Java/Python;
+  microservices decomposition (DDD); Kafka vs RabbitMQ; database-per-service; REST/GraphQL/gRPC;
+  eventual consistency; EKS + Istio; GitOps with Argo CD. Total: **24 ADRs**.
+- **`docs/rfc/`** — RFC-001 (Data Mesh), RFC-002 (ML Platform).
+- **`docs/c4/`** — C4 model (context / container / component) in Mermaid.
+- **`docs/standards/`** — coding, API design, observability standards.
+- **`terraform/modules/aws/`** — `network` (VPC + multi-AZ subnets), `eks`, `msk`
+  (Kafka, `min.insync.replicas=2`), `observability` (AMP + log group) + `environments/dev-aws`
+  composition. `terraform fmt` passes. 🗺️ reference (no `apply`).
+- **`services/customer-service/`** (Java / Spring Boot 3) — 🗺️ skeleton: valid `pom.xml`,
+  full DDD layout, `Customer` aggregate + value objects + domain events + ports + use case +
+  REST controller + in-memory adapters, `CustomerAggregateTest` (JUnit 5). Not compiled here
+  (no JDK 17/Maven in the environment).
+- **`platform/service-mesh/istio/`** — 🗺️ reference manifests: `PeerAuthentication` (mTLS
+  STRICT), `DestinationRule` (circuit breaker, subsets), `VirtualService` (timeout, retry,
+  90/10 canary).
+- **`apps/web-shell/`** — 🗺️ skeleton: Angular 18 + `@angular-architects/module-federation`
+  config for a host + 4 microfrontends. `ng build` not run here.
+
+### Changed
+- `README.md` — new "Arquitetura Enterprise (v2)" section with the Capability Status table;
+  repository-structure and documentation sections updated for the new dirs.
+- `README.md` intro — Argus now also framed as a software-architecture / system-design
+  reference, with Customer Intelligence as the demonstration domain.
+
+---
+
 ## [2.0.0] — 2026-08-14 — First real implementation pass (Lakehouse, MDM, ML)
 
 Moves the project from pure specification to real, executable code with real (not simulated)

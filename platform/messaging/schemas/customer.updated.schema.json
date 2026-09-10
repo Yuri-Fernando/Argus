@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argus/events/customer.updated/v1",
+  "title": "customer.updated",
+  "description": "Emitido pelo customer-service quando um cadastro de cliente muda. Consumido por MDM (rematching), churn-service (re-scoring) e recommendation-service.",
+  "type": "object",
+  "required": ["event_id", "occurred_at", "customer_id", "changed_fields"],
+  "properties": {
+    "event_id": {"type": "string", "format": "uuid"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "customer_id": {"type": "string"},
+    "source_system": {"type": "string", "enum": ["crm", "web", "marketing", "support", "billing"]},
+    "changed_fields": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "payload": {"type": "object"}
+  },
+  "additionalProperties": false
+}

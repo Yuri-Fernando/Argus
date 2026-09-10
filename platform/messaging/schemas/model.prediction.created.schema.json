@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "argus/events/model.prediction.created/v1",
+  "title": "model.prediction.created",
+  "description": "Emitido pelo inference-service a cada predição (domain event PredictionMade). Consumido por analytics, dashboard e pelo monitor de drift.",
+  "type": "object",
+  "required": ["request_id", "model_id", "score", "label", "high_risk", "occurred_at"],
+  "properties": {
+    "request_id": {"type": "string"},
+    "model_id": {"type": "string", "description": "name@version, ex.: churn@3"},
+    "score": {"type": "number", "minimum": 0, "maximum": 1},
+    "label": {"type": "string"},
+    "high_risk": {"type": "boolean"},
+    "occurred_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}
