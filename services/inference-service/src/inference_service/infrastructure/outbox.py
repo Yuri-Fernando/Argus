@@ -33,37 +33,39 @@ CREATE TABLE IF NOT EXISTS outbox (
 class SqliteOutbox:
     def __init__(self, db_path: str | Path = "outbox.db"):
         self.db_path = str(db_path)
-        with self._conn() as c:
-            c.executescript(_SCHEMA)
-
-    def _conn(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        return conn
+        # uma conexão persistente — necessário para `:memory:` (cada conexão
+        # nova abriria um banco vazio) e mais barato para arquivo. Em
+        # produção com Postgres, a "conexão" é o pool do serviço e o INSERT
+        # no outbox participa da mesma transação da escrita de domínio.
+        self._conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        self._conn.row_factory = sqlite3.Row
+        self._conn.executescript(_SCHEMA)
 
     def append(self, topic: str, payload: dict) -> int:
-        with self._conn() as c:
-            cur = c.execute(
-                "INSERT INTO outbox (topic, payload, created_at) VALUES (?, ?, ?)",
-                (topic, json.dumps(payload), datetime.now(timezone.utc).isoformat()),
-            )
-            return int(cur.lastrowid)
+        cur = self._conn.execute(
+            "INSERT INTO outbox (topic, payload, created_at) VALUES (?, ?, ?)",
+            (topic, json.dumps(payload), datetime.now(timezone.utc).isoformat()),
+        )
+        self._conn.commit()
+        return int(cur.lastrowid)
 
     def pending(self) -> list[sqlite3.Row]:
-        with self._conn() as c:
-            return list(c.execute("SELECT * FROM outbox WHERE published_at IS NULL ORDER BY id"))
+        return list(self._conn.execute(
+            "SELECT * FROM outbox WHERE published_at IS NULL ORDER BY id"
+        ))
 
     def mark_published(self, row_id: int) -> None:
-        with self._conn() as c:
-            c.execute(
-                "UPDATE outbox SET published_at = ? WHERE id = ?",
-                (datetime.now(timezone.utc).isoformat(), row_id),
-            )
+        self._conn.execute(
+            "UPDATE outbox SET published_at = ? WHERE id = ?",
+            (datetime.now(timezone.utc).isoformat(), row_id),
+        )
+        self._conn.commit()
 
     def stats(self) -> dict:
-        with self._conn() as c:
-            total = c.execute("SELECT COUNT(*) FROM outbox").fetchone()[0]
-            pending = c.execute("SELECT COUNT(*) FROM outbox WHERE published_at IS NULL").fetchone()[0]
+        total = self._conn.execute("SELECT COUNT(*) FROM outbox").fetchone()[0]
+        pending = self._conn.execute(
+            "SELECT COUNT(*) FROM outbox WHERE published_at IS NULL"
+        ).fetchone()[0]
         return {"total": total, "pending": pending, "published": total - pending}
 
 

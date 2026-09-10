@@ -23,13 +23,19 @@ hexagonal (ADR-014): `domain / application / infrastructure / interfaces`.
 
 ```bash
 cd services/customer-service
-mvn spring-boot:run     # requer JDK 17 + Maven
-mvn test
+./mvnw verify            # compila + roda os 5 testes JUnit (requer só JDK 17)
+./mvnw spring-boot:run   # sobe o serviço em :8081
 ```
+
+O Maven wrapper (`./mvnw` / `mvnw.cmd`) está incluído — não precisa de Maven
+instalado, só de um JDK 17.
 
 ## Status
 
-🗺️ **Skeleton estrutural.** `pom.xml` válido (parent Spring Boot 3.3.2),
-layout DDD/hexagonal completo e testável. **Não compilado neste ambiente**
-(sem JDK 17/Maven). Próximo ciclo: JPA + Postgres (Testcontainers), adapter
-Kafka real, Cucumber ligado às features de `tests/bdd/`.
+✅ **Compila e testa.** `mvn verify` com JDK 17 (Temurin): parent Spring Boot
+3.3.2, layout DDD/hexagonal, **5 testes JUnit** (`CustomerAggregateTest`)
+verdes cobrindo invariantes do agregado e emissão de domain events. Job
+`java-customer-service` no workflow `.github/workflows/enterprise-v2.yml`.
+
+Próximo ciclo: JPA + Postgres (Testcontainers), adapter Kafka real
+(`spring-kafka`), Cucumber ligado às features de `tests/bdd/`.

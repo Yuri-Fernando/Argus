@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 /** Value object — e-mail validado. */
 public record EmailAddress(String value) {
-    private static final Pattern RE = Pattern.compile("^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    private static final Pattern RE = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     public EmailAddress {
         Objects.requireNonNull(value);

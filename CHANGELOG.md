@@ -46,6 +46,32 @@ Torna concretos (com testes reais) itens antes marcados 🗺️/🚧 na Capabili
 
 ---
 
+## [2.5.0] — 2026-09-10 — Enterprise v2.1: validado contra infra real
+
+Os itens da v2.1 antes marcados "✅ em CI / 🚧 local" ou "🗺️ skeleton" foram exercitados
+contra ferramentas de verdade (localmente, sem custo de nuvem).
+
+### Changed
+- **Kafka/RabbitMQ com broker real → ✅ testado.** `docker compose -f
+  docker-compose.enterprise.yml up` (Redpanda + RabbitMQ + Postgres) e
+  `RUN_INTEGRATION=1 pytest -m integration` passou: roundtrip Kafka, roundtrip RabbitMQ e o
+  fluxo completo predição → outbox (SQLite) → relay → Kafka.
+- **`services/customer-service` (Java) → ✅ compila e testa.** `mvn verify` com JDK 17
+  (Temurin): **5 testes JUnit** verdes (`CustomerAggregateTest`). Adicionado o **Maven
+  wrapper** (`./mvnw`) e o job `java-customer-service` no workflow `enterprise-v2.yml`
+  (`actions/setup-java`).
+- `KafkaBus`/`RabbitBus` ganharam `consume_batch()` (consumo não-bloqueante) — o que
+  viabilizou os testes de integração.
+
+### Fixed
+- `infrastructure/outbox.py`: `SqliteOutbox` agora mantém **uma conexão persistente** — a
+  versão anterior reconectava por operação, o que quebra com `:memory:` (cada conexão nova
+  abre um banco vazio). Descoberto ao rodar o teste de integração `outbox → relay → Kafka`.
+- `domain/EmailAddress.java`: escapes de regex inválidos em string literal Java
+  (`\s` → `\\s`, `\.` → `\\.`). Descoberto ao compilar de verdade com `javac` 17.
+
+---
+
 ## [2.3.0] — 2026-09-10 — Enterprise architecture layer (v2)
 
 Additive layer (ADR-016): the Azure/Databricks/Snowflake data pipeline is unchanged. Adds

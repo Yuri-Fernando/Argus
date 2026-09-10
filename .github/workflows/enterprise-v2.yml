@@ -50,6 +50,21 @@ jobs:
       - name: BDD
         run: behave tests/bdd
 
+  java-customer-service:
+    name: customer-service (Java 17 / Spring Boot)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: mvn verify
+        working-directory: services/customer-service
+        run: ./mvnw -B verify
+
   integration:
     name: Integration (Kafka + RabbitMQ reais)
     runs-on: ubuntu-latest

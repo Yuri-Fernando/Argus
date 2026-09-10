@@ -219,7 +219,7 @@ já modelado.
 | **gRPC** (Protocol Buffers) — porta interna quente (ADR-021) | ✅ Implementado | `services/inference-service/proto/inference.proto` + `grpc_server.py`; teste garante REST e gRPC dão o mesmo score |
 | **Transactional Outbox** (ADR-022) | ✅ Implementado | `infrastructure/outbox.py` (SQLite) + `relay()` idempotente; teste de recuperação pós-crash |
 | Event-Driven Architecture | ✅ Implementado | `platform/messaging/` — `InMemoryBus` + demo + testes; `KafkaBus`/`RabbitBus` com `consume_batch` |
-| **Kafka/RabbitMQ com broker real** | ✅ em CI · 🚧 local | job `integration` do workflow sobe Redpanda+RabbitMQ; local: `make up-enterprise` (requer Docker) + `make test-integration` |
+| **Kafka/RabbitMQ com broker real** | ✅ testado | `make up-enterprise` (Redpanda + RabbitMQ + Postgres via Docker) → `make test-integration` verde: roundtrip Kafka, roundtrip RabbitMQ e fluxo predição→outbox→relay→Kafka. Também no job `integration` do CI. |
 | **Read models CQRS** (ADR-022, RFC-002) | ✅ Implementado | `platform/read_models/` — `ChurnReadModel` + teste de equivalência replay ↔ incremental |
 | Schema Registry (JSON Schema por tópico) | ✅ Implementado | `platform/messaging/schemas/` + `ValidatingBus` |
 | **Data Mesh — Data Product contracts** (RFC-001) | ✅ Implementado | `data-platform/data-products/*/contract.yaml` (4 domínios) + `validate.py` + testes |
@@ -232,7 +232,7 @@ já modelado.
 | Robustness gate de MLOps (integra ThemisAI) | ✅ Implementado | `ml-platform/adversarial-evaluation/` (5 testes) |
 | **CI da camada v2** | ✅ Implementado | `.github/workflows/enterprise-v2.yml` — job `unit` (pytest+behave+node) + job `integration` (brokers reais) |
 | Terraform AWS (VPC · EKS · MSK · observability) | 🗺️ Referência | `terraform/modules/aws/` — `terraform fmt` passa; `apply` não executado |
-| Java / Spring Boot (`customer-service`) | 🗺️ Skeleton | `services/customer-service/` — `pom.xml` válido, DDD completo, `CustomerAggregateTest`; não compilado (sem JDK 17/Maven no ambiente) |
+| Java / Spring Boot (`customer-service`) | ✅ Compila e testa | `services/customer-service/` — `mvn verify` com JDK 17: **5 testes JUnit** (`CustomerAggregateTest`) verdes. Maven wrapper (`./mvnw`) incluído; job `java-customer-service` no CI. |
 | Service Mesh (Istio — mTLS, canary) | 🗺️ Referência | `platform/service-mesh/istio/` — manifests válidos, requer cluster |
 | Angular Microfrontends (`web-shell`) | 🗺️ Skeleton | `apps/web-shell/` — configs Module Federation válidas; `ng build` não roda no ambiente |
 | Argo CD / GitOps | 🗺️ Planejado | ADR-024 |
