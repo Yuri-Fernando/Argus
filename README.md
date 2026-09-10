@@ -326,6 +326,41 @@ docs/standards/    [v2] padrões de código / API / observabilidade
 
 ---
 
+## Projetos Relacionados
+
+Argus é o **flagship de arquitetura** de um portfólio de projetos
+especializados. Cada um prova um recorte; o Argus mostra como eles se
+encaixam.
+
+```text
+                         ENTERPRISE AI SYSTEMS
+                                   │
+          ┌────────────────────────┼────────────────────────┐
+          │                        │                        │
+    AI / ML / DATA           SOFTWARE ARCH.           CLOUD PLATFORM
+          │                        │                        │
+   ML · RAG · Agents        DDD · EDA · CQRS         AWS · K8s · IaC
+   Adversarial ML           Kafka · RabbitMQ         Service Mesh · GitOps
+   Data Eng · MLOps         Java · Python            Observability
+          │                        │                        │
+          └────────────────────────┼────────────────────────┘
+                                   │
+                                 ARGUS
+```
+
+| Projeto | Papel no portfólio | Ligação com o Argus |
+|---|---|---|
+| **ThemisAI** | AI Governance + AI Security + **Adversarial ML** (`core/adversarial_ml/`) | Gera o `ModelSecurityReport` que o `ml-platform/adversarial-evaluation/` do Argus usa como *production robustness gate* |
+| **Enterprise Automation** | Cloud Platform Engineering (Terraform · EKS · GitOps · policy-as-code) | É a plataforma de infraestrutura+entrega sobre a qual o Argus roda (`docs/platform-consumers.md` de lá) |
+| **RetentIQ** | Event-Driven SaaS (Kafka · RabbitMQ · CQRS · Next.js) | Mesma stack event-driven do `platform/messaging/` do Argus, aplicada a um produto SaaS |
+| **VisionGuard** | Computer Vision (YOLO + ResNet) + **Adversarial Vision** (FGSM/PGD/patch) | Caso de uso de visão da trilha de AI Security; alimenta o mesmo gate |
+| **Self-Evolving RL-PID-AGV** | RL + Controle + **Robust/Adversarial RL** | Caso de uso de RL da trilha de AI Security |
+| **Credit Score (AWS)** | ML serverless (Lambda/SageMaker) + **Adversarial tabular** | Caso de uso tabular da trilha de AI Security |
+| **Churn Intelligence** | ML + RAG + streaming distribuído + **Robustness Testing** | Caso de uso de robustez tabular empresarial |
+| **AI Network Optimizer** | Telecom (O-RAN/xApp) · microsserviços gRPC · K8s + HPA | Referência de microsserviços cloud-native num domínio diferente |
+
+---
+
 ## Autor
 
 **Yuri Fernando Dubbern**
