@@ -65,3 +65,7 @@ great_expectations/uncommitted/
 
 # Docker
 docker-compose.override.yml
+
+# camada enterprise v2 — bancos SQLite de runtime
+**/outbox.db
+**/cqrs*.db

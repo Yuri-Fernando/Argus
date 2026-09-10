@@ -1,0 +1,36 @@
+name: customer-360
+domain: customer
+owner: customer-domain-team
+description: Visão única e governada de cada cliente (Golden Record + engajamento + valor).
+version: 1.2.0
+output_ports:
+  - type: delta_table
+    location: gold.customer_360
+  - type: rest_api
+    endpoint: /v1/customers/{id}
+sla:
+  freshness: 15m          # atraso máximo em relação ao evento de origem
+  availability: 99.9%
+  latency_p95_ms: 800
+schema:
+  - { name: customer_id,        type: string,  nullable: false, pii: false }
+  - { name: golden_id,          type: string,  nullable: false }
+  - { name: total_orders,       type: integer, nullable: false }
+  - { name: lifetime_value,     type: double,  nullable: false }
+  - { name: last_order_at,      type: timestamp, nullable: true }
+  - { name: churn_score,        type: double,  nullable: true, range: [0.0, 1.0] }
+  - { name: segment,            type: string,  nullable: true }
+quality_rules:
+  - rule: not_null
+    columns: [customer_id, golden_id, total_orders, lifetime_value]
+  - rule: range
+    column: churn_score
+    min: 0.0
+    max: 1.0
+  - rule: unique
+    columns: [customer_id]
+lineage:
+  upstream: [bronze.crm_customers, bronze.web_events, bronze.orders, gold.golden_record]
+access_policy:
+  classification: internal
+  masking: []

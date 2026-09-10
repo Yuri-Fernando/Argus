@@ -1,0 +1,28 @@
+name: risk
+domain: risk
+owner: risk-domain-team
+description: Indicadores de risco fiscal/financeiro por cliente (extensão fiscal do Argus).
+version: 0.3.0
+output_ports:
+  - type: delta_table
+    location: gold.risk
+sla:
+  freshness: 24h
+  availability: 99.0%
+  latency_p95_ms: 2000
+schema:
+  - { name: customer_id,       type: string,  nullable: false }
+  - { name: fiscal_discrepancy, type: double, nullable: true }
+  - { name: risk_band,         type: string,  nullable: false }  # low|medium|high
+  - { name: assessed_at,       type: timestamp, nullable: false }
+quality_rules:
+  - rule: not_null
+    columns: [customer_id, risk_band, assessed_at]
+  - rule: allowed_values
+    column: risk_band
+    values: [low, medium, high]
+lineage:
+  upstream: [bronze.fiscal_documents, customer-360]
+access_policy:
+  classification: confidential
+  masking: [fiscal_discrepancy]

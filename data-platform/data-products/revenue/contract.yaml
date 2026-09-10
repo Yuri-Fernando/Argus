@@ -1,0 +1,28 @@
+name: revenue
+domain: sales
+owner: sales-domain-team
+description: Receita agregada por cliente / período, base para BI executivo.
+version: 1.1.0
+output_ports:
+  - type: delta_table
+    location: gold.revenue
+sla:
+  freshness: 60m
+  availability: 99.5%
+  latency_p95_ms: 1500
+schema:
+  - { name: customer_id, type: string,  nullable: false }
+  - { name: period,      type: string,  nullable: false }   # YYYY-MM
+  - { name: gross_revenue, type: double, nullable: false }
+  - { name: net_revenue,   type: double, nullable: false }
+  - { name: orders,        type: integer, nullable: false }
+quality_rules:
+  - rule: not_null
+    columns: [customer_id, period, gross_revenue, net_revenue, orders]
+  - rule: expression
+    expression: "net_revenue <= gross_revenue"
+lineage:
+  upstream: [bronze.orders, bronze.refunds]
+access_policy:
+  classification: confidential
+  masking: []

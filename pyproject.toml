@@ -66,3 +66,6 @@ target-version = "py310"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "integration: exige brokers/serviços externos (Kafka/RabbitMQ) — roda com RUN_INTEGRATION=1 após `make up-enterprise`",
+]

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+// Contrato gRPC do inference-service (ADR-021: gRPC para chamadas internas
+// quentes — BFF/serviços que precisam de baixa latência e contrato forte).
+// O REST em interfaces/rest.py continua sendo a porta externa.
+
+package argus.inference.v1;
+
+message PredictRequest {
+  string model_name = 1;
+  string model_version = 2;
+  string request_id = 3;
+  map<string, double> features = 4;
+}
+
+message PredictResponse {
+  string model_id = 1;      // name@version
+  string request_id = 2;
+  double score = 3;
+  string label = 4;
+  bool high_risk = 5;
+  string explanation_json = 6;  // JSON serializado (explicação é heterogênea por estratégia)
+}
+
+message HealthRequest {}
+message HealthResponse { string status = 1; }
+
+service InferenceService {
+  rpc Predict(PredictRequest) returns (PredictResponse);
+  rpc Health(HealthRequest) returns (HealthResponse);
+}

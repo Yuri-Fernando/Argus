@@ -76,6 +76,25 @@ class KafkaBus(MessageBus):
         for record in consumer:  # loop bloqueante — rodado num worker dedicado
             handler(record.value)
 
+    def consume_batch(self, topic: str, max_messages: int = 10, timeout_s: float = 5.0) -> list[dict]:
+        """Consumo não-bloqueante: lê até `max_messages` do início do tópico
+        e retorna. Usado em testes de integração e em jobs batch."""
+        consumer = self._KafkaConsumer(
+            topic,
+            bootstrap_servers=self._bootstrap,
+            group_id=f"{self._group_id}-batch-{id(self)}",
+            value_deserializer=lambda v: json.loads(v.decode("utf-8")),
+            auto_offset_reset="earliest",
+            consumer_timeout_ms=int(timeout_s * 1000),
+        )
+        out: list[dict] = []
+        for record in consumer:
+            out.append(record.value)
+            if len(out) >= max_messages:
+                break
+        consumer.close()
+        return out
+
 
 class RabbitBus(MessageBus):
     def __init__(self, url: str = "amqp://guest:guest@localhost:5672/"):
@@ -108,3 +127,22 @@ class RabbitBus(MessageBus):
 
         ch.basic_consume(queue=topic, on_message_callback=_on_message)
         ch.start_consuming()  # loop bloqueante — rodado num worker dedicado
+
+    def consume_batch(self, queue: str, max_messages: int = 10, timeout_s: float = 5.0) -> list[dict]:
+        """Consumo não-bloqueante via `basic_get` (polling). Ack em cada
+        mensagem lida. Usado em testes de integração e workers batch."""
+        import time as _time
+
+        conn = self._pika.BlockingConnection(self._params)
+        ch = conn.channel()
+        ch.queue_declare(queue=queue, durable=True)
+        out: list[dict] = []
+        deadline = _time.time() + timeout_s
+        while len(out) < max_messages and _time.time() < deadline:
+            method, _props, body = ch.basic_get(queue=queue, auto_ack=True)
+            if body is None:
+                _time.sleep(0.1)
+                continue
+            out.append(json.loads(body))
+        conn.close()
+        return out

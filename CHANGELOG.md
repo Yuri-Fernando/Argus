@@ -7,6 +7,45 @@ In progress: 3 new notebooks (`07_rag_document_intelligence`, `08_agents_mcp_a2a
 
 ---
 
+## [2.4.0] — 2026-09-10 — Enterprise v2.1: gRPC · Outbox · CQRS read models · Data Mesh contracts · CI
+
+Torna concretos (com testes reais) itens antes marcados 🗺️/🚧 na Capability Status table
+— tudo sem custo de nuvem.
+
+### Added
+- **gRPC no inference-service** (ADR-021): `proto/inference.proto` + stubs gerados +
+  `interfaces/grpc_server.py` (`InferenceService.Predict` / `Health`). Reusa o mesmo
+  composition root da porta REST. Teste garante que REST e gRPC devolvem score idêntico.
+  `make proto` regenera os stubs.
+- **Transactional Outbox** (ADR-022): `infrastructure/outbox.py` — `SqliteOutbox` +
+  `OutboxEventPublisher` (port `EventPublisher`) + `relay()` idempotente. Teste de
+  recuperação pós-crash: cada evento é publicado exatamente uma vez mesmo com falha entre
+  publish e ack.
+- **Read models CQRS** (ADR-022, RFC-002): `platform/read_models/churn_read_model.py` —
+  `ChurnReadModel` materializa `customer_360` + `churn_kpis` em SQLite a partir de
+  `model.prediction.created` / `customer.updated`. Teste de **equivalência replay ↔
+  incremental** (propriedade central de event-sourcing).
+- **Data Mesh — Data Product contracts** (RFC-001): `data-platform/data-products/{customer-360,
+  churn-scores,revenue,risk}/contract.yaml` (schema versionado · SLA · quality rules ·
+  lineage · política de acesso) + `validate.py` (roda no CI) + testes (contratos válidos +
+  validador pega campo faltante / quality rule em coluna inexistente).
+- **`KafkaBus`/`RabbitBus.consume_batch()`** — consumo não-bloqueante, viabiliza testes de
+  integração reais.
+- **`services/inference-service/tests/test_integration.py`** — `@pytest.mark.integration`
+  (Kafka/RabbitMQ reais): roundtrip publish→consume e fluxo predição→outbox→relay→Kafka.
+  Skipa sem `RUN_INTEGRATION=1` + broker acessível.
+- **`docker-compose.enterprise.yml`** (Redpanda + RabbitMQ + Postgres) + alvos no
+  `Makefile` (`up-enterprise`, `test-enterprise`, `test-integration`, `proto`).
+- **`.github/workflows/enterprise-v2.yml`** — job `unit` (pytest + behave + node) + job
+  `integration` com brokers reais como `services` do runner.
+
+### Changed
+- `inference-service`: 13 → **20 testes** (gRPC + outbox).
+- README: Capability Status table atualizada (gRPC · Outbox · CQRS · Data Mesh · CI = ✅);
+  `v2.1` na linha de evolução de versões.
+
+---
+
 ## [2.3.0] — 2026-09-10 — Enterprise architecture layer (v2)
 
 Additive layer (ADR-016): the Azure/Databricks/Snowflake data pipeline is unchanged. Adds

@@ -213,11 +213,16 @@ já modelado.
 
 | Capacidade | Status | Evidência |
 |---|---|---|
-| DDD / hexagonal (camadas) | ✅ Implementado | `services/inference-service/` (13 testes) |
+| DDD / hexagonal (camadas) | ✅ Implementado | `services/inference-service/` (20 testes) |
 | Design Patterns (Strategy · Factory · Adapter · Ports&Adapters) | ✅ Implementado | `services/inference-service/src/.../infrastructure/` |
-| FastAPI (Python) | ✅ Implementado | `inference-service` roda com `uvicorn` |
-| Event-Driven Architecture | ✅ Implementado (in-memory) / 🚧 broker | `platform/messaging/` — `InMemoryBus` + demo + 5 testes; `KafkaBus`/`RabbitBus` prontos, sem broker no ambiente |
+| FastAPI (Python) — porta REST | ✅ Implementado | `inference-service` roda com `uvicorn` |
+| **gRPC** (Protocol Buffers) — porta interna quente (ADR-021) | ✅ Implementado | `services/inference-service/proto/inference.proto` + `grpc_server.py`; teste garante REST e gRPC dão o mesmo score |
+| **Transactional Outbox** (ADR-022) | ✅ Implementado | `infrastructure/outbox.py` (SQLite) + `relay()` idempotente; teste de recuperação pós-crash |
+| Event-Driven Architecture | ✅ Implementado | `platform/messaging/` — `InMemoryBus` + demo + testes; `KafkaBus`/`RabbitBus` com `consume_batch` |
+| **Kafka/RabbitMQ com broker real** | ✅ em CI · 🚧 local | job `integration` do workflow sobe Redpanda+RabbitMQ; local: `make up-enterprise` (requer Docker) + `make test-integration` |
+| **Read models CQRS** (ADR-022, RFC-002) | ✅ Implementado | `platform/read_models/` — `ChurnReadModel` + teste de equivalência replay ↔ incremental |
 | Schema Registry (JSON Schema por tópico) | ✅ Implementado | `platform/messaging/schemas/` + `ValidatingBus` |
+| **Data Mesh — Data Product contracts** (RFC-001) | ✅ Implementado | `data-platform/data-products/*/contract.yaml` (4 domínios) + `validate.py` + testes |
 | BDD (Gherkin PT-BR) | ✅ Implementado | `tests/bdd/` — behave, 2 cenários |
 | System Design docs (requisitos, capacidade, escala, HA, consistência, cache, DR, trade-offs) | ✅ Implementado | `docs/system-design/00..14` |
 | ADRs de arquitetura enterprise | ✅ Implementado | `docs/decisions/ADR-016..024` (total: 24 ADRs) |
@@ -225,17 +230,18 @@ já modelado.
 | C4 model (context / container / component) | ✅ Implementado | `docs/c4/` (Mermaid) |
 | Standards (código, API, observabilidade) | ✅ Implementado | `docs/standards/` |
 | Robustness gate de MLOps (integra ThemisAI) | ✅ Implementado | `ml-platform/adversarial-evaluation/` (5 testes) |
+| **CI da camada v2** | ✅ Implementado | `.github/workflows/enterprise-v2.yml` — job `unit` (pytest+behave+node) + job `integration` (brokers reais) |
 | Terraform AWS (VPC · EKS · MSK · observability) | 🗺️ Referência | `terraform/modules/aws/` — `terraform fmt` passa; `apply` não executado |
 | Java / Spring Boot (`customer-service`) | 🗺️ Skeleton | `services/customer-service/` — `pom.xml` válido, DDD completo, `CustomerAggregateTest`; não compilado (sem JDK 17/Maven no ambiente) |
 | Service Mesh (Istio — mTLS, canary) | 🗺️ Referência | `platform/service-mesh/istio/` — manifests válidos, requer cluster |
 | Angular Microfrontends (`web-shell`) | 🗺️ Skeleton | `apps/web-shell/` — configs Module Federation válidas; `ng build` não roda no ambiente |
-| Kafka/RabbitMQ com broker real | 🗺️ Planejado | adapters prontos em `platform/messaging/bus.py` |
 | Argo CD / GitOps | 🗺️ Planejado | ADR-024 |
 
 ### Evolução de versões
 
 `v1.x` Plataforma de Dados & IA (Lakehouse, MDM, ML, RAG, agentes, governança) →
-`v2.0` DDD + `inference-service` + messaging + system design + ADRs 16–24 →
+`v2.0` DDD + `inference-service` (REST) + messaging + system design + ADRs 16–24 →
+`v2.1` gRPC + transactional outbox + read models CQRS + Data Product contracts + CI da camada v2 →
 `v2.1` (planejado) Kafka/RabbitMQ com broker + `customer-service` compilando →
 `v2.2` (planejado) EKS + Istio + Argo CD.
 
@@ -278,6 +284,7 @@ agents/            6 agentes (orquestrador, qualidade, recomendação, monitoram
 api/                FastAPI + GraphQL
 apps/              [v2] Angular web-shell + microfrontends (skeleton)
 data/               Geradores sintéticos + documentos (RAG)
+data-platform/     [v2] data-products/ — contratos de Data Product (Data Mesh, RFC-001)
 data_quality/       Engine de regras + quarentena
 dashboard/          Dashboard Streamlit
 dbt/                Semantic layer (dbt/MetricFlow)
@@ -290,7 +297,7 @@ mdm/                Entity Resolution + Golden Record
 ml/                 Features, churn, segmentação, reforço, explicabilidade
 ml-platform/       [v2] adversarial-evaluation — robustness gate de MLOps (ThemisAI)
 notebooks/          9 notebooks executáveis, um por camada
-platform/          [v2] messaging (Kafka/RabbitMQ + schemas) + service-mesh (Istio)
+platform/          [v2] messaging (Kafka/RabbitMQ + schemas) + read_models (CQRS) + service-mesh (Istio)
 powerbi/            Semantic model, DAX, dashboard
 rag/                RAG cloud (Cortex) + local-first (Crawl4AI/Docling/Chroma/FAISS)
 services/          [v2] Serviços de domínio DDD: inference-service (Python, ✅) +
