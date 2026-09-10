@@ -50,6 +50,22 @@ jobs:
       - name: BDD
         run: behave tests/bdd
 
+  web-shell:
+    name: web-shell (Angular 18)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/web-shell/package-lock.json
+      - working-directory: apps/web-shell
+        run: npm ci
+      - working-directory: apps/web-shell
+        run: npm run build
+
   java-customer-service:
     name: customer-service (Java 17 / Spring Boot)
     runs-on: ubuntu-latest

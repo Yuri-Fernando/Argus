@@ -72,3 +72,8 @@ docker-compose.override.yml
 
 # Java (customer-service)
 **/target/
+
+# Angular (web-shell)
+apps/web-shell/dist/
+apps/web-shell/.angular/
+node_modules/

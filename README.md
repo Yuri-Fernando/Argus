@@ -234,7 +234,7 @@ já modelado.
 | Terraform AWS (VPC · EKS · MSK · observability) | 🗺️ Referência | `terraform/modules/aws/` — `terraform fmt` passa; `apply` não executado |
 | Java / Spring Boot (`customer-service`) | ✅ Compila e testa | `services/customer-service/` — `mvn verify` com JDK 17: **5 testes JUnit** (`CustomerAggregateTest`) verdes. Maven wrapper (`./mvnw`) incluído; job `java-customer-service` no CI. |
 | Service Mesh (Istio — mTLS, canary) | 🗺️ Referência | `platform/service-mesh/istio/` — manifests válidos, requer cluster |
-| Angular Microfrontends (`web-shell`) | 🗺️ Skeleton | `apps/web-shell/` — configs Module Federation válidas; `ng build` não roda no ambiente |
+| Angular (`web-shell`) | ✅ Builda | `apps/web-shell/` — workspace Angular 18 real; `ng build` production gera o shell + 1 lazy chunk por área (customer/analytics/ai-ops/governance). Job `web-shell` no CI. Module Federation (`webpack.config.js`) = próximo passo. |
 | Argo CD / GitOps | 🗺️ Planejado | ADR-024 |
 
 ### Evolução de versões

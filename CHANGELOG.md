@@ -62,6 +62,11 @@ contra ferramentas de verdade (localmente, sem custo de nuvem).
   (`actions/setup-java`).
 - `KafkaBus`/`RabbitBus` ganharam `consume_batch()` (consumo não-bloqueante) — o que
   viabilizou os testes de integração.
+- **`apps/web-shell` (Angular) → ✅ builda.** Trocado o skeleton por um **workspace
+  Angular 18 real** (shell de navegação + 4 áreas como lazy components). `ng build`
+  production passa: bundle do shell + 1 lazy chunk por área. `package-lock.json`
+  versionado; job `web-shell` no `enterprise-v2.yml`. Module Federation
+  (`webpack.config.js`) mantido como próximo passo.
 
 ### Fixed
 - `infrastructure/outbox.py`: `SqliteOutbox` agora mantém **uma conexão persistente** — a
