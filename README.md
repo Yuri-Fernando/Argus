@@ -225,11 +225,12 @@ já modelado.
 | **Data Mesh — Data Product contracts** (RFC-001) | ✅ Implementado | `data-platform/data-products/*/contract.yaml` (4 domínios) + `validate.py` + testes |
 | BDD (Gherkin PT-BR) | ✅ Implementado | `tests/bdd/` — behave, 2 cenários |
 | System Design docs (requisitos, capacidade, escala, HA, consistência, cache, DR, trade-offs) | ✅ Implementado | `docs/system-design/00..14` |
-| ADRs de arquitetura enterprise | ✅ Implementado | `docs/decisions/ADR-016..024` (total: 24 ADRs) |
+| ADRs de arquitetura enterprise | ✅ Implementado | `docs/decisions/ADR-016..025` (total: 25 ADRs) |
 | RFCs (Data Mesh, ML Platform) | ✅ Implementado | `docs/rfc/` |
 | C4 model (context / container / component) | ✅ Implementado | `docs/c4/` (Mermaid) |
 | Standards (código, API, observabilidade) | ✅ Implementado | `docs/standards/` |
 | Robustness gate de MLOps (integra ThemisAI) | ✅ Implementado | `ml-platform/adversarial-evaluation/` (5 testes) |
+| **Fine-Tuning LoRA / QLoRA** | ✅ Implementado (rodado de verdade) | `ml/fine_tuning/` — LoRA e QLoRA sobre `Qwen2.5-0.5B-Instruct` (RTX 3060 Ti): 0,22% dos parâmetros treináveis, loss 3,5→1,7 (LoRA, 13s) e 3,6→1,8 (QLoRA 4-bit, 24s). Adapter salvo e recarregável (`PeftModel`). ADR-025, `notebooks/lora_qlora_finetuning.ipynb`, 2 testes (`RUN_FINETUNE=1`) |
 | **CI da camada v2** | ✅ Implementado | `.github/workflows/enterprise-v2.yml` — job `unit` (pytest+behave+node) + job `integration` (brokers reais) |
 | Terraform AWS (VPC · EKS · MSK · observability) | 🗺️ Referência | `terraform/modules/aws/` — `terraform fmt` passa; `apply` não executado |
 | Java / Spring Boot (`customer-service`) | ✅ Compila e testa | `services/customer-service/` — `mvn verify` com JDK 17: **5 testes JUnit** (`CustomerAggregateTest`) verdes. Maven wrapper (`./mvnw`) incluído; job `java-customer-service` no CI. |
@@ -294,7 +295,7 @@ k8s/                Manifests Kubernetes
 lakehouse/          Pipeline Bronze → Silver
 mcp/                Servidor MCP + ferramentas
 mdm/                Entity Resolution + Golden Record
-ml/                 Features, churn, segmentação, reforço, explicabilidade
+ml/                 Features, churn, segmentação, reforço, explicabilidade, fine_tuning (LoRA/QLoRA)
 ml-platform/       [v2] adversarial-evaluation — robustness gate de MLOps (ThemisAI)
 notebooks/          9 notebooks executáveis, um por camada
 platform/          [v2] messaging (Kafka/RabbitMQ + schemas) + read_models (CQRS) + service-mesh (Istio)
@@ -323,7 +324,7 @@ docs/standards/    [v2] padrões de código / API / observabilidade
 | [ROADMAP.md](ROADMAP.md) | Sprints, épicos, stories, critérios de aceite |
 | [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
 | [DATA_MODEL.md](DATA_MODEL.md) | Datasets, schemas, modelo dimensional |
-| [docs/decisions/](docs/decisions/) | ADRs — 24 decisões de arquitetura documentadas (16–24 = camada enterprise v2) |
+| [docs/decisions/](docs/decisions/) | ADRs — 25 decisões de arquitetura documentadas (16–25 = camada enterprise v2) |
 | [docs/system-design/](docs/system-design/) | System design: requisitos, capacidade, escala, HA, consistência, cache, segurança, observabilidade, DR, trade-offs |
 | [docs/c4/](docs/c4/) | C4 model — context / container / component (Mermaid) |
 | [docs/rfc/](docs/rfc/) | RFC-001 Data Mesh · RFC-002 ML Platform |

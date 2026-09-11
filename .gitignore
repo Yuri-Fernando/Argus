@@ -77,3 +77,6 @@ docker-compose.override.yml
 apps/web-shell/dist/
 apps/web-shell/.angular/
 node_modules/
+
+# Fine-tuning (LoRA/QLoRA)
+ml/fine_tuning/adapters/

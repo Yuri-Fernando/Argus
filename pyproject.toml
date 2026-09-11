@@ -41,6 +41,16 @@ pyspark = ["pyspark>=3.5", "delta-spark>=3.2"]
 dbt = ["dbt-core>=1.8", "dbt-snowflake>=1.8", "dbt-databricks>=1.8"]
 docs-pdf = ["reportlab>=4.2"]
 dev = ["pytest>=8.2", "pytest-cov>=5.0", "ruff>=0.4", "mypy>=1.10"]
+# ml/fine_tuning/ — LoRA/QLoRA (ADR-025). bitsandbytes é o único pedaço
+# realmente opcional (QLoRA); torch/transformers/peft/accelerate servem
+# tanto LoRA quanto QLoRA.
+fine-tuning = [
+    "torch>=2.4",
+    "transformers>=4.44",
+    "peft>=0.12",
+    "accelerate>=0.33",
+    "bitsandbytes>=0.43; platform_system != 'Darwin'",
+]
 # Local-first RAG stack (ADR-011) + multi-model LLM gateway (ADR-012) + Agno-based Knowledge
 # Ingestion Agent (ADR-011). Note: DeepSeek and other OpenAI-compatible providers reuse the
 # existing `openai` SDK client pointed at a different base_url (see agents/llm_gateway/router.py)
@@ -68,4 +78,5 @@ target-version = "py310"
 testpaths = ["tests"]
 markers = [
     "integration: exige brokers/serviços externos (Kafka/RabbitMQ) — roda com RUN_INTEGRATION=1 após `make up-enterprise`",
+    "finetune: baixa um LLM (~1GB) e treina de verdade (LoRA/QLoRA) — roda com RUN_FINETUNE=1; lento e pesado para o default",
 ]

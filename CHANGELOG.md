@@ -7,6 +7,33 @@ In progress: 3 new notebooks (`07_rag_document_intelligence`, `08_agents_mcp_a2a
 
 ---
 
+## [2.6.0] — 2026-09-11 — LoRA / QLoRA fine-tuning (ml/fine_tuning/)
+
+### Added
+- **`ml/fine_tuning/`** — adapta `Qwen/Qwen2.5-0.5B-Instruct` (open-source, Apache-2.0) ao
+  domínio de Customer Intelligence (assistente de retenção), via **LoRA** e **QLoRA**.
+  - `model.py` — carrega o modelo-base, com `load_in_4bit` opcional (NF4 + double
+    quantization via `bitsandbytes`, o mecanismo do QLoRA).
+  - `lora_finetune.py` — loop de treino compartilhado entre LoRA e QLoRA (mascara a loss
+    no prompt, só o `assistant` conta para o gradiente); salva o adapter via
+    `model.save_pretrained`.
+  - `qlora_finetune.py` — mesmo loop com o modelo-base em 4-bit.
+  - `evaluate.py` — compara gerações do modelo base vs. base+adapter em prompts held-out.
+  - `dataset.py` — 8 exemplos de instrução no domínio de churn/retenção/políticas.
+- **Rodado de verdade** numa RTX 3060 Ti (8GB): LoRA treina **0,22% dos parâmetros**
+  (1.081.344 de 495.114.112), loss 3,51→1,66 em 13,0s; QLoRA mesmo resultado sobre o
+  modelo em 4-bit, loss 3,62→1,78 em 24,2s. Adapters salvos e recarregáveis via
+  `PeftModel.from_pretrained` (verificado em teste).
+- `notebooks/lora_qlora_finetuning.ipynb` — walkthrough completo com curva de loss e
+  comparação qualitativa.
+- 2 testes (`ml/fine_tuning/tests/test_lora_finetune.py`, marcador `finetune`, gated por
+  `RUN_FINETUNE=1` — baixam o modelo-base e treinam de verdade, não rodam no CI padrão).
+- `docs/decisions/ADR-025-lora-qlora-fine-tuning.md`.
+- `pyproject.toml`: novo extra `fine-tuning` (`torch`, `transformers`, `peft`,
+  `accelerate`, `bitsandbytes`).
+
+---
+
 ## [2.4.0] — 2026-09-10 — Enterprise v2.1: gRPC · Outbox · CQRS read models · Data Mesh contracts · CI
 
 Torna concretos (com testes reais) itens antes marcados 🗺️/🚧 na Capability Status table
