@@ -7,6 +7,25 @@ In progress: 3 new notebooks (`07_rag_document_intelligence`, `08_agents_mcp_a2a
 
 ---
 
+## [2.6.1] — 2026-09-11 — Otimização de inferência do modelo fine-tunado
+
+### Added
+- **`ml/fine_tuning/inference_optimize.py`** — duas técnicas reais de otimização de
+  inferência aplicadas sobre o modelo LoRA já treinado (não um exemplo à parte):
+  - `merge_adapter` — funde o adapter LoRA nos pesos-base (`PeftModel.merge_and_unload`),
+    eliminando o produto de matrizes extra do adapter a cada forward pass.
+  - `quantize_dynamic_int8` — quantização dinâmica INT8 das camadas lineares
+    (`torch.quantization`, stdlib), reduzindo o footprint de memória para deploy sem GPU.
+- **Medido de verdade** (RTX 3060 Ti): adapter separado 5,51 tok/s (946 MB) → fundido
+  8,82 tok/s (942 MB, +60% por eliminar o overhead do adapter) → fundido+INT8/CPU
+  3,77 tok/s (519 MB, -45% de memória — troca velocidade por rodar sem GPU).
+- 3 testes (`ml/fine_tuning/tests/test_inference_optimize.py`, marcador `finetune`) —
+  um deles pegou um bug real (forward pass em modelo quantizado exige `.float()` antes
+  da quantização quando o modelo veio da GPU em bfloat16; sem isso, `RuntimeError` em
+  runtime — corrigido).
+
+---
+
 ## [2.6.0] — 2026-09-11 — LoRA / QLoRA fine-tuning (ml/fine_tuning/)
 
 ### Added

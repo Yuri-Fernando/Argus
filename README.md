@@ -231,6 +231,7 @@ já modelado.
 | Standards (código, API, observabilidade) | ✅ Implementado | `docs/standards/` |
 | Robustness gate de MLOps (integra ThemisAI) | ✅ Implementado | `ml-platform/adversarial-evaluation/` (5 testes) |
 | **Fine-Tuning LoRA / QLoRA** | ✅ Implementado (rodado de verdade) | `ml/fine_tuning/` — LoRA e QLoRA sobre `Qwen2.5-0.5B-Instruct` (RTX 3060 Ti): 0,22% dos parâmetros treináveis, loss 3,5→1,7 (LoRA, 13s) e 3,6→1,8 (QLoRA 4-bit, 24s). Adapter salvo e recarregável (`PeftModel`). ADR-025, `notebooks/lora_qlora_finetuning.ipynb`, 2 testes (`RUN_FINETUNE=1`) |
+| **Otimização de inferência (merge + quantização INT8)** | ✅ Implementado (medido de verdade) | `ml/fine_tuning/inference_optimize.py` — funde o adapter LoRA (`merge_and_unload`, +60% tok/s vs. adapter separado) e quantiza dinamicamente para INT8 (-45% de memória, deploy sem GPU). 3 testes (`RUN_FINETUNE=1`) |
 | **CI da camada v2** | ✅ Implementado | `.github/workflows/enterprise-v2.yml` — job `unit` (pytest+behave+node) + job `integration` (brokers reais) |
 | Terraform AWS (VPC · EKS · MSK · observability) | 🗺️ Referência | `terraform/modules/aws/` — `terraform fmt` passa; `apply` não executado |
 | Java / Spring Boot (`customer-service`) | ✅ Compila e testa | `services/customer-service/` — `mvn verify` com JDK 17: **5 testes JUnit** (`CustomerAggregateTest`) verdes. Maven wrapper (`./mvnw`) incluído; job `java-customer-service` no CI. |
