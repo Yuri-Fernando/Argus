@@ -7,6 +7,30 @@ In progress: 3 new notebooks (`07_rag_document_intelligence`, `08_agents_mcp_a2a
 
 ---
 
+## [2.7.0] — 2026-09-23 — Human-in-the-loop nativo do LangGraph (ADR-006)
+
+### Added
+- **`agents/orchestrator/customer_intelligence_agent.py`** — o gate de aprovação humana do ADR-006
+  agora é nativo do LangGraph, não só do `agents/recommendation/approval_queue.py` (usado até aqui
+  só por um pipeline Python simples, sem grafo). Dois nós novos (`enqueue_for_approval`,
+  `require_human_approval`), duas arestas condicionais (`route_after_reason`,
+  `route_after_approval`), grafo compilado com `checkpointer=InMemorySaver()`.
+  - Respostas a `POLICY_QUESTION` (ex.: elegibilidade de reembolso) pausam via `interrupt()` em
+    vez de responder direto — LangGraph persiste o estado pausado contra um `thread_id`.
+  - A retomada (`Command(resume=...)`) nunca decide autorização pelo próprio payload de resume —
+    lê o status real do item na fila (`approval_queue.py`), a mesma fila do Recommendation Agent.
+    Um resume que *afirma* aprovação sem um `approve()` real anterior continua bloqueado
+    (`test_resume_payload_cannot_forge_approval`).
+- **`agents/a2a/server.py`** — `_handle_orchestrator` agora exige `thread_id` (usa
+  `sessionId` ou `task_id`) e aceita `metadata.resume` para retomar uma tarefa pausada;
+  `send_task` reporta o estado A2A `input-required` (não `completed`) quando o grafo pausa.
+- 6 testes reais (`agents/orchestrator/tests/test_human_in_the_loop.py`) — sem LLM, sem rede,
+  ~3s: pausa, aprovação, rejeição, forja de aprovação, e o guard da própria fila
+  (`mark_executed()` recusa item nunca aprovado). Verificado também ponta a ponta via
+  `TestClient` HTTP real contra `agents/a2a/server.py`.
+
+---
+
 ## [2.6.1] — 2026-09-11 — Otimização de inferência do modelo fine-tunado
 
 ### Added

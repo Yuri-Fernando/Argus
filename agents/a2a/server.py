@@ -37,6 +37,8 @@ from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from langgraph.types import Command
+
 from agents.a2a.agent_card import AGENT_CARDS
 from agents.monitoring.monitoring_agent import run_monitoring_cycle
 from agents.orchestrator.customer_intelligence_agent import customer_intelligence_agent
@@ -111,15 +113,34 @@ def _to_jsonable(value: Any) -> Any:
 # ---------------------------------------------------------------------------
 
 
-def _handle_orchestrator(text: str, metadata: dict[str, Any]) -> dict[str, Any]:
+def _handle_orchestrator(text: str, metadata: dict[str, Any], thread_id: str) -> dict[str, Any]:
+    """`thread_id` is required now that the graph is compiled with a checkpointer (ADR-006
+    human-in-the-loop gate, see customer_intelligence_agent.py) — LangGraph keys paused/resumable
+    state to it. `send_task` passes `body.sessionId or task_id`, so a client that wants to resume
+    a paused (`input-required`) task must send the same `sessionId` on its follow-up call.
+
+    `metadata.resume`, when present, resumes a paused task instead of starting a new question —
+    the *value* of `resume` is never trusted for authorization (see
+    customer_intelligence_agent.py::require_human_approval's docstring): it only tells LangGraph
+    which interrupted node to re-enter; the actual approve/reject decision is read back out of
+    agents/recommendation/approval_queue.py, which a human must have updated out-of-band (e.g. via
+    a separate internal review endpoint/CLI — not built here, out of this scope, same as
+    approval_queue.py's own `mark_executed()` executor).
+    """
+    config = {"configurable": {"thread_id": thread_id}}
+    if "resume" in metadata:
+        result_state = customer_intelligence_agent.invoke(Command(resume=metadata["resume"]), config)
+        return _to_jsonable(dict(result_state))
+
     question = metadata.get("question") or text
     if not question:
         raise HTTPException(status_code=400, detail="orchestrator requires a question (message text or metadata.question).")
-    result_state = customer_intelligence_agent.invoke({"question": question})
+    result_state = customer_intelligence_agent.invoke({"question": question}, config)
     return _to_jsonable(dict(result_state))
 
 
-def _handle_quality(text: str, metadata: dict[str, Any]) -> dict[str, Any]:
+def _handle_quality(text: str, metadata: dict[str, Any], thread_id: str) -> dict[str, Any]:
+    _ = thread_id  # quality has no multi-turn/paused state — stateless per call
     dataset = metadata.get("dataset") or text
     if not dataset:
         raise HTTPException(status_code=400, detail="quality requires a dataset (message text or metadata.dataset).")
@@ -130,7 +151,8 @@ def _handle_quality(text: str, metadata: dict[str, Any]) -> dict[str, Any]:
     return payload
 
 
-def _handle_recommendation(text: str, metadata: dict[str, Any]) -> dict[str, Any]:
+def _handle_recommendation(text: str, metadata: dict[str, Any], thread_id: str) -> dict[str, Any]:
+    _ = thread_id  # this agent's own ADR-006 gate (approval_queue.py) isn't thread/session-scoped
     master_customer_id = metadata.get("master_customer_id") or text
     if not master_customer_id:
         raise HTTPException(
@@ -143,8 +165,8 @@ def _handle_recommendation(text: str, metadata: dict[str, Any]) -> dict[str, Any
     return payload
 
 
-def _handle_monitoring(text: str, metadata: dict[str, Any]) -> dict[str, Any]:
-    _ = (text, metadata)  # monitoring takes no input — it evaluates current platform-wide signals
+def _handle_monitoring(text: str, metadata: dict[str, Any], thread_id: str) -> dict[str, Any]:
+    _ = (text, metadata, thread_id)  # monitoring takes no input — evaluates current platform-wide signals
     alerts = run_monitoring_cycle()
     return {"alerts": _to_jsonable(alerts), "alert_count": len(alerts)}
 
@@ -198,10 +220,17 @@ def send_task(agent_id: str, body: TaskSendRequest) -> dict[str, Any]:
 
     task_id = body.id or str(uuid4())
     text = _text_of(body.message)
+    # LangGraph checkpoints (customer_intelligence_agent's ADR-006 gate) key paused state to this
+    # thread_id — a client resuming a paused task MUST send the same sessionId it got back below.
+    thread_id = body.sessionId or task_id
 
     try:
-        result = handler(text, body.metadata)
-        state = "completed"
+        result = handler(text, body.metadata, thread_id)
+        # "__interrupt__" is LangGraph's own marker for a paused-not-failed run (see
+        # customer_intelligence_agent.py's require_human_approval) — surfaced as the A2A spec's
+        # "input-required" state, not "completed", since the answer isn't final yet: it's pending
+        # a human approve()/reject() call against agents/recommendation/approval_queue.py.
+        state = "input-required" if isinstance(result, dict) and "__interrupt__" in result else "completed"
         error = None
     except HTTPException:
         raise

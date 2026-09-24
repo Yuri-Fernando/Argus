@@ -59,12 +59,30 @@ one-off manual exercise.
 ## Run it
 
 ```bash
-# Once wired (Sprint 14), invoke the orchestrator directly:
+# The graph is compiled with a checkpointer (ADR-006 human-in-the-loop gate — see
+# customer_intelligence_agent.py's module docstring) so every call needs a thread_id:
 python -c "
 from agents.orchestrator.customer_intelligence_agent import customer_intelligence_agent
-print(customer_intelligence_agent.invoke({'question': 'What was revenue last month?'}))
+config = {'configurable': {'thread_id': 'demo-1'}}
+print(customer_intelligence_agent.invoke({'question': 'What was revenue last month?'}, config))
+
+# A POLICY_QUESTION pauses instead of answering directly — it recommends/informs a
+# consequential action, so ADR-006 requires human approval first:
+config2 = {'configurable': {'thread_id': 'demo-2'}}
+paused = customer_intelligence_agent.invoke({'question': 'Is this customer eligible for a refund?'}, config2)
+print(paused['__interrupt__'])  # the pending approval, with its approval_queue_id
+
+# A human calls approve()/reject() out-of-band (agents/recommendation/approval_queue.py),
+# then the caller resumes with the SAME thread_id:
+from langgraph.types import Command
+from agents.recommendation.approval_queue import get_queue
+get_queue().approve(paused['approval_queue_id'], approved_by='you@example.com')
+print(customer_intelligence_agent.invoke(Command(resume={'approved': True}), config2))
 "
 ```
+
+See [agents/orchestrator/tests/test_human_in_the_loop.py](orchestrator/tests/test_human_in_the_loop.py)
+for the full pause/resume/reject/forged-approval proof (6 real tests, no LLM call needed).
 
 ## Related
 

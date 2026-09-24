@@ -24,6 +24,19 @@ boundary doesn't change when the real guardrail lands.
 See agents/orchestrator/evaluation/golden_questions.yaml for example Q&A pairs with expected
 tool calls, and evaluation/prompt_injection_cases.yaml for the ADR-007 prompt-injection test
 case this agent must handle safely.
+
+Human-in-the-loop (ADR-006) via LangGraph's own state, not a second mechanism: a POLICY_QUESTION
+answer recommends or informs a consequential action, so — same rule ADR-006 applies to the
+Recommendation Agent — it may not reach the caller without explicit human sign-off. Before this,
+the only ADR-006 enforcement point in this codebase was `agents/recommendation/approval_queue.py`,
+used by a plain-Python pipeline (`agents/recommendation/recommendation_agent.py`) with no
+connection to LangGraph. This graph now enqueues into that *same* queue (one ADR-006 gate, not
+two competing ones) and pauses via LangGraph's `interrupt()`, persisted by a checkpointer
+(`InMemorySaver` here — swap for `SqliteSaver`/`PostgresSaver` in production without touching any
+node). Resuming after a human calls `approve()`/`reject()` out-of-band requires the same
+`thread_id` the paused run used; see `agents/a2a/server.py::_handle_orchestrator` for the only
+real caller today, and `agents/orchestrator/tests/test_human_in_the_loop.py` for the pause/resume
+proof (rejection included — this is the acceptance criterion `tests/ai/README.md` names).
 """
 
 from __future__ import annotations
@@ -32,7 +45,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, TypedDict
 
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, StateGraph
+from langgraph.types import interrupt
+
+from agents.recommendation.approval_queue import RecommendationStatus, get_queue
 
 
 class Intent(str, Enum):
@@ -83,6 +100,7 @@ class AgentState(TypedDict, total=False):
     evidence: list[str]
     guardrail_passed: bool
     guardrail_notes: list[str]
+    approval_queue_id: str  # set by enqueue_for_approval() — ADR-006 human-in-the-loop gate
 
 
 @dataclass
@@ -234,6 +252,69 @@ def apply_guardrail(state: AgentState) -> AgentState:
     return {**state, "guardrail_passed": passed, "guardrail_notes": notes}
 
 
+def enqueue_for_approval(state: AgentState) -> AgentState:
+    """First half of the ADR-006 human-in-the-loop gate: record the proposed answer in the same
+    approval queue the Recommendation Agent uses (`agents/recommendation/approval_queue.py`),
+    before the graph pauses.
+
+    Split from `require_human_approval` on purpose: `interrupt()` re-runs its node from the top
+    on every resume (LangGraph replays the node function; `interrupt()` only stops raising once a
+    matching resume value exists), so anything with a side effect — like creating a queue entry —
+    must happen in a node that runs exactly once. This node's return value is checkpointed before
+    the next node executes, so `approval_queue_id` survives the pause/resume round trip and is
+    never re-created.
+    """
+    queue_id = get_queue().enqueue(
+        master_customer_id=state.get("intent", Intent.UNKNOWN).value,  # no identity resolution
+        # wired yet (retrieve_data is still Sprint 13-15 scope) — the intent stands in as the
+        # queue's grouping key until a real master_customer_id flows through the graph.
+        recommendation=state.get("answer") or state["question"],
+        confidence=None,
+        evidence=state.get("evidence", []),
+    )
+    return {**state, "approval_queue_id": queue_id}
+
+
+def require_human_approval(state: AgentState) -> AgentState:
+    """Second half of the gate: pause the graph and, on resume, decide purely from the approval
+    queue's own state machine — never from whatever a caller happens to pass to
+    `Command(resume=...)`.
+
+    This is the concrete version of the interview answer "eu não confiaria no
+    [caller/LLM] para decidir autorização; autorização é determinística e deve existir fora do
+    modelo": the resume payload can carry anything (a note, a ping, garbage), but only a prior,
+    successful `approval_queue.approve()` call — which itself refuses to run on anything but a
+    PENDING item, see that module's `ApprovalQueueError` guard — can make this node treat the
+    answer as approved.
+    """
+    interrupt(
+        {
+            "reason": "policy_question_requires_human_approval",
+            "queue_id": state["approval_queue_id"],
+            "question": state["question"],
+            "proposed_answer": state.get("answer", ""),
+        }
+    )
+
+    item = get_queue().get(state["approval_queue_id"])
+    notes = list(state.get("guardrail_notes", []))
+
+    if item.status is RecommendationStatus.APPROVED:
+        notes.append(f"Human-approved before returning (queue_id={item.queue_id}, by={item.decided_by}).")
+        return {**state, "guardrail_passed": True, "guardrail_notes": notes}
+
+    notes.append(
+        "Blocked: policy-question answer was not approved by a human "
+        f"(queue_id={item.queue_id}, status={item.status.value})."
+    )
+    return {
+        **state,
+        "answer": "This recommendation requires human approval before it can be shared, and it was not approved.",
+        "guardrail_passed": False,
+        "guardrail_notes": notes,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Conditional edges
 # ---------------------------------------------------------------------------
@@ -248,6 +329,24 @@ def route_after_validation(state: AgentState) -> str:
     return "retrieve_data"
 
 
+def route_after_reason(state: AgentState) -> str:
+    """POLICY_QUESTION answers recommend or inform a consequential action (ADR-006) and must
+    clear human approval before being returned; every other intent skips straight to the
+    guardrail — unlike apply_guardrail, the approval gate isn't a blanket check on every answer,
+    it targets the specific case ADR-006 is about."""
+    if state.get("intent") == Intent.POLICY_QUESTION:
+        return "enqueue_for_approval"
+    return "apply_guardrail"
+
+
+def route_after_approval(state: AgentState) -> str:
+    """A rejected answer is already final (require_human_approval set the blocked message and
+    guardrail_passed=False) — routing it through apply_guardrail would overwrite that decision,
+    since that node unconditionally recomputes guardrail_passed from scratch. Only an approved
+    answer still needs the structural checks apply_guardrail performs."""
+    return "apply_guardrail" if state.get("guardrail_passed") else END
+
+
 # ---------------------------------------------------------------------------
 # Graph assembly
 # ---------------------------------------------------------------------------
@@ -258,6 +357,8 @@ _graph.add_node("select_tools", select_tools)
 _graph.add_node("retrieve_data", retrieve_data)
 _graph.add_node("validate_data", validate_data)
 _graph.add_node("reason", reason)
+_graph.add_node("enqueue_for_approval", enqueue_for_approval)
+_graph.add_node("require_human_approval", require_human_approval)
 _graph.add_node("apply_guardrail", apply_guardrail)
 
 _graph.set_entry_point("detect_intent")
@@ -269,9 +370,29 @@ _graph.add_conditional_edges(
     route_after_validation,
     {"retrieve_data": "retrieve_data", "reason": "reason"},
 )
-_graph.add_edge("reason", "apply_guardrail")
+_graph.add_conditional_edges(
+    "reason",
+    route_after_reason,
+    {"enqueue_for_approval": "enqueue_for_approval", "apply_guardrail": "apply_guardrail"},
+)
+_graph.add_edge("enqueue_for_approval", "require_human_approval")
+_graph.add_conditional_edges(
+    "require_human_approval",
+    route_after_approval,
+    {"apply_guardrail": "apply_guardrail", END: END},
+)
 _graph.add_edge("apply_guardrail", END)
 
-# Compiled graph — the actual entrypoint agents/orchestrator callers invoke, e.g.:
-#   result = customer_intelligence_agent.invoke({"question": "What was revenue last month?"})
-customer_intelligence_agent = _graph.compile()
+# Compiled with a checkpointer — required for require_human_approval's interrupt()/resume to work
+# (LangGraph persists paused state against a thread_id; without a checkpointer, interrupt() raises
+# instead of pausing). InMemorySaver is real, not a stub — it fully implements the checkpoint
+# protocol — its limitation is that state doesn't survive a process restart. Swapping in
+# `langgraph.checkpoint.sqlite.SqliteSaver` for production is a one-line change here; no node
+# above needs to know which backend is in use.
+#
+# Every call now requires a thread_id, e.g.:
+#   config = {"configurable": {"thread_id": "some-conversation-id"}}
+#   result = customer_intelligence_agent.invoke({"question": "What was revenue last month?"}, config)
+# See agents/a2a/server.py::_handle_orchestrator for the real caller and
+# agents/orchestrator/tests/test_human_in_the_loop.py for the pause/resume/reject proof.
+customer_intelligence_agent = _graph.compile(checkpointer=InMemorySaver())

@@ -120,7 +120,8 @@ Análise completa do trade-off: [`docs/decisions/ADR-002-lakehouse-vs-warehouse.
 | ML não supervisionado | Segmentação KMeans em cinco segmentos, com distribuição balanceada (6%–28,4%) |
 | ML por reforço | Bandit epsilon-greedy para próxima-melhor-ação, sujeito à mesma fila de aprovação humana das recomendações baseadas em regra |
 | Explicabilidade | SHAP aplicado ao modelo campeão já registrado, sem retreino apenas para fins de explicação |
-| Agentes de IA | Orquestrador conversacional (LangGraph, com gate de aprovação humana) e agente de ingestão de conhecimento (Agno, seleção autônoma de ferramenta por fonte) |
+| Agentes de IA | Orquestrador conversacional (LangGraph — `StateGraph` com nós, roteamento condicional, checkpointer e `interrupt()`/`Command(resume=...)` nativos, não apenas um pipeline chamado "agente") e agente de ingestão de conhecimento (Agno, seleção autônoma de ferramenta por fonte) |
+| Human-in-the-loop (ADR-006) | Gate de aprovação humana nativo do LangGraph no orquestrador — pausa via `interrupt()`, decide a partir do estado real da fila (`agents/recommendation/approval_queue.py`), nunca do payload de resume — testado ponta a ponta via HTTP real (A2A: `input-required` → aprova/rejeita → resume), 6 testes (`agents/orchestrator/tests/test_human_in_the_loop.py`), incluindo tentativa de forjar aprovação |
 | MCP (Model Context Protocol) | Servidor customizado com 12 ferramentas, sem lógica de negócio na camada de registro |
 | A2A (Agent2Agent) | Protocolo padronizado de comunicação entre agentes, com `AgentCard` de descoberta e endpoint JSON-RPC |
 | LLM Gateway multi-provider | Roteador único (`complete(prompt, task_type)`) para Azure OpenAI, OpenAI, DeepSeek, Gemini e AWS Bedrock, com registro de custo e latência por tipo de tarefa |
